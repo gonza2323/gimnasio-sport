@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class AddressDto {
+public class DireccionDto {
     private final Long id;
     private final String calle;
     private final String numeracion;
