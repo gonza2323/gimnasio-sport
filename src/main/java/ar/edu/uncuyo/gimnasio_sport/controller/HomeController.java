@@ -13,6 +13,7 @@ public class HomeController {
         return "view/home";
     }
 
+    // TODO: Remover, es solo para testear
     @ResponseBody
     @GetMapping("/me")
     public CustomUserDetails userDetails(@AuthenticationPrincipal CustomUserDetails authenticatedUserDetails) {
