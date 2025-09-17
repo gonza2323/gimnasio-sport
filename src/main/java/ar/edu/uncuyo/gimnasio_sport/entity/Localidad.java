@@ -1,0 +1,26 @@
+package ar.edu.uncuyo.gimnasio_sport.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Localidad {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long id;
+
+    public String nombre;
+    public String codigoPostal;
+
+    public boolean eliminado;
+
+    @ManyToOne
+    public Departamento departamento;
+}
