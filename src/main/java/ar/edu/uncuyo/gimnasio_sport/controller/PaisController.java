@@ -36,7 +36,7 @@ public class PaisController {
     @GetMapping
     public String listarPaises(Model model) {
         try {
-            List<PaisDto> paises = paisService.listarPaisesDto();
+            List<PaisDto> paises = paisService.listarPaisesDtos();
             model.addAttribute("paises", paises);
         } catch (BusinessException e) {
             model.addAttribute("msgError", e.getMessageKey());

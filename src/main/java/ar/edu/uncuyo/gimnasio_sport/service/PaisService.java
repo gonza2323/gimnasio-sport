@@ -25,7 +25,7 @@ public class PaisService {
     }
 
     @Transactional
-    public List<PaisDto> listarPaisesDto() {
+    public List<PaisDto> listarPaisesDtos() {
         List<Pais> paises = paisRepository.findAllByEliminadoFalseOrderByNombre();
         return paisMapper.toDtos(paises);
     }

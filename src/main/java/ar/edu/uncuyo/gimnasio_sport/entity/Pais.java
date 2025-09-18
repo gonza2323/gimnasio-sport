@@ -16,8 +16,9 @@ public class Pais {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @Column(length = 255)
+    @Column(nullable = false)
     public String nombre;
 
+    @Column(nullable = false)
     public boolean eliminado;
 }

@@ -16,11 +16,16 @@ public class Localidad {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
+    @Column(nullable = false)
     public String nombre;
+
+    @Column(nullable = false)
     public String codigoPostal;
 
+    @Column(nullable = false)
     public boolean eliminado;
 
-    @ManyToOne
+    @JoinColumn(nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     public Departamento departamento;
 }
