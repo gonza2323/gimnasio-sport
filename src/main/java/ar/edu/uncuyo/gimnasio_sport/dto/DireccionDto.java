@@ -6,12 +6,12 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class DireccionDto {
-    private final Long id;
-    private final String calle;
-    private final String numeracion;
-    private final String barrio;
-    private final String manzanaPiso;
-    private final String casaDepartamento;
-    private final String referencia;
-    private final String localidadId;
+    private Long id;
+    private String calle;
+    private String numeracion;
+    private String barrio;
+    private String manzanaPiso;
+    private String casaDepartamento;
+    private String referencia;
+    private String localidadId;
 }

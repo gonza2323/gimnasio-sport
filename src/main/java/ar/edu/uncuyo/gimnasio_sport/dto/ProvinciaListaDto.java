@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaisDto {
+public class ProvinciaListaDto {
     private Long id;
 
-    @NotBlank(message = "NotBlank.pais.nombre")
-    @Size(min = 2, max = 255, message = "Size.pais.nombre")
     private String nombre;
+
+    private String paisNombre;
 }
