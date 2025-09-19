@@ -2,7 +2,6 @@ package ar.edu.uncuyo.gimnasio_sport.controller;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.PaisDto;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
-import ar.edu.uncuyo.gimnasio_sport.error.FieldSpecificBusinessException;
 import ar.edu.uncuyo.gimnasio_sport.service.PaisService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -71,9 +70,6 @@ public class PaisController {
 
         try {
             paisService.modificarPais(pais);
-        } catch (FieldSpecificBusinessException e) {
-            bindingResult.rejectValue(e.getField(), e.getMessageKey());
-            return "view/pais/editar";
         } catch (BusinessException e) {
             model.addAttribute("msgError", e.getMessageKey());
             return "view/pais/editar";
@@ -90,9 +86,6 @@ public class PaisController {
 
         try {
             paisService.crearPais(pais);
-        } catch (FieldSpecificBusinessException e) {
-            bindingResult.rejectValue(e.getField(), e.getMessageKey());
-            return "view/pais/alta";
         } catch (BusinessException e) {
             model.addAttribute("msgError", e.getMessageKey());
             return "view/pais/alta";

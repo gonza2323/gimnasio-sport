@@ -5,10 +5,8 @@ import ar.edu.uncuyo.gimnasio_sport.dto.ProvinciaListaDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.Pais;
 import ar.edu.uncuyo.gimnasio_sport.entity.Provincia;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
-import ar.edu.uncuyo.gimnasio_sport.error.FieldSpecificBusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.ProvinciaListMapper;
 import ar.edu.uncuyo.gimnasio_sport.mapper.ProvinciaMapper;
-import ar.edu.uncuyo.gimnasio_sport.repository.PaisRepository;
 import ar.edu.uncuyo.gimnasio_sport.repository.ProvinciaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,13 +37,13 @@ public class ProvinciaService {
     @Transactional
     public void crearProvincia(ProvinciaDto provinciaDto) {
         if (provinciaRepository.existsByNombreAndEliminadoFalse((provinciaDto.getNombre())))
-            throw new FieldSpecificBusinessException("nombre", "yaExiste");
+            throw new BusinessException("yaExiste.provincia.nombre");
 
         Pais pais;
         try {
             pais = paisService.buscarPais(provinciaDto.getPaisId());
         } catch (BusinessException e) {
-            throw new FieldSpecificBusinessException("paisId", "noExiste");
+            throw new BusinessException("noExiste.pais");
         }
 
         Provincia provincia = provinciaMapper.toEntity(provinciaDto);
@@ -60,13 +58,13 @@ public class ProvinciaService {
         Provincia provincia = buscarProvincia(provinciaDto.getId());
 
         if (provinciaRepository.existsByNombreAndIdNotAndEliminadoFalse(provinciaDto.getNombre(), provinciaDto.getId()))
-            throw new FieldSpecificBusinessException("nombre", "yaExiste");
+            throw new BusinessException("yaExiste.provincia.nombre");
 
         Pais pais;
         try {
             pais = paisService.buscarPais(provinciaDto.getPaisId());
         } catch (BusinessException e) {
-            throw new FieldSpecificBusinessException("paisId", "noExiste");
+            throw new BusinessException("noExiste.pais");
         }
 
         provinciaMapper.updateEntityFromDto(provinciaDto, provincia);

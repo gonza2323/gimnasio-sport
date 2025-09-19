@@ -2,7 +2,7 @@ package ar.edu.uncuyo.gimnasio_sport.service;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.UsuarioCreateFormDTO;
 import ar.edu.uncuyo.gimnasio_sport.entity.Usuario;
-import ar.edu.uncuyo.gimnasio_sport.error.FieldSpecificBusinessException;
+import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.UsuarioMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class UsuarioService {
         validarDatos(formDto.getClave(), formDto.getConfirmacionClave());
 
         if (usuarioRepository.existsByNombreUsuarioAndEliminadoFalse(formDto.getNombreUsuario()))
-            throw new FieldSpecificBusinessException("nombreUsuario", "yaExiste");
+            throw new BusinessException("yaExiste.usuario.nombre");
 
         Usuario usuario = usuarioMapper.toEntity(formDto);
         String hashClave = passwordEncoder.encode(formDto.getClave());
@@ -31,6 +31,6 @@ public class UsuarioService {
 
     private void validarDatos(String clave, String confirmacionClave) {
         if (!clave.equals(confirmacionClave))
-            throw new FieldSpecificBusinessException("confirmacionClave", "noIguales");
+            throw new BusinessException("noIguales.confirmacionClave");
     }
 }

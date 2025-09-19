@@ -4,7 +4,6 @@ import ar.edu.uncuyo.gimnasio_sport.dto.DireccionDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.Direccion;
 import ar.edu.uncuyo.gimnasio_sport.entity.Localidad;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
-import ar.edu.uncuyo.gimnasio_sport.error.FieldSpecificBusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.DireccionMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.DireccionRepository;
 import jakarta.transaction.Transactional;
@@ -31,7 +30,7 @@ public class DireccionService {
         try {
             localidad = localidadService.buscarLocalidad(direccionDto.getLocalidadId());
         } catch (BusinessException e) {
-            throw new FieldSpecificBusinessException("localidadId", "noExiste");
+            throw new BusinessException("noExiste.localidad");
         }
 
         Direccion direccion = direccionMapper.toEntity(direccionDto);
@@ -49,7 +48,7 @@ public class DireccionService {
         try {
             localidad = localidadService.buscarLocalidad(direccionDto.getLocalidadId());
         } catch (BusinessException e) {
-            throw new FieldSpecificBusinessException("localidadId", "noExiste");
+            throw new BusinessException("noExiste.localidad");
         }
 
         direccionMapper.updateEntityFromDto(direccionDto, direccion);
