@@ -14,8 +14,6 @@ import lombok.NoArgsConstructor;
 public class UsuarioCreateFormDTO {
     private Long id;
 
-    @NotBlank(message = "")
-    @Size(min = 2, max = 255, message = "")
     private String nombreUsuario;
 
     @NotBlank(message = "")
@@ -27,5 +25,5 @@ public class UsuarioCreateFormDTO {
     private String confirmacionClave;
 
     @NotNull
-    private RolUsuario rolUsuario;
+    private RolUsuario rol;
 }

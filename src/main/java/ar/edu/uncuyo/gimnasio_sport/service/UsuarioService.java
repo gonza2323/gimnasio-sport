@@ -2,7 +2,6 @@ package ar.edu.uncuyo.gimnasio_sport.service;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.UsuarioCreateFormDTO;
 import ar.edu.uncuyo.gimnasio_sport.entity.Usuario;
-import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.error.FieldSpecificBusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.UsuarioMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.UsuarioRepository;
@@ -17,7 +16,7 @@ public class UsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final UsuarioMapper usuarioMapper;
 
-    public void crearUsuario(UsuarioCreateFormDTO formDto) {
+    public Usuario crearUsuario(UsuarioCreateFormDTO formDto) {
         validarDatos(formDto.getClave(), formDto.getConfirmacionClave());
 
         if (usuarioRepository.existsByNombreUsuarioAndEliminadoFalse(formDto.getNombreUsuario()))
@@ -27,7 +26,7 @@ public class UsuarioService {
         String hashClave = passwordEncoder.encode(formDto.getClave());
         usuario.setClave(hashClave);
 
-        usuarioRepository.save(usuario);
+        return usuarioRepository.save(usuario);
     }
 
     private void validarDatos(String clave, String confirmacionClave) {

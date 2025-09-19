@@ -11,6 +11,5 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class Socio extends Persona {
     @Column(nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long numeroSocio;
+    private Long numeroSocio;
 }

@@ -3,11 +3,11 @@ package ar.edu.uncuyo.gimnasio_sport.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
-@Getter
-@RequiredArgsConstructor
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class DireccionDto {
     private Long id;
 
@@ -30,6 +30,12 @@ public class DireccionDto {
 
     @Size(max = 50)
     private String referencia;
+
+    private Long paisId;
+
+    private Long provinciaId;
+
+    private Long departamentoId;
 
     @NotNull
     private Long localidadId;

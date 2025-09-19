@@ -1,6 +1,7 @@
 package ar.edu.uncuyo.gimnasio_sport.init;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.PaisDto;
+import ar.edu.uncuyo.gimnasio_sport.dto.UsuarioCreateFormDTO;
 import ar.edu.uncuyo.gimnasio_sport.enums.RolUsuario;
 import ar.edu.uncuyo.gimnasio_sport.repository.UsuarioRepository;
 import ar.edu.uncuyo.gimnasio_sport.service.PaisService;
@@ -32,7 +33,7 @@ public class DataInitialization implements CommandLineRunner {
         }
 
         // 1. Create Authentication manually
-        var authorities = List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        var authorities = List.of(new SimpleGrantedAuthority("ROLE_ADMINISTRA"));
         var auth = new UsernamePasswordAuthenticationToken("system", null, authorities);
 
         // 2. Set it in SecurityContext
@@ -40,7 +41,8 @@ public class DataInitialization implements CommandLineRunner {
 
         System.out.println("Creando datos iniciales...");
 
-        usuarioService.crearUsuario("admin","1234", "1234", RolUsuario.ADMIN);
+        UsuarioCreateFormDTO form = new UsuarioCreateFormDTO(null, "admin", "1234", "1234", RolUsuario.ADMINISTRATIVO);
+        usuarioService.crearUsuario(form);
 
         crearUbicaciones();
         SecurityContextHolder.clearContext();

@@ -24,6 +24,7 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**", "/vendor/**",
                                 "/bootstrap/**", "/images/**", "/tinymce/**").permitAll()
                         .requestMatchers("/", "/error", "/me").permitAll()
+                        .requestMatchers("/paises/**").hasRole("ADMINISTRATIVO")
                         .anyRequest().authenticated()
                 )
 //                .formLogin(form -> form

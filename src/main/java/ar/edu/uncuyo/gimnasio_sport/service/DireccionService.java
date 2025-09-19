@@ -3,12 +3,10 @@ package ar.edu.uncuyo.gimnasio_sport.service;
 import ar.edu.uncuyo.gimnasio_sport.dto.DireccionDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.Direccion;
 import ar.edu.uncuyo.gimnasio_sport.entity.Localidad;
-import ar.edu.uncuyo.gimnasio_sport.entity.Pais;
-import ar.edu.uncuyo.gimnasio_sport.entity.Provincia;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.error.FieldSpecificBusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.DireccionMapper;
-import ar.edu.uncuyo.gimnasio_sport.repository.*;
+import ar.edu.uncuyo.gimnasio_sport.repository.DireccionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,7 @@ public class DireccionService {
     }
 
     @Transactional
-    public void crearDireccion(DireccionDto direccionDto) {
+    public Direccion crearDireccion(DireccionDto direccionDto) {
         Localidad localidad;
         try {
             localidad = localidadService.buscarLocalidad(direccionDto.getLocalidadId());
@@ -40,7 +38,7 @@ public class DireccionService {
         direccion.setId(null);
         direccion.setLocalidad(localidad);
         direccion.setEliminado(false);
-        direccionRepository.save(direccion);
+        return direccionRepository.save(direccion);
     }
 
     @Transactional
