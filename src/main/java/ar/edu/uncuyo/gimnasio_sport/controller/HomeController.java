@@ -1,23 +1,16 @@
 package ar.edu.uncuyo.gimnasio_sport.controller;
 
-import ar.edu.uncuyo.gimnasio_sport.auth.CustomUserDetails;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.security.Principal;
 
 @Controller
 public class HomeController {
-    @GetMapping
-    public String home() {
-        return "view/home";
-    }
-
-    // TODO: Remover, es solo para testear
-    @ResponseBody
-    @GetMapping("/me")
-    public CustomUserDetails userDetails(@AuthenticationPrincipal CustomUserDetails authenticatedUserDetails) {
-        System.out.println(authenticatedUserDetails);
-        return authenticatedUserDetails;
+    @GetMapping({"/", "/about", "/blog", "/contact", "/elements", "/gallery", "/pricing", "/single-blog"})
+    public String page(Principal principal, HttpServletRequest request) {
+        String pageName = request.getRequestURI().substring(1);
+        return pageName.isEmpty() ? "home" : pageName;
     }
 }

@@ -21,9 +21,9 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**", "/img/**", "/webjars/**", "/vendor/**",
-                                "/bootstrap/**", "/images/**", "/tinymce/**").permitAll()
-                        .requestMatchers("/", "/error", "/me").permitAll()
+                        .requestMatchers("/css/**", "/fonts/**", "/img/**", "/js/**").permitAll()
+                        .requestMatchers("/", "/about", "/blog", "/contact", "/elements",
+                                "gallery", "pricing", "single-blog", "/error").permitAll()
                         .requestMatchers("/paises/**").hasRole("ADMINISTRATIVO")
                         .anyRequest().authenticated()
                 )
