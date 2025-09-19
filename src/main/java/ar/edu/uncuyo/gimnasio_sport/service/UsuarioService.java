@@ -1,8 +1,10 @@
 package ar.edu.uncuyo.gimnasio_sport.service;
 
+import ar.edu.uncuyo.gimnasio_sport.dto.UsuarioCreateFormDTO;
 import ar.edu.uncuyo.gimnasio_sport.entity.Usuario;
-import ar.edu.uncuyo.gimnasio_sport.enums.Rol;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
+import ar.edu.uncuyo.gimnasio_sport.error.FieldSpecificBusinessException;
+import ar.edu.uncuyo.gimnasio_sport.mapper.UsuarioMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,24 +15,23 @@ import org.springframework.stereotype.Service;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UsuarioMapper usuarioMapper;
 
-    public void crearUsuario(String nombreUsuario, String clave, String confirmacionClave, Rol rol) {
-        validar(nombreUsuario, clave, confirmacionClave);
+    public void crearUsuario(UsuarioCreateFormDTO formDto) {
+        validarDatos(formDto.getClave(), formDto.getConfirmacionClave());
 
-        if (usuarioRepository.existsByNombreUsuarioAndEliminadoFalse(nombreUsuario))
-            throw new BusinessException("El correo electrónico ya está en uso.");
+        if (usuarioRepository.existsByNombreUsuarioAndEliminadoFalse(formDto.getNombreUsuario()))
+            throw new FieldSpecificBusinessException("nombreUsuario", "yaExiste");
 
-        Usuario usuario = Usuario.builder()
-                .nombreUsuario(nombreUsuario)
-                .clave(passwordEncoder.encode(clave))
-                .rol(rol)
-                .build();
+        Usuario usuario = usuarioMapper.toEntity(formDto);
+        String hashClave = passwordEncoder.encode(formDto.getClave());
+        usuario.setClave(hashClave);
 
         usuarioRepository.save(usuario);
     }
 
-    private void validar(String nombreUsuario, String clave, String confirmacionClave) {
+    private void validarDatos(String clave, String confirmacionClave) {
         if (!clave.equals(confirmacionClave))
-            throw new BusinessException("Las contraseñas no coinciden.");
+            throw new FieldSpecificBusinessException("confirmacionClave", "noIguales");
     }
 }

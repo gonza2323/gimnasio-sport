@@ -1,14 +1,12 @@
 package ar.edu.uncuyo.gimnasio_sport.entity;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Entity
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,13 +14,13 @@ import lombok.NoArgsConstructor;
 public class Sucursal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-    public String nombre;
-    public boolean eliminado;
+    private Long id;
+    private String nombre;
+    private boolean eliminado;
 
     @ManyToOne
-    public Direccion direccion;
+    private Direccion direccion;
 
     @ManyToOne
-    public Empresa empresa;
+    private Empresa empresa;
 }

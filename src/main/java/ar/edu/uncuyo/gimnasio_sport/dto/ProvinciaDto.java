@@ -18,5 +18,5 @@ public class ProvinciaDto {
     private String nombre;
 
     @NotNull(message = "NotNull.provincia.paisId")
-    private String paisId;
+    private Long paisId;
 }

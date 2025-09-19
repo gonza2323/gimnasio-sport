@@ -43,7 +43,7 @@ public class ProvinciaService {
 
         Pais pais;
         try {
-            pais = paisService.buscarPais(provinciaDto.getId());
+            pais = paisService.buscarPais(provinciaDto.getPaisId());
         } catch (BusinessException e) {
             throw new FieldSpecificBusinessException("paisId", "noExiste");
         }
@@ -64,14 +64,13 @@ public class ProvinciaService {
 
         Pais pais;
         try {
-            pais = paisService.buscarPais(provinciaDto.getId());
+            pais = paisService.buscarPais(provinciaDto.getPaisId());
         } catch (BusinessException e) {
             throw new FieldSpecificBusinessException("paisId", "noExiste");
         }
 
         provinciaMapper.updateEntityFromDto(provinciaDto, provincia);
         provincia.setPais(pais);
-        provincia.setEliminado(false);
         provinciaRepository.save(provincia);
     }
 

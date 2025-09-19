@@ -1,7 +1,7 @@
 package ar.edu.uncuyo.gimnasio_sport.init;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.PaisDto;
-import ar.edu.uncuyo.gimnasio_sport.enums.Rol;
+import ar.edu.uncuyo.gimnasio_sport.enums.RolUsuario;
 import ar.edu.uncuyo.gimnasio_sport.repository.UsuarioRepository;
 import ar.edu.uncuyo.gimnasio_sport.service.PaisService;
 import ar.edu.uncuyo.gimnasio_sport.service.UsuarioService;
@@ -40,7 +40,7 @@ public class DataInitialization implements CommandLineRunner {
 
         System.out.println("Creando datos iniciales...");
 
-        usuarioService.crearUsuario("admin","1234", "1234", Rol.ADMIN);
+        usuarioService.crearUsuario("admin","1234", "1234", RolUsuario.ADMIN);
 
         crearUbicaciones();
         SecurityContextHolder.clearContext();

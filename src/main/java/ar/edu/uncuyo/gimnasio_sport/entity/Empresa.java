@@ -1,5 +1,6 @@
 package ar.edu.uncuyo.gimnasio_sport.entity;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -8,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Entity
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,10 +17,10 @@ import lombok.NoArgsConstructor;
 public class Empresa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-    public String nombre;
-    public String telefono;
-    public String mail;
-    public boolean eliminado;
+    private Long id;
+    private String nombre;
+    private String telefono;
+    private String mail;
+    private boolean eliminado;
 
 }

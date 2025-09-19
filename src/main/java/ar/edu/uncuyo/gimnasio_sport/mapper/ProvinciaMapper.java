@@ -1,8 +1,6 @@
 package ar.edu.uncuyo.gimnasio_sport.mapper;
 
-import ar.edu.uncuyo.gimnasio_sport.dto.PaisDto;
 import ar.edu.uncuyo.gimnasio_sport.dto.ProvinciaDto;
-import ar.edu.uncuyo.gimnasio_sport.entity.Pais;
 import ar.edu.uncuyo.gimnasio_sport.entity.Provincia;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,7 +15,7 @@ public interface ProvinciaMapper {
     Provincia toEntity(ProvinciaDto dto);
 
     @Mapping(target = "paisId", source = "pais.id")
-    ProvinciaDto toDto(Provincia province);
+    ProvinciaDto toDto(Provincia provincia);
 
     List<ProvinciaDto> toDtos(List<Provincia> provincias);
 
