@@ -12,7 +12,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public abstract class PersonaAbstractService<T extends Persona> {
+public abstract class PersonaAbstractService {
     private final PersonaRepository personaRepository;
     private final PersonaMapper personaMapper;
     private final DireccionService direccionService;
@@ -20,7 +20,7 @@ public abstract class PersonaAbstractService<T extends Persona> {
     private final SucursalService sucursalService;
 
     @Transactional
-    protected Persona crearPersona(PersonaCreateFormDTO formDto) {
+    protected void setDatosPersona(Persona persona, PersonaCreateFormDTO formDto) {
         UsuarioCreateFormDTO usuarioDto = formDto.getUsuario();
         usuarioDto.setNombreUsuario(formDto.getCorreoElectronico());
         Usuario usuario = usuarioService.crearUsuario(usuarioDto);
@@ -29,12 +29,11 @@ public abstract class PersonaAbstractService<T extends Persona> {
 
         Sucursal sucursal = sucursalService.buscarSucursal(formDto.getSucursalId());
 
-        Persona persona =  personaMapper.toEntity(formDto);
+        personaMapper.updateEntityFromDto(formDto, persona);
         persona.setSucursal(sucursal);
         persona.setUsuario(usuario);
         persona.setDireccion(direccion);
         persona.setId(null);
         persona.setEliminado(false);
-        return personaRepository.save(persona);
     }
 }

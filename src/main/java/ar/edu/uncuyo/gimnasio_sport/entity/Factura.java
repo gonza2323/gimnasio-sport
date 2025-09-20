@@ -25,9 +25,8 @@ public class Factura {
     private EstadoFactura estado;
     private boolean eliminado;
     @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL)
-    private List<DetalleFactura> detalleCollection = new ArrayList<>();
+    private List<DetalleFactura> detalles = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "forma_de_pago_id")
     private FormaDePago formaDePago;
-
 }

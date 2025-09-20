@@ -1,17 +1,16 @@
 package ar.edu.uncuyo.gimnasio_sport.dto;
 
-import ar.edu.uncuyo.gimnasio_sport.entity.DetalleFactura;
 import ar.edu.uncuyo.gimnasio_sport.entity.FormaDePago;
 import ar.edu.uncuyo.gimnasio_sport.enums.EstadoFactura;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -33,8 +32,6 @@ public class FacturaDto {
     @NotNull
     private boolean eliminado;
 
-    private List<DetalleFacturaDto> detalleCollection;
+    private List<DetalleFacturaDto> detalles;
     private FormaDePago formaDePago;
-
-
 }

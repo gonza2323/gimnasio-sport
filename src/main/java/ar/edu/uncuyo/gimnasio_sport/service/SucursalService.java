@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ar.edu.uncuyo.gimnasio_sport.service.DireccionService;
 
+
+// TODO: SucursalService debería aceptar los datos de dirección y crearla llamando a SucursalService
 @Service
 @RequiredArgsConstructor
 public class SucursalService {
@@ -20,7 +22,7 @@ public class SucursalService {
     private final DireccionService direccionService;
 
     @Transactional
-    public void crearSucursal(String nombre, Long empresaId, DireccionDto direccionDto) {
+    public Sucursal crearSucursal(String nombre, Long empresaId, DireccionDto direccionDto) {
         if (sucursalRepository.existsByNombreAndEliminadoFalse(nombre)) {
             throw new BusinessException("Ya existe una sucursal con ese nombre");
         }
@@ -32,7 +34,7 @@ public class SucursalService {
                 .direccion(direccion)
                 .eliminado(false)
                 .build();
-        sucursalRepository.save(sucursal);
+        return sucursalRepository.save(sucursal);
     }
 
     @Transactional

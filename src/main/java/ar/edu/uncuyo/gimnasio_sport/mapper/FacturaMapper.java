@@ -7,7 +7,7 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {DetalleFacturaMapper.class})
 public interface FacturaMapper {
 
     Factura toEntity(FacturaDto dto);
