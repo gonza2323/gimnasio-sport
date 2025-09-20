@@ -65,7 +65,7 @@ public class MensajeController {
     }
 
     @GetMapping("/editar/{id}")
-    public String editar(@PathVariable String id, Model model) {
+    public String editar(@PathVariable Long id, Model model) {
         Mensaje m = mensajeService.obtener(id);
         Usuario usuarioActual = obtenerUsuarioAutenticado();
         validarAccesoMensaje(m, usuarioActual);
@@ -77,7 +77,7 @@ public class MensajeController {
     }
 
     @PostMapping("/editar/{id}")
-    public String actualizar(@PathVariable String id,
+    public String actualizar(@PathVariable Long id,
                              @Valid @ModelAttribute("mensaje") MensajeDTO dto,
                              BindingResult binding,
                              Model model) {
@@ -95,7 +95,7 @@ public class MensajeController {
     }
 
     @PostMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable String id) {
+    public String eliminar(@PathVariable Long id) {
         Usuario usuarioActual = obtenerUsuarioAutenticado();
         Mensaje mensaje = mensajeService.obtener(id);
         validarAccesoMensaje(mensaje, usuarioActual);

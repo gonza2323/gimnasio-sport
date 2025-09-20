@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface MensajeRepository extends JpaRepository<Mensaje, String> {
+public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
 
     @Query("select m from Mensaje m join m.usuario u " +
             "where m.eliminado = false and (:tipo is null or m.tipoMensaje = :tipo) " +
@@ -21,5 +21,5 @@ public interface MensajeRepository extends JpaRepository<Mensaje, String> {
                           @Param("nombreUsuario") String nombreUsuario,
                           Pageable pageable);
 
-    Optional<Mensaje> findByIdAndEliminadoFalse(String id);
+    Optional<Mensaje> findByIdAndEliminadoFalse(Long id);
 }

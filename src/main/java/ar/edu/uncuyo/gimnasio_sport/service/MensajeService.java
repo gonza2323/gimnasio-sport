@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class MensajeService {
@@ -35,7 +33,7 @@ public class MensajeService {
     }
 
     @Transactional(readOnly = true)
-    public Mensaje obtener(String id) {
+    public Mensaje obtener(Long id) {
         return mensajeRepository.findByIdAndEliminadoFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException("Mensaje no encontrado"));
     }
@@ -53,7 +51,7 @@ public class MensajeService {
     }
 
     @Transactional
-    public Mensaje actualizar(String id, MensajeDTO dto) {
+    public Mensaje actualizar(Long id, MensajeDTO dto) {
         validarMensaje(dto);
         Mensaje m = obtener(id);
         mensajeMapper.updateEntityFromDto(dto, m);
@@ -72,7 +70,7 @@ public class MensajeService {
     }
 
     @Transactional
-    public void eliminarLogico(String id) {
+    public void eliminarLogico(Long id) {
         Mensaje m = obtener(id);
         m.setEliminado(true);
         mensajeRepository.save(m);

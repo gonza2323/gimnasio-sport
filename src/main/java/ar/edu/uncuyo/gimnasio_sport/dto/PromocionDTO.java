@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PromocionDTO {
-    private String id;
+    private Long id;
 
     @NotBlank
     private String nombre;

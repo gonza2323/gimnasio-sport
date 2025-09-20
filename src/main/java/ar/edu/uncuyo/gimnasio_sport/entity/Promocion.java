@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "promociones")
+//@Table(name = "promociones")
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Promocion extends Mensaje {

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MensajeDTO {
-    private String id;
+    private Long id;
 
     @NotBlank
     @Size(max = 200)

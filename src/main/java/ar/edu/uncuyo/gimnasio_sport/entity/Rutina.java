@@ -25,10 +25,12 @@ public class Rutina {
     @Column(nullable = false)
     private Date fechaFinalizacion;
 
-    @Column
+    @JoinColumn(name = "usuario_id", nullable = false)
     @ManyToOne
     private Socio usuario;
 
+    @JoinColumn(name = "profesor_id")
+    @ManyToOne
     private Empleado profesor;
 
     @Column
