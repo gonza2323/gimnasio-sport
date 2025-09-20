@@ -1,6 +1,7 @@
 package ar.edu.uncuyo.gimnasio_sport.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -9,12 +10,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    @Autowired(required = false)
+    private DevAutoLoginFilter devAutoLoginFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -50,6 +56,10 @@ public class SecurityConfig {
 //                            return cors;
 //                        })
                 );
+
+        if (devAutoLoginFilter != null) {
+            http.addFilterBefore(devAutoLoginFilter, UsernamePasswordAuthenticationFilter.class);
+        }
 
         return http.build();
     }
