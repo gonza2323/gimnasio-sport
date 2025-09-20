@@ -1,4 +1,6 @@
-<header th:fragment="header">
+<header xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity"
+        th:fragment="header">
     <div class="header-area ">
         <div id="sticky-header" class="main-header-area">
             <div class="container-fluid ">
@@ -18,18 +20,18 @@
                                         <li><a th:href="@{/}">INICIO</a></li>
                                         <li><a th:href="@{/about}">ACERCA DE</a></li>
                                         <li><a th:href="@{/pricing}">PRECIOS</a></li>
-                                        <li><a th:href="@{/gallery}">GALERÍA</a></li>
+<!--                                        <li><a th:href="@{/gallery}">GALERÍA</a></li>-->
                                         <li><a href="#">PÁGINAS<i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
                                                 <li><a th:href="@{/elements}">ELEMENTOS</a></li>
                                             </ul>
                                         </li>
-                                        <li><a href="#">BLOG<i class="ti-angle-down"></i></a>
-                                            <ul class="submenu">
-                                                <li><a th:href="@{/blog}">BLOG</a></li>
-                                                <li><a th:href="@{/single-blog}">BLOG POST</a></li>
-                                            </ul>
-                                        </li>
+<!--                                        <li><a href="#">BLOG<i class="ti-angle-down"></i></a>-->
+<!--                                            <ul class="submenu">-->
+<!--                                                <li><a th:href="@{/blog}">BLOG</a></li>-->
+<!--                                                <li><a th:href="@{/single-blog}">BLOG POST</a></li>-->
+<!--                                            </ul>-->
+<!--                                        </li>-->
                                         <li><a th:href="@{/contact}">CONTACTO</a></li>
                                     </ul>
                                 </nav>
@@ -38,7 +40,8 @@
                         <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                             <div class="Appointment">
                                 <div class="book_btn d-none d-lg-block">
-                                    <a th:href="@{/login}">LOG IN</a>
+                                    <a th:href="@{/login}" sec:authorize="isAnonymous()">LOG IN</a>
+                                    <a th:href="@{/logout}" sec:authorize="isAuthenticated()">LOG OUT</a>
                                 </div>
                             </div>
                         </div>
