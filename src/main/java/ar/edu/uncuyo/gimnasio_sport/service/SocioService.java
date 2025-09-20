@@ -10,7 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SocioService extends PersonaAbstractService<Socio> {
+public class SocioService extends PersonaAbstractService {
     private final SocioRepository socioRepository;
 
     public SocioService(PersonaRepository personaRepository, PersonaMapper mapper, DireccionService direccionService,
@@ -21,8 +21,9 @@ public class SocioService extends PersonaAbstractService<Socio> {
 
     @Transactional
     public Socio crearSocio(SocioCreateFormDto socioCreateFormDto) {
+        Socio socio = new Socio();
         socioCreateFormDto.getPersona().getUsuario().setRol(RolUsuario.SOCIO);
-        Socio socio = (Socio) crearPersona(socioCreateFormDto.getPersona());
+        setDatosPersona(socio, socioCreateFormDto.getPersona());
         socio.setNumeroSocio(generarSiguienteNumeroDeSocio());
         socio.setEliminado(false);
 

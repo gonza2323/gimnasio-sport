@@ -3,7 +3,6 @@ package ar.edu.uncuyo.gimnasio_sport.entity;
 import ar.edu.uncuyo.gimnasio_sport.enums.TipoDocumento;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -15,7 +14,7 @@ import java.time.LocalDate;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Persona {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

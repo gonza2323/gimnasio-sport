@@ -8,7 +8,7 @@
                     <div class="row align-items-center">
                         <div class="col-xl-3 col-lg-2">
                             <div class="logo">
-                                <a href="@{/}">
+                                <a th:href="@{/}">
                                     <img src="img/logo.png" alt="">
                                 </a>
                             </div>
@@ -17,22 +17,56 @@
                             <div class="main-menu  d-none d-lg-block">
                                 <nav>
                                     <ul id="navigation">
+                                        <!--OPCIONES PÚBLICAS-->
                                         <li><a th:href="@{/}">INICIO</a></li>
-                                        <li><a th:href="@{/about}">ACERCA DE</a></li>
-                                        <li><a th:href="@{/pricing}">PRECIOS</a></li>
-<!--                                        <li><a th:href="@{/gallery}">GALERÍA</a></li>-->
-                                        <li><a href="#">PÁGINAS<i class="ti-angle-down"></i></a>
+                                        <li sec:authorize="!hasRole('ADMINISTRATIVO')"><a th:href="@{/about}">ACERCA DE</a></li>
+                                        <li sec:authorize="!hasRole('ADMINISTRATIVO')"><a th:href="@{/pricing}">PRECIOS</a></li>
+
+
+                                        <!--OPCIONES SOCIO-->
+                                        <li sec:authorize="hasRole('SOCIO')"><a th:href="@{#}">MIS RUTINAS</a></li>
+                                        <li sec:authorize="hasRole('SOCIO')"><a href="#">PAGOS<i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
-                                                <li><a th:href="@{/elements}">ELEMENTOS</a></li>
+                                                <li><a th:href="@{#}">MI DEUDA</a></li>
+                                                <li><a th:href="@{#}">MIS PAGOS</a></li>
                                             </ul>
                                         </li>
-<!--                                        <li><a href="#">BLOG<i class="ti-angle-down"></i></a>-->
-<!--                                            <ul class="submenu">-->
-<!--                                                <li><a th:href="@{/blog}">BLOG</a></li>-->
-<!--                                                <li><a th:href="@{/single-blog}">BLOG POST</a></li>-->
-<!--                                            </ul>-->
-<!--                                        </li>-->
-                                        <li><a th:href="@{/contact}">CONTACTO</a></li>
+
+
+                                        <!--OPCIONES ADMIN-->
+                                        <li sec:authorize="hasRole('ADMINISTRATIVO')"><a th:href="@{#}">SUCURSALES</a></li>
+                                        <li sec:authorize="hasRole('ADMINISTRATIVO')"><a href="#">USUARIOS<i class="ti-angle-down"></i></a>
+                                            <ul class="submenu">
+                                                <li><a th:href="@{#}">SOCIOS</a></li>
+                                                <li><a th:href="@{#}">EMPLEADOS</a></li>
+                                            </ul>
+                                        </li>
+
+                                        <li sec:authorize="hasRole('ADMINISTRATIVO')"><a href="#">PAGOS<i class="ti-angle-down"></i></a>
+                                            <ul class="submenu">
+                                                <li><a th:href="@{#}">MANEJO CUOTA</a></li>
+                                                <li><a th:href="@{#}">PAGOS RECIBIDOS</a></li>
+                                            </ul>
+                                        </li>
+
+                                        <li sec:authorize="hasRole('ADMINISTRATIVO')"><a th:href="@{#}">MENSAJES</a></li>
+
+                                        <li sec:authorize="hasRole('ADMINISTRATIVO')"><a href="#">PÁGINAS<i class="ti-angle-down"></i></a>
+                                            <ul class="submenu">
+                                                <li><a th:href="@{/about}">ACERCA DE</a></li>
+                                                <li><a th:href="@{/pricing}">PRECIOS</a></li>
+                                                <li><a th:href="@{/contact}">CONTACTO</a></li>
+                                            </ul>
+                                        </li>
+
+
+                                        <!--OPCIONES PROFESOR-->
+                                        <li sec:authorize="hasRole('PROFESOR')"><a th:href="@{#}">RUTINAS</a></li>
+                                        <li sec:authorize="hasRole('PROFESOR')"><a th:href="@{#}">SOCIOS</a></li>
+
+
+                                        <!--OPCIONES PÚBLICAS-->
+                                        <li sec:authorize="!hasRole('ADMINISTRATIVO')"><a th:href="@{/contact}">CONTACTO</a></li>
                                     </ul>
                                 </nav>
                             </div>

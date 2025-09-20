@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface LocalidadRepository extends JpaRepository<Localidad, Long> {
+    boolean existsByNombreAndEliminadoFalse(String nombre);
+    boolean existsByNombreAndIdNotAndEliminadoFalse(String nombre, Long id);
     Optional<Localidad> findByIdAndEliminadoFalse(Long id);
 }
