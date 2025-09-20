@@ -1,6 +1,6 @@
 package ar.edu.uncuyo.gimnasio_sport.entity;
 
-import ar.edu.uncuyo.gimnasio_sport.enums.Rol;
+import ar.edu.uncuyo.gimnasio_sport.enums.RolUsuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
-    public String nombreUsuario;
-    public String clave;
+    private String nombreUsuario;
+    private String clave;
 
     @Enumerated(EnumType.STRING)
-    public Rol rol;
+    private RolUsuario rol;
 
-    public boolean eliminado;
+    private boolean eliminado;
 }

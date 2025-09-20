@@ -14,10 +14,11 @@ import lombok.NoArgsConstructor;
 public class Pais {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
-    @Column(length = 255)
-    public String nombre;
+    @Column(nullable = false)
+    private String nombre;
 
-    public boolean eliminado;
+    @Column(nullable = false)
+    private boolean eliminado;
 }

@@ -3,7 +3,6 @@ package ar.edu.uncuyo.gimnasio_sport.service;
 import ar.edu.uncuyo.gimnasio_sport.dto.PaisDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.Pais;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
-import ar.edu.uncuyo.gimnasio_sport.error.FieldSpecificBusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.PaisMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.PaisRepository;
 import jakarta.transaction.Transactional;
@@ -25,7 +24,7 @@ public class PaisService {
     }
 
     @Transactional
-    public List<PaisDto> listarPaisesDto() {
+    public List<PaisDto> listarPaisesDtos() {
         List<Pais> paises = paisRepository.findAllByEliminadoFalseOrderByNombre();
         return paisMapper.toDtos(paises);
     }
@@ -33,7 +32,7 @@ public class PaisService {
     @Transactional
     public void crearPais(PaisDto paisDto) {
         if (paisRepository.existsByNombreAndEliminadoFalse(paisDto.getNombre()))
-            throw new FieldSpecificBusinessException("nombre", "yaExiste");
+            throw new BusinessException("yaExiste.pais.nombre");
 
         Pais pais = paisMapper.toEntity(paisDto);
         pais.setId(null);
@@ -45,7 +44,7 @@ public class PaisService {
         Pais pais = buscarPais(paisDto.getId());
 
         if (paisRepository.existsByNombreAndIdNotAndEliminadoFalse(paisDto.getNombre(), paisDto.getId()))
-            throw new FieldSpecificBusinessException("nombre", "yaExiste");
+            throw new BusinessException("yaExiste.pais.nombre");
 
         paisMapper.updateEntityFromDto(paisDto, pais);
         paisRepository.save(pais);

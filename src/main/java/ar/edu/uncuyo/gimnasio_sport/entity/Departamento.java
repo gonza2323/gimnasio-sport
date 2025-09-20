@@ -14,10 +14,15 @@ import lombok.NoArgsConstructor;
 public class Departamento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
-    public boolean eliminado;
+    @Column(nullable = false)
+    private String nombre;
 
-    @ManyToOne
-    public Provincia provincia;
+    @Column(nullable = false)
+    private boolean eliminado;
+
+    @JoinColumn(nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Provincia provincia;
 }

@@ -1,7 +1,96 @@
-<footer th:fragment="pie-pagina" class="footer">
-    <div class="container">
-        <p>
-            &copy; TEAM INGENIERIA DE SOFTWARE 2
-        </p>
+<footer xmlns:th="http://www.thymeleaf.org"
+        th:fragment="header" class="footer">
+    <div class="footer_top">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-3 col-md-6 col-lg-3 ">
+                    <div class="footer_widget">
+                        <div class="footer_logo">
+                            <a href="#">
+                                <img src="img/footer_logo.png" alt="">
+                            </a>
+                        </div>
+                        <p>9 de Julio 870, Monserrat<br>CABA, Argentina<br>
+                            <a href="#">+54 9 11 2216-2867</a> <br>
+                            <a href="#">contacto@gymsport.com</a>
+                        </p>
+                        <p>
+
+
+                        </p>
+                        <div class="socail_links">
+                            <ul>
+                                <li>
+                                    <a href="#">
+                                        <i class="ti-facebook"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="ti-twitter-alt"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-instagram"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-pinterest"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#">
+                                        <i class="fa fa-youtube-play"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6 col-lg-4 offset-xl-1">
+                    <div class="footer_widget">
+                        <h3 class="footer_title">
+                            Links Útiles
+                        </h3>
+                        <ul class="links">
+                            <li><a th:href="@{/pricing}">Precios</a></li>
+                            <li><a th:href="@{/about}">Acerca de</a></li>
+                            <li><a th:href="@{/gallery}">Galería</a></li>
+                            <li><a th:href="@{/contact}">Contacto</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-6 col-lg-4">
+                    <div class="footer_widget">
+                        <h3 class="footer_title">
+                            Suscríbete
+                        </h3>
+                        <form action="#" class="newsletter_form">
+                            <input type="text" placeholder="Ingrese su correo electrónico">
+                            <button type="submit">Suscribirse</button>
+                        </form>
+                        <p class="newsletter_text">Suscríbete para recibir nuestra newsletter todas las semanas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copy-right_text">
+        <div class="container">
+            <div class="footer_border"></div>
+            <div class="row">
+                <div class="col-xl-12">
+                    <p class="copy_right text-center">
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        Copyright &copy;<script>document.write(new Date().getFullYear());</script>
+                        All rights reserved | Made by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </footer>

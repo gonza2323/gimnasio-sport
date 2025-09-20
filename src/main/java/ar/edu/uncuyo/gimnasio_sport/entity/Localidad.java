@@ -14,13 +14,18 @@ import lombok.NoArgsConstructor;
 public class Localidad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
-    public String nombre;
-    public String codigoPostal;
+    @Column(nullable = false)
+    private String nombre;
 
-    public boolean eliminado;
+    @Column(nullable = false)
+    private String codigoPostal;
 
-    @ManyToOne
-    public Departamento departamento;
+    @Column(nullable = false)
+    private boolean eliminado;
+
+    @JoinColumn(nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Departamento departamento;
 }

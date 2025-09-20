@@ -14,12 +14,15 @@ import lombok.NoArgsConstructor;
 public class Provincia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
-    public String nombre;
+    @Column(nullable = false)
+    private String nombre;
 
-    public boolean eliminado;
+    @Column(nullable = false)
+    private boolean eliminado;
 
-    @ManyToOne
-    public Pais pais;
+    @JoinColumn(nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Pais pais;
 }
