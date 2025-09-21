@@ -11,4 +11,6 @@ public class DetalleFacturaDto {
     private Long id;
     private boolean eliminado;
     private Long facturaId;
+    private Long cuotaMensualId;
+
 }

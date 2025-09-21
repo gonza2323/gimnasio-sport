@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @SuperBuilder
 @Getter @Setter
@@ -12,4 +15,7 @@ import lombok.experimental.SuperBuilder;
 public class Socio extends Persona {
     @Column(nullable = false, unique = true)
     private Long numeroSocio;
+
+    @OneToMany(mappedBy = "socio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CuotaMensual> cuotasMensuales = new ArrayList<>();
 }

@@ -16,7 +16,7 @@ public class EmpresaService {
     private final EmpresaRepository empresaRepository;
 
     @Transactional
-    public void crearEmpresa(String nombre, String telefono, String mail) {
+    public Empresa crearEmpresa(String nombre, String telefono, String mail) {
         if (empresaRepository.existsByNombreAndEliminadoFalse(nombre)) {
             throw new BusinessException("Ya existe una empresa con ese nombre");
         }
@@ -26,7 +26,8 @@ public class EmpresaService {
                 .mail(mail)
                 .eliminado(false)
                 .build();
-        empresaRepository.save(empresa);
+        return empresaRepository.save(empresa);
+
     }
 
     @Transactional

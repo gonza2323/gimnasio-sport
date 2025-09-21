@@ -3,6 +3,7 @@ package ar.edu.uncuyo.gimnasio_sport.mapper;
 import ar.edu.uncuyo.gimnasio_sport.dto.DetalleFacturaDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.DetalleFactura;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
@@ -10,9 +11,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface DetalleFacturaMapper {
 
-    DetalleFactura toEntity(DetalleFacturaDto dto);
+    @Mapping(target = "facturaId", source = "factura.id")
+    DetalleFacturaDto toDto(DetalleFactura entity);
 
-    DetalleFacturaDto toDto(DetalleFactura detalleFactura);
+    @Mapping(target = "factura", ignore = true) // la factura se asigna en el servicio
+    DetalleFactura toEntity(DetalleFacturaDto dto);
 
     List<DetalleFacturaDto> toDtos(List<DetalleFactura> detallesFacturas);
 

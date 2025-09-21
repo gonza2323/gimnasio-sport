@@ -1,0 +1,6 @@
+package ar.edu.uncuyo.gimnasio_sport.enums;
+
+public enum Mes {
+    ENERO, FEBRERO, MARZO, ABRIL, MAYO, JUNIO,
+    JULIO, AGOSTO, SEPTIEMBRE, OCTUBRE, NOVIEMBRE, DICIEMBRE
+}
