@@ -1,11 +1,8 @@
 package ar.edu.uncuyo.gimnasio_sport.service;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.CuotaMensualDto;
-import ar.edu.uncuyo.gimnasio_sport.dto.FacturaDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.CuotaMensual;
-import ar.edu.uncuyo.gimnasio_sport.entity.Factura;
 import ar.edu.uncuyo.gimnasio_sport.enums.EstadoCuota;
-import ar.edu.uncuyo.gimnasio_sport.enums.EstadoFactura;
 import ar.edu.uncuyo.gimnasio_sport.enums.Mes;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.CuotaMensualMapper;
@@ -25,7 +22,7 @@ public class CuotaMensualService {
     private final ValorCuotaRepository valorCuotaRepository;
 
     public CuotaMensual crearCuotaMensual(CuotaMensualDto cuotaMensualDto) throws BusinessException {
-        if (cuotaMensualRepository.existsByIdSocioAndMesAndAnio(
+        if (cuotaMensualRepository.existsBySocioIdAndMesAndAnio(
                 cuotaMensualDto.getIdSocio(),
                 cuotaMensualDto.getMes(),
                 cuotaMensualDto.getAnio())) {
@@ -46,7 +43,7 @@ public class CuotaMensualService {
 
         if (!cuotaExistente.getMes().equals(cuotaMensualDto.getMes()) ||
             !cuotaExistente.getAnio().equals(cuotaMensualDto.getAnio())) {
-            if (cuotaMensualRepository.existsByIdSocioAndMesAndAnio(
+            if (cuotaMensualRepository.existsBySocioIdAndMesAndAnio(
                     cuotaExistente.getSocio().getId(),
                     cuotaMensualDto.getMes(),
                     cuotaMensualDto.getAnio())) {

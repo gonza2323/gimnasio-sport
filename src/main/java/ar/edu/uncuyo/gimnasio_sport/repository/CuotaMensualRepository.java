@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CuotaMensualRepository extends JpaRepository<CuotaMensual, Long> {
-    boolean existsByIdSocioAndMesAndAnio(Long idSocio, Mes mes, Long anio);
+    boolean existsBySocioIdAndMesAndAnio(Long idSocio, Mes mes, Long anio);
     List<CuotaMensual> findAllByEliminadoFalse();
     List<CuotaMensual> findAllByEliminadoFalseAndEstado(EstadoCuota estado);
     List<CuotaMensual> findAllByFechaVencimientoBetween(LocalDate fechaDesde, LocalDate fechaHasta);
