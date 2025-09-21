@@ -64,6 +64,8 @@ public class DataInitialization implements CommandLineRunner {
 
         // Resetear los permisos
         SecurityContextHolder.clearContext();
+
+        System.out.println("Datos iniciales creados.");
     }
 
     private void crearPaises() {
@@ -97,27 +99,32 @@ public class DataInitialization implements CommandLineRunner {
     }
 
     private void crearSucursales() {
-        DireccionDto direccion1 = DireccionDto.builder()
-                .calle("Av. 9 de Julio")
-                .numeracion("870")
-                .localidadId(1L)
-                .build();
+        sucursalService.crearSucursal(SucursalDto.builder()
+                .nombre("CABA 1")
+                .direccion(DireccionDto.builder()
+                        .calle("Av. 9 de Julio")
+                        .numeracion("870")
+                        .localidadId(1L)
+                        .build())
+                .build());
 
-        DireccionDto direccion2 = DireccionDto.builder()
-                .calle("Av. Corrientes")
-                .numeracion("276")
-                .localidadId(2L)
-                .build();
+        sucursalService.crearSucursal(SucursalDto.builder()
+                .nombre("CABA 2")
+                .direccion(DireccionDto.builder()
+                        .calle("Av. Corrientes")
+                        .numeracion("276")
+                        .localidadId(2L)
+                        .build())
+                .build());
 
-        DireccionDto direccion3 = DireccionDto.builder()
-                .calle("Av. Emilio Civit")
-                .numeracion("1020")
-                .localidadId(3L)
-                .build();
-
-        sucursalService.crearSucursal("CABA 1", 1L, direccion1);
-        sucursalService.crearSucursal("CABA 2", 1L, direccion2);
-        sucursalService.crearSucursal("Mendoza 1", 1L, direccion3);
+        sucursalService.crearSucursal(SucursalDto.builder()
+                .nombre("Mendoza 1")
+                .direccion(DireccionDto.builder()
+                        .calle("Av. Emilio Civit")
+                        .numeracion("1020")
+                        .localidadId(3L)
+                        .build())
+                .build());
     }
 
     private void crearSocios() {

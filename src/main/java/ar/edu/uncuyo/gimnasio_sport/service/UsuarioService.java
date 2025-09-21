@@ -20,7 +20,7 @@ public class UsuarioService {
         validarDatos(formDto.getClave(), formDto.getConfirmacionClave());
 
         if (usuarioRepository.existsByNombreUsuarioAndEliminadoFalse(formDto.getNombreUsuario()))
-            throw new BusinessException("yaExiste.usuario.nombre");
+            throw new BusinessException("YaExiste.usuario.nombre");
 
         Usuario usuario = usuarioMapper.toEntity(formDto);
         String hashClave = passwordEncoder.encode(formDto.getClave());
@@ -31,6 +31,6 @@ public class UsuarioService {
 
     private void validarDatos(String clave, String confirmacionClave) {
         if (!clave.equals(confirmacionClave))
-            throw new BusinessException("noIguales.confirmacionClave");
+            throw new BusinessException("NoIguales.confirmacionClave");
     }
 }

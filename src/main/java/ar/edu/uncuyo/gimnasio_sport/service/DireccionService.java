@@ -26,12 +26,7 @@ public class DireccionService {
 
     @Transactional
     public Direccion crearDireccion(DireccionDto direccionDto) {
-        Localidad localidad;
-        try {
-            localidad = localidadService.buscarLocalidad(direccionDto.getLocalidadId());
-        } catch (BusinessException e) {
-            throw new BusinessException("noExiste.localidad");
-        }
+        Localidad localidad = localidadService.buscarLocalidad(direccionDto.getLocalidadId());
 
         Direccion direccion = direccionMapper.toEntity(direccionDto);
         direccion.setId(null);
@@ -44,12 +39,7 @@ public class DireccionService {
     public void modificarDireccion(DireccionDto direccionDto) {
         Direccion direccion = buscarDireccion(direccionDto.getId());
 
-        Localidad localidad;
-        try {
-            localidad = localidadService.buscarLocalidad(direccionDto.getLocalidadId());
-        } catch (BusinessException e) {
-            throw new BusinessException("noExiste.localidad");
-        }
+        Localidad localidad = localidadService.buscarLocalidad(direccionDto.getLocalidadId());
 
         direccionMapper.updateEntityFromDto(direccionDto, direccion);
         direccion.setLocalidad(localidad);
@@ -65,6 +55,6 @@ public class DireccionService {
 
     public Direccion buscarDireccion(Long id) {
         return direccionRepository.findByIdAndEliminadoFalse(id)
-                .orElseThrow(() -> new BusinessException("noExiste.direccion"));
+                .orElseThrow(() -> new BusinessException("NoExiste.direccion"));
     }
 }

@@ -11,4 +11,6 @@ public interface ProvinciaRepository extends JpaRepository<Provincia, Long> {
     boolean existsByNombreAndIdNotAndEliminadoFalse(String nombre, Long id);
     Optional<Provincia> findByIdAndEliminadoFalse(Long id);
     List<Provincia> findAllByEliminadoFalseOrderByNombre();
+
+    List<Provincia> findAllByPaisIdAndEliminadoFalse(Long paisId);
 }

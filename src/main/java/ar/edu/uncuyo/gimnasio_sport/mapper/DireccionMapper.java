@@ -15,6 +15,9 @@ public interface DireccionMapper {
     Direccion toEntity(DireccionDto dto);
 
     @Mapping(target = "localidadId", source = "localidad.id")
+    @Mapping(target = "departamentoId", source = "localidad.departamento.id")
+    @Mapping(target = "provinciaId", source = "localidad.departamento.provincia.id")
+    @Mapping(target = "paisId", source = "localidad.departamento.provincia.pais.id")
     DireccionDto toDto(Direccion direccion);
 
     List<DireccionDto> toDtos(List<Direccion> direccion);

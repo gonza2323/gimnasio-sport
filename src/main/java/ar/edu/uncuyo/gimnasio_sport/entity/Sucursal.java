@@ -15,12 +15,18 @@ public class Sucursal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String nombre;
+
+    @Column(nullable = false)
     private boolean eliminado;
 
-    @ManyToOne
+    @JoinColumn(nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Direccion direccion;
 
-    @ManyToOne
+    @JoinColumn(nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Empresa empresa;
 }

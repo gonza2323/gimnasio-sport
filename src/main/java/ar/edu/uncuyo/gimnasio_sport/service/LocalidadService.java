@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class LocalidadService {
@@ -18,22 +20,11 @@ public class LocalidadService {
     private final LocalidadMapper localidadMapper;
 
     @Transactional
-    public LocalidadDto buscarDepartamentoDto(Long id) {
-        Localidad localidad = buscarLocalidad(id);
-        return localidadMapper.toDto(localidad);
-    }
-
-    @Transactional
     public void crearLocalidad(LocalidadDto localidadDto) {
         if (localidadRepository.existsByNombreAndEliminadoFalse((localidadDto.getNombre())))
-            throw new BusinessException("yaExiste.provincia.nombre");
+            throw new BusinessException("YaExiste.localidad.nombre");
 
-        Departamento departamento;
-        try {
-            departamento = departamentoService.buscarDepartamento(localidadDto.getDepartamentoId());
-        } catch (BusinessException e) {
-            throw new BusinessException("noExiste.provincia");
-        }
+        Departamento departamento = departamentoService.buscarDepartamento(localidadDto.getDepartamentoId());
 
         Localidad localidad = localidadMapper.toEntity(localidadDto);
         localidad.setId(null);
@@ -44,6 +35,11 @@ public class LocalidadService {
 
     public Localidad buscarLocalidad(Long id) {
         return localidadRepository.findByIdAndEliminadoFalse(id)
-                .orElseThrow(() -> new BusinessException("noExiste.localidad"));
+                .orElseThrow(() -> new BusinessException("NoExiste.localidad"));
+    }
+
+    public List<LocalidadDto> buscarLocalidadesPorDepartamento(Long departamentoId) {
+        List<Localidad> localidades = localidadRepository.findAllByDepartamentoIdAndEliminadoFalse(departamentoId);
+        return localidadMapper.toDtos(localidades);
     }
 }

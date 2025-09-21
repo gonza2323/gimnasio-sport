@@ -35,14 +35,9 @@ public class ProvinciaService {
     @Transactional
     public void crearProvincia(ProvinciaDto provinciaDto) {
         if (provinciaRepository.existsByNombreAndEliminadoFalse((provinciaDto.getNombre())))
-            throw new BusinessException("yaExiste.provincia.nombre");
+            throw new BusinessException("YaExiste.provincia.nombre");
 
-        Pais pais;
-        try {
-            pais = paisService.buscarPais(provinciaDto.getPaisId());
-        } catch (BusinessException e) {
-            throw new BusinessException("noExiste.pais");
-        }
+        Pais pais = paisService.buscarPais(provinciaDto.getPaisId());
 
         Provincia provincia = provinciaMapper.toEntity(provinciaDto);
         provincia.setId(null);
@@ -56,14 +51,9 @@ public class ProvinciaService {
         Provincia provincia = buscarProvincia(provinciaDto.getId());
 
         if (provinciaRepository.existsByNombreAndIdNotAndEliminadoFalse(provinciaDto.getNombre(), provinciaDto.getId()))
-            throw new BusinessException("yaExiste.provincia.nombre");
+            throw new BusinessException("YaExiste.provincia.nombre");
 
-        Pais pais;
-        try {
-            pais = paisService.buscarPais(provinciaDto.getPaisId());
-        } catch (BusinessException e) {
-            throw new BusinessException("noExiste.pais");
-        }
+        Pais pais = paisService.buscarPais(provinciaDto.getPaisId());
 
         provinciaMapper.updateEntityFromDto(provinciaDto, provincia);
         provincia.setPais(pais);
@@ -79,6 +69,11 @@ public class ProvinciaService {
 
     public Provincia buscarProvincia(Long id) {
         return provinciaRepository.findByIdAndEliminadoFalse(id)
-                .orElseThrow(() -> new BusinessException("noExiste.provincia"));
+                .orElseThrow(() -> new BusinessException("NoExiste.provincia"));
+    }
+
+    public List<ProvinciaDto> buscarProvinciaPorPais(Long paisId) {
+        List<Provincia> provincias = provinciaRepository.findAllByPaisIdAndEliminadoFalse(paisId);
+        return provinciaMapper.toDtos(provincias);
     }
 }

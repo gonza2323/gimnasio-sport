@@ -25,15 +25,14 @@ public class Rutina {
     @Column(nullable = false)
     private Date fechaFinalizacion;
 
-    @JoinColumn(name = "usuario_id", nullable = false)
-    @ManyToOne
+    @JoinColumn(nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Socio usuario;
 
-    @JoinColumn(name = "profesor_id")
-    @ManyToOne
+    @JoinColumn(nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Empleado profesor;
 
     @Column
     private boolean eliminado;
-
 }
