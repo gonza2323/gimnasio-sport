@@ -10,6 +10,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DepartamentoService {
@@ -18,22 +20,11 @@ public class DepartamentoService {
     private final DepartamentoMapper departamentoMapper;
 
     @Transactional
-    public DepartamentoDto buscarDepartamentoDto(Long id) {
-        Departamento departamento = buscarDepartamento(id);
-        return departamentoMapper.toDto(departamento);
-    }
-
-    @Transactional
     public void crearDepartamento(DepartamentoDto departamentoDto) {
         if (departamentoRepository.existsByNombreAndEliminadoFalse((departamentoDto.getNombre())))
-            throw new BusinessException("yaExiste.departamento.nombre");
+            throw new BusinessException("YaExiste.departamento.nombre");
 
-        Provincia provincia;
-        try {
-            provincia = provinciaService.buscarProvincia(departamentoDto.getProvinciaId());
-        } catch (BusinessException e) {
-            throw new BusinessException("noExiste.provincia");
-        }
+        Provincia provincia = provinciaService.buscarProvincia(departamentoDto.getProvinciaId());
 
         Departamento departamento = departamentoMapper.toEntity(departamentoDto);
         departamento.setId(null);
@@ -44,6 +35,11 @@ public class DepartamentoService {
 
     public Departamento buscarDepartamento(Long id) {
         return departamentoRepository.findByIdAndEliminadoFalse(id)
-                .orElseThrow(() -> new BusinessException("noExiste.departamento"));
+                .orElseThrow(() -> new BusinessException("NoExiste.departamento"));
+    }
+
+    public List<DepartamentoDto> buscarDepartamentosPorProvincia(Long provinciaId) {
+        List<Departamento> departamentos = departamentoRepository.findAllByProvinciaIdAndEliminadoFalse(provinciaId);
+        return departamentoMapper.toDtos(departamentos);
     }
 }

@@ -5,6 +5,8 @@ import ar.edu.uncuyo.gimnasio_sport.entity.Departamento;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface DepartamentoMapper {
 
@@ -14,4 +16,6 @@ public interface DepartamentoMapper {
 
     @Mapping(target = "provinciaId", source = "provincia.id")
     DepartamentoDto toDto(Departamento departamento);
+
+    List<DepartamentoDto> toDtos(List<Departamento> departamentos);
 }

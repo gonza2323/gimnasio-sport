@@ -15,14 +15,14 @@ import lombok.NoArgsConstructor;
 public class LocalidadDto {
     private Long id;
 
-    @NotBlank(message = "NotBlank.localidad.nombre")
-    @Size(min = 2, max = 255, message = "Size.localidad.nombre")
+    @NotBlank(message = "{NotBlank.localidad.nombre}")
+    @Size(min = 2, max = 255, message = "{Size.localidad.nombre}")
     private String nombre;
 
-    @NotBlank(message = "NotBlank.localidad.codigoPostal")
-    @Size(min = 1, max = 50, message = "Size.localidad.codigoPostal")
+    @NotBlank(message = "{NotBlank.localidad.codigoPostal}")
+    @Size(min = 1, max = 50, message = "{Size.localidad.codigoPostal}")
     private String codigoPostal;
 
-    @NotNull(message = "NotNull.localidad.departamentoId")
+    @NotNull(message = "{NotNull.localidad.departamentoId}")
     private Long departamentoId;
 }

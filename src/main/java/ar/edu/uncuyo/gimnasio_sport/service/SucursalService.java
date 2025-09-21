@@ -1,6 +1,6 @@
 package ar.edu.uncuyo.gimnasio_sport.service;
 
-import ar.edu.uncuyo.gimnasio_sport.dto.DireccionDto;
+import ar.edu.uncuyo.gimnasio_sport.dto.SucursalDto;
 import ar.edu.uncuyo.gimnasio_sport.dto.SucursalResumenDTO;
 import ar.edu.uncuyo.gimnasio_sport.entity.Direccion;
 import ar.edu.uncuyo.gimnasio_sport.entity.Empresa;
@@ -24,55 +24,61 @@ public class SucursalService {
     private final SucursalRepository sucursalRepository;
     private final DireccionService direccionService;
     private final SucursalMapper sucursalMapper;
+    private final EmpresaService empresaService;
 
     @Transactional
-    public Sucursal crearSucursal(String nombre, Long empresaId, DireccionDto direccionDto) {
-        if (sucursalRepository.existsByNombreAndEliminadoFalse(nombre)) {
-            throw new BusinessException("Ya existe una sucursal con ese nombre");
+    public Sucursal crearSucursal(SucursalDto formDto) {
+        if (sucursalRepository.existsByNombreAndEliminadoFalse(formDto.getNombre())) {
+            throw new BusinessException("YaExiste.sucursal.nombre");
         }
-        Direccion direccion = direccionService.crearDireccion(direccionDto);
 
-        Sucursal sucursal = Sucursal.builder()
-                .nombre(nombre)
-                .empresa(empresaRepository.findById(empresaId).orElseThrow(() -> new BusinessException("Empresa no encontrada")))
-                .direccion(direccion)
-                .eliminado(false)
-                .build();
+        Direccion direccion = direccionService.crearDireccion(formDto.getDireccion());
+
+        // TODO: Asumimos que hay una sola empresa, no pienso hacer un ABM para una sola empresa
+        Empresa empresa = empresaService.buscarEmpresa(1L);
+
+        Sucursal sucursal = sucursalMapper.toEntity(formDto);
+        sucursal.setEmpresa(empresa);
+        sucursal.setDireccion(direccion);
+        sucursal.setEliminado(false);
+
         return sucursalRepository.save(sucursal);
     }
 
     @Transactional
-    public void eliminarSucursal(Long id){
-        Sucursal sucursal = sucursalRepository.findByIdAndEliminadoFalse(id)
-                .orElseThrow(() -> new BusinessException("Sucursal no encontrada"));
-        sucursal.setEliminado(true);
+    public void modificarSucursal(SucursalDto formDto){
+        Sucursal sucursal = buscarSucursal(formDto.getId());
+
+        if (sucursalRepository.existsByNombreAndIdNotAndEliminadoFalse(formDto.getNombre(), formDto.getId()))
+            throw new BusinessException("YaExiste.sucursal.nombre");
+
+        sucursalMapper.updateEntityFromDto(formDto, sucursal);
+        direccionService.modificarDireccion(formDto.getDireccion());
+
         sucursalRepository.save(sucursal);
     }
 
     @Transactional
-    public void modificarSucursal(Long id, String nombre, Empresa empresa, DireccionDto direccionDto){
-        Sucursal sucursal = sucursalRepository.findByIdAndEliminadoFalse(id)
-                .orElseThrow(() -> new BusinessException("Sucursal no encontrada"));
-
-        if (sucursalRepository.existsByNombreAndIdNotAndEliminadoFalse(nombre, id))
-            throw new BusinessException("Ya existe una sucursal con ese nombre");
-        Direccion direccion = direccionService.crearDireccion(direccionDto);
-
-        sucursal.setNombre(nombre);
-        sucursal.setEmpresa(empresa);
-        sucursal.setDireccion(direccion);
+    public void eliminarSucursal(Long id){
+        Sucursal sucursal = buscarSucursal(id);
+        sucursal.setEliminado(true);
         sucursalRepository.save(sucursal);
     }
 
     @Transactional
     public Sucursal buscarSucursal(Long id) {
         return sucursalRepository.findByIdAndEliminadoFalse(id)
-                .orElseThrow(() -> new BusinessException("Sucursal no encontrada"));
+                .orElseThrow(() -> new BusinessException("NotFound.sucursal"));
     }
 
     @Transactional
     public List<SucursalResumenDTO> listarSucursalResumenDto() {
         List<Sucursal> sucursales = sucursalRepository.findAllByEliminadoFalse();
         return sucursalMapper.toSummaryDtos(sucursales);
+    }
+
+    @Transactional
+    public SucursalDto buscarSucursalDto(Long id) {
+        return sucursalMapper.toDto(buscarSucursal(id));
     }
 }

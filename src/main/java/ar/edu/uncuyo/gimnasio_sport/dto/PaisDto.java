@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class PaisDto {
     private Long id;
 
-    @NotBlank(message = "NotBlank.pais.nombre")
-    @Size(min = 2, max = 255, message = "Size.pais.nombre")
+    @NotBlank(message = "{NotBlank.pais.nombre}")
+    @Size(min = 2, max = 255, message = "{Size.pais.nombre}")
     private String nombre;
 }

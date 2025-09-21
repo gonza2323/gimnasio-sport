@@ -11,12 +11,14 @@
 <body>
 
 <th:block layout:fragment="content">
-
     <section class="my-5">
         <div class="container">
+
+            <div th:if="${msgError}" th:text="#{${msgError}}" class="alert alert-danger" role="alert">MENSAJE ERROR</div>
+
             <div class="d-flex align-items-center mb-3 flex-wrap">
                 <h3 class="m-0 mr-3">Sucursales</h3>
-                <a href="#" class="genric-btn primary radius">Añadir sucursal</a>
+                <a th:href="@{/sucursales/alta}" class="genric-btn primary radius">Añadir sucursal</a>
             </div>
 
             <div class="table-responsive">

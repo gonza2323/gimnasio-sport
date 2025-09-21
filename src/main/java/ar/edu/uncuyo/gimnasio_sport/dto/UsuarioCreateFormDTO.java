@@ -18,12 +18,12 @@ public class UsuarioCreateFormDTO {
 
     private String nombreUsuario;
 
-    @NotBlank(message = "")
-    @Size(min = 8, max = 255, message = "")
+    @NotBlank(message = "{NotBlank.usuario.clave}")
+    @Size(min = 8, max = 255, message = "{Size.usuario.clave}")
     private String clave;
 
-    @NotBlank(message = "")
-    @Size(min = 8, max = 255, message = "")
+    @NotBlank(message = "{NotBlank.usuario.confirmacionClave}")
+    @Size(min = 8, max = 255, message = "{Size.usuario.confirmacionClave}")
     private String confirmacionClave;
 
     @NotNull

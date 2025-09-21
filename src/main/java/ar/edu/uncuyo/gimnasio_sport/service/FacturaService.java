@@ -100,10 +100,10 @@ public class FacturaService {
     /// validar algo mas?
     public void validar(FacturaDto facturaDto) {
         if (facturaRepository.existsByNumeroFactura(facturaDto.getNumeroFactura())) {
-            throw new BusinessException("yaExiste.factura.numero");
+            throw new BusinessException("YaExiste.factura.numero");
         }
         if (!tipoDePagoRepository.existsByTipoDePago(facturaDto.getFormaDePago().getTipoDePago())) {
-            throw new BusinessException("noExiste.tipoDePago");
+            throw new BusinessException("NoExiste.tipoDePago");
         }
     }
 

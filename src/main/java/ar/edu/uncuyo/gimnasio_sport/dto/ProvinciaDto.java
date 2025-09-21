@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 public class ProvinciaDto {
     private Long id;
 
-    @NotBlank(message = "NotBlank.provincia.nombre")
-    @Size(min = 2, max = 255, message = "Size.provincia.nombre")
+    @NotBlank(message = "{NotBlank.provincia.nombre}")
+    @Size(min = 2, max = 255, message = "{Size.provincia.nombre}")
     private String nombre;
 
-    @NotNull(message = "NotNull.provincia.paisId")
+    @NotNull(message = "{NotNull.provincia.paisId}")
     private Long paisId;
 }

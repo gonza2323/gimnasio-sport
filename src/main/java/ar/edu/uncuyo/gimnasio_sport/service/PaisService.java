@@ -32,7 +32,7 @@ public class PaisService {
     @Transactional
     public void crearPais(PaisDto paisDto) {
         if (paisRepository.existsByNombreAndEliminadoFalse(paisDto.getNombre()))
-            throw new BusinessException("yaExiste.pais.nombre");
+            throw new BusinessException("YaExiste.pais.nombre");
 
         Pais pais = paisMapper.toEntity(paisDto);
         pais.setId(null);
@@ -44,7 +44,7 @@ public class PaisService {
         Pais pais = buscarPais(paisDto.getId());
 
         if (paisRepository.existsByNombreAndIdNotAndEliminadoFalse(paisDto.getNombre(), paisDto.getId()))
-            throw new BusinessException("yaExiste.pais.nombre");
+            throw new BusinessException("YaExiste.pais.nombre");
 
         paisMapper.updateEntityFromDto(paisDto, pais);
         paisRepository.save(pais);
@@ -59,6 +59,6 @@ public class PaisService {
 
     public Pais buscarPais(Long id) {
         return paisRepository.findByIdAndEliminadoFalse(id)
-                .orElseThrow(() -> new BusinessException("noExiste.pais"));
+                .orElseThrow(() -> new BusinessException("NoExiste.pais"));
     }
 }
