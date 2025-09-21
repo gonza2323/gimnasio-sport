@@ -23,6 +23,6 @@ public class Provincia {
     private boolean eliminado;
 
     @JoinColumn(nullable = false)
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private Pais pais;
 }

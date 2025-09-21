@@ -1,16 +1,19 @@
 package ar.edu.uncuyo.gimnasio_sport.service;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.DireccionDto;
+import ar.edu.uncuyo.gimnasio_sport.dto.SucursalResumenDTO;
 import ar.edu.uncuyo.gimnasio_sport.entity.Direccion;
 import ar.edu.uncuyo.gimnasio_sport.entity.Empresa;
 import ar.edu.uncuyo.gimnasio_sport.entity.Sucursal;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
+import ar.edu.uncuyo.gimnasio_sport.mapper.SucursalMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.EmpresaRepository;
 import ar.edu.uncuyo.gimnasio_sport.repository.SucursalRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ar.edu.uncuyo.gimnasio_sport.service.DireccionService;
+
+import java.util.List;
 
 
 // TODO: SucursalService debería aceptar los datos de dirección y crearla llamando a SucursalService
@@ -20,6 +23,7 @@ public class SucursalService {
     private final EmpresaRepository empresaRepository;
     private final SucursalRepository sucursalRepository;
     private final DireccionService direccionService;
+    private final SucursalMapper sucursalMapper;
 
     @Transactional
     public Sucursal crearSucursal(String nombre, Long empresaId, DireccionDto direccionDto) {
@@ -64,5 +68,11 @@ public class SucursalService {
     public Sucursal buscarSucursal(Long id) {
         return sucursalRepository.findByIdAndEliminadoFalse(id)
                 .orElseThrow(() -> new BusinessException("Sucursal no encontrada"));
+    }
+
+    @Transactional
+    public List<SucursalResumenDTO> listarSucursalResumenDto() {
+        List<Sucursal> sucursales = sucursalRepository.findAllByEliminadoFalse();
+        return sucursalMapper.toSummaryDtos(sucursales);
     }
 }

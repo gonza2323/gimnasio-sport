@@ -5,7 +5,6 @@ import ar.edu.uncuyo.gimnasio_sport.dto.ProvinciaListaDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.Pais;
 import ar.edu.uncuyo.gimnasio_sport.entity.Provincia;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
-import ar.edu.uncuyo.gimnasio_sport.mapper.ProvinciaListMapper;
 import ar.edu.uncuyo.gimnasio_sport.mapper.ProvinciaMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.ProvinciaRepository;
 import jakarta.transaction.Transactional;
@@ -20,7 +19,6 @@ public class ProvinciaService {
     private final ProvinciaRepository provinciaRepository;
     private final PaisService paisService;
     private final ProvinciaMapper provinciaMapper;
-    private final ProvinciaListMapper provinciaListMapper;
 
     @Transactional
     public ProvinciaDto buscarProvinciaDto(Long id) {
@@ -31,7 +29,7 @@ public class ProvinciaService {
     @Transactional
     public List<ProvinciaListaDto> listarProvinciasDtos() {
         List<Provincia> provincias = provinciaRepository.findAllByEliminadoFalseOrderByNombre();
-        return provinciaListMapper.toDtos(provincias);
+        return provinciaMapper.toSummaryDtos(provincias);
     }
 
     @Transactional

@@ -1,7 +1,7 @@
 <header xmlns:th="http://www.thymeleaf.org"
         xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity"
-        th:fragment="header">
-    <div class="header-area ">
+        th:fragment="header(isSolidHeader)">
+    <div class="header-area " th:style="${isSolidHeader} ? 'display: block; position: static; background-color: black;' : ''">
         <div id="sticky-header" class="main-header-area">
             <div class="container-fluid ">
                 <div class="header_bottom_border">
@@ -34,7 +34,7 @@
 
 
                                         <!--OPCIONES ADMIN-->
-                                        <li sec:authorize="hasRole('ADMINISTRATIVO')"><a th:href="@{#}">SUCURSALES</a></li>
+                                        <li sec:authorize="hasRole('ADMINISTRATIVO')"><a th:href="@{/sucursales}">SUCURSALES</a></li>
                                         <li sec:authorize="hasRole('ADMINISTRATIVO')"><a href="#">USUARIOS<i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
                                                 <li><a th:href="@{#}">SOCIOS</a></li>

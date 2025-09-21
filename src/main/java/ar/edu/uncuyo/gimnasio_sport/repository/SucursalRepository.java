@@ -3,6 +3,7 @@ package ar.edu.uncuyo.gimnasio_sport.repository;
 import ar.edu.uncuyo.gimnasio_sport.entity.Sucursal;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface SucursalRepository extends JpaRepository<Sucursal, Long> {
@@ -10,4 +11,5 @@ public interface SucursalRepository extends JpaRepository<Sucursal, Long> {
     boolean existsByNombreAndIdNotAndEliminadoFalse(String nombre, Long id);
 
     Optional<Sucursal> findByIdAndEliminadoFalse(Long id);
+    List<Sucursal> findAllByEliminadoFalse();
 }
