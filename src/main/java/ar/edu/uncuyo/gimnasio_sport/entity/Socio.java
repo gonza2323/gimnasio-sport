@@ -16,6 +16,6 @@ public class Socio extends Persona {
     @Column(nullable = false, unique = true)
     private Long numeroSocio;
 
-    @OneToMany(mappedBy = "socio", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "socio", cascade = CascadeType.PERSIST)
     private List<CuotaMensual> cuotasMensuales = new ArrayList<>();
 }

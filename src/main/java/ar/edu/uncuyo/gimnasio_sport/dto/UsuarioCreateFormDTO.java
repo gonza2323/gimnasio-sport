@@ -2,7 +2,6 @@ package ar.edu.uncuyo.gimnasio_sport.dto;
 
 import ar.edu.uncuyo.gimnasio_sport.enums.RolUsuario;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +25,5 @@ public class UsuarioCreateFormDTO {
     @Size(min = 8, max = 255, message = "{Size.usuario.confirmacionClave}")
     private String confirmacionClave;
 
-    @NotNull
     private RolUsuario rol;
 }

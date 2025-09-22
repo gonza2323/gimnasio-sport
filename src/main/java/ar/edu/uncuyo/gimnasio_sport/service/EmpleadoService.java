@@ -5,28 +5,23 @@ import ar.edu.uncuyo.gimnasio_sport.entity.Empleado;
 import ar.edu.uncuyo.gimnasio_sport.enums.RolUsuario;
 import ar.edu.uncuyo.gimnasio_sport.enums.TipoEmpleado;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
-import ar.edu.uncuyo.gimnasio_sport.mapper.PersonaMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.EmpleadoRepository;
-import ar.edu.uncuyo.gimnasio_sport.repository.PersonaRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmpleadoService extends PersonaAbstractService {
+@RequiredArgsConstructor
+public class EmpleadoService {
     private final EmpleadoRepository empleadoRepository;
-
-    public EmpleadoService(PersonaRepository personaRepository, PersonaMapper mapper, DireccionService direccionService,
-                           UsuarioService usuarioService, SucursalService sucursalService, EmpleadoRepository empleadoRepository) {
-        super(personaRepository, mapper, direccionService, usuarioService, sucursalService);
-        this.empleadoRepository = empleadoRepository;
-    }
+    private final PersonaService personaService;
 
     @Transactional
     public Empleado crearEmpleado(EmpleadoCreateForm empleadoCreateForm) {
         Empleado empleado = new Empleado();
         RolUsuario rol = determineRoleFromEmployeeType(empleadoCreateForm.getTipoEmpleado());
         empleadoCreateForm.getPersona().getUsuario().setRol(rol);
-        setDatosPersona(empleado, empleadoCreateForm.getPersona());
+        personaService.crearPersona(empleado, empleadoCreateForm.getPersona());
         empleado.setTipoEmpleado(empleadoCreateForm.getTipoEmpleado());
         empleado.setEliminado(false);
 

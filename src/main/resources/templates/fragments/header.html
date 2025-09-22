@@ -37,8 +37,8 @@
                                         <li sec:authorize="hasRole('ADMINISTRATIVO')"><a th:href="@{/sucursales}">SUCURSALES</a></li>
                                         <li sec:authorize="hasRole('ADMINISTRATIVO')"><a href="#">USUARIOS<i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
-                                                <li><a th:href="@{#}">SOCIOS</a></li>
-                                                <li><a th:href="@{#}">EMPLEADOS</a></li>
+                                                <li><a th:href="@{/socios}">SOCIOS</a></li>
+                                                <li><a th:href="@{/empleados}">EMPLEADOS</a></li>
                                             </ul>
                                         </li>
 
@@ -61,8 +61,8 @@
 
 
                                         <!--OPCIONES PROFESOR-->
-                                        <li sec:authorize="hasRole('PROFESOR')"><a th:href="@{#}">RUTINAS</a></li>
-                                        <li sec:authorize="hasRole('PROFESOR')"><a th:href="@{#}">SOCIOS</a></li>
+                                        <li sec:authorize="hasRole('PROFESOR')"><a th:href="@{/rutinas}">RUTINAS</a></li>
+                                        <li sec:authorize="hasRole('PROFESOR')"><a th:href="@{/socios}">SOCIOS</a></li>
 
 
                                         <!--OPCIONES PÚBLICAS-->

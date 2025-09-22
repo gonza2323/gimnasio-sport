@@ -1,40 +1,58 @@
 package ar.edu.uncuyo.gimnasio_sport.service;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.SocioCreateFormDto;
+import ar.edu.uncuyo.gimnasio_sport.dto.SocioResumenDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
 import ar.edu.uncuyo.gimnasio_sport.enums.RolUsuario;
-import ar.edu.uncuyo.gimnasio_sport.mapper.PersonaMapper;
-import ar.edu.uncuyo.gimnasio_sport.repository.PersonaRepository;
+import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
+import ar.edu.uncuyo.gimnasio_sport.mapper.SocioMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.SocioRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
-public class SocioService extends PersonaAbstractService {
-    private final SocioRepository socioRepository;
+import java.util.List;
 
-    public SocioService(PersonaRepository personaRepository, PersonaMapper mapper, DireccionService direccionService,
-                        UsuarioService usuarioService, SucursalService sucursalService, SocioRepository socioRepository) {
-        super(personaRepository, mapper, direccionService, usuarioService, sucursalService);
-        this.socioRepository = socioRepository;
-    }
+@Service
+@RequiredArgsConstructor
+public class SocioService {
+    private final SocioRepository socioRepository;
+    private final SocioMapper socioMapper;
+    private final PersonaService personaService;
 
     @Transactional
     public Socio crearSocio(SocioCreateFormDto socioCreateFormDto) {
         Socio socio = new Socio();
-        socioCreateFormDto.getPersona().getUsuario().setRol(RolUsuario.SOCIO);
-        setDatosPersona(socio, socioCreateFormDto.getPersona());
+        socioCreateFormDto.getUsuario().setRol(RolUsuario.SOCIO);
+        personaService.crearPersona(socio, socioCreateFormDto);
         socio.setNumeroSocio(generarSiguienteNumeroDeSocio());
         socio.setEliminado(false);
 
         return socioRepository.save(socio);
     }
 
+    @Transactional
+    public List<SocioResumenDto> listarSocioResumenDtos() {
+        List<Socio> socios = socioRepository.findAllByEliminadoFalse();
+        return socioMapper.toSummaryDtos(socios);
+    }
+
+    public void eliminarSocio(Long id) {
+        personaService.eliminarPersona(id);
+    }
+
     private Long generarSiguienteNumeroDeSocio() {
         Long max = socioRepository.findMaxNumeroSocio();
-        if (max == null) {
-            return 1L;
-        }
-        return max + 1;
+        return max == null ? 1L : max + 1;
+    }
+
+    public SocioCreateFormDto buscarSocioDto(Long id) {
+        Socio socio = buscarSocio(id);
+        return socioMapper.toDto(socio);
+    }
+
+    private Socio buscarSocio(Long id) {
+        return socioRepository.findByIdAndEliminadoFalse(id)
+                .orElseThrow(() -> new BusinessException("NotFound.socio"));
     }
 }
