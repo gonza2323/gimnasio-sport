@@ -5,7 +5,7 @@
       layout:decorate="~{fragments/adminLayout}">
 
 <head>
-    <title>Gimnasio Sport - Sucursales</title>
+    <title>Gimnasio Sport - Socios</title>
 </head>
 
 <body>
@@ -17,33 +17,37 @@
             <div th:if="${msgError}" th:text="#{${msgError}}" class="alert alert-danger" role="alert">MENSAJE ERROR</div>
 
             <div class="d-flex align-items-center mb-3 flex-wrap">
-                <h3 class="m-0 mr-3">Sucursales</h3>
-                <a th:href="@{/sucursales/alta}" class="genric-btn primary radius">Agregar sucursal</a>
+                <h3 class="m-0 mr-3">Socios</h3>
+                <a th:href="@{/socios/alta}" class="genric-btn primary radius">Agregar socio</a>
             </div>
 
             <div class="table-responsive">
                 <table class="table table-striped table-bordered align-middle">
                     <thead class="table-light">
                     <tr>
+                        <th>Nº Socio</th>
                         <th>Nombre</th>
-                        <th>País</th>
-                        <th>Provincia</th>
+                        <th>Apellido</th>
+                        <th>Correo</th>
+                        <th>Sucursal</th>
                         <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="sucursal : ${sucursales}">
-                        <td th:text="${sucursal.nombre}">Nombre</td>
-                        <td th:text="${sucursal.nombrePais}">País</td>
-                        <td th:text="${sucursal.nombreProvincia}">Provincia</td>
+                    <tr th:each="socio : ${socios}">
+                        <td th:text="${socio.numeroSocio}">Nº Socio</td>
+                        <td th:text="${socio.nombre}">Nombre</td>
+                        <td th:text="${socio.apellido}">Apellido</td>
+                        <td th:text="${socio.correoElectronico}">Correo</td>
+                        <td th:text="${socio.nombreSucursal}">Sucursal</td>
                         <td>
-                            <a th:href="@{/sucursales/{id}(id=${sucursal.id})}" class="btn btn-primary btn-sm me-1" title="View">
+                            <a th:href="@{/socios/{id}(id=${socio.id})}" class="btn btn-primary btn-sm me-1" title="View">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            <a th:href="@{/sucursales/{id}/edit(id=${sucursal.id})}" class="btn btn-warning btn-sm me-1" title="Edit">
+                            <a th:href="@{/socios/{id}/edit(id=${socio.id})}" class="btn btn-warning btn-sm me-1" title="Edit">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <form th:action="@{/sucursales/{id}/baja(id=${sucursal.id})}" method="post" style="display:inline"
+                            <form th:action="@{/socios/{id}/baja(id=${socio.id})}" method="post" style="display:inline"
                                   th:onsubmit="'return confirm(\'Está seguro de qué desea borrar este elemento?\')'">
                                 <button type="submit" class="btn btn-danger btn-sm">
                                     <i class="bi bi-trash"></i>

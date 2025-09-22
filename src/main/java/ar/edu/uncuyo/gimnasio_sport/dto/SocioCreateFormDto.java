@@ -1,18 +1,9 @@
 package ar.edu.uncuyo.gimnasio_sport.dto;
 
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-public class SocioCreateFormDto {
-    private Long socioId;
-
-    @Valid
-    private PersonaCreateFormDTO persona;
+public class SocioCreateFormDto extends PersonaCreateFormDTO {
 }

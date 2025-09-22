@@ -7,50 +7,53 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonaCreateFormDTO {
     private Long id;
 
-    @NotBlank
-    @Size(min = 1, max = 255)
+    @NotBlank(message = "{NotBlank.persona.nombre}")
+    @Size(min = 1, max = 255, message = "{Size.persona.nombre}")
     private String nombre;
 
-    @NotBlank
-    @Size(min = 1, max = 255)
+    @NotBlank(message = "{NotBlank.persona.apellido}")
+    @Size(min = 1, max = 255, message = "{Size.persona.apellido}")
     private String apellido;
 
-    @NotNull
+    @NotNull(message = "{NotNull.persona.fechaNacimiento}")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaNacimiento;
 
-    @NotNull
+    @NotNull(message = "{NotNull.persona.tipoDocumento}")
     private TipoDocumento tipoDocumento;
 
-    @NotBlank
-    @Size(min = 7, max = 50)
+    @NotBlank(message = "{NotBlank.persona.numeroDocumento}")
+    @Size(min = 6, max = 20, message = "{Size.persona.numeroDocumento}")
     private String numeroDocumento;
 
-    @NotBlank
-    @Size(min = 6, max = 50)
+    @NotBlank(message = "{NotBlank.persona.telefono}")
+    @Size(min = 6, max = 20, message = "{Size.persona.telefono}")
     private String telefono;
 
-    @Email
+    @Email(message = "{Email.persona.correoElectronico}")
+    @NotBlank(message = "{NotBlank.persona.correoElectronico}")
     private String correoElectronico;
 
     @Valid
-    private DireccionDto direccion;
+    private DireccionDto direccion = new DireccionDto();
 
     @Valid
-    private UsuarioCreateFormDTO usuario;
+    private UsuarioCreateFormDTO usuario = new UsuarioCreateFormDTO();
 
-    @NotNull
+    @NotNull(message = "{NotBlank.persona.sucursal}")
     private Long sucursalId;
 }

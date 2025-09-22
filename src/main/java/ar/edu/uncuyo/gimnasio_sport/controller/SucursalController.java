@@ -43,7 +43,7 @@ public class SucursalController {
     }
 
     @GetMapping("/sucursales/{id}")
-    public String listarSucursales(Model model, @PathVariable Long id) {
+    public String detalleSucursal(Model model, @PathVariable Long id) {
         try {
             SucursalDto sucursal = sucursalService.buscarSucursalDto(id);
             return prepararVistaDetalle(model, sucursal);

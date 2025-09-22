@@ -53,6 +53,12 @@ public class DireccionService {
         direccionRepository.save(direccion);
     }
 
+    @Transactional
+    public void eliminarDireccion(Direccion direccion) {
+        direccion.setEliminado(true);
+        direccionRepository.save(direccion);
+    }
+
     public Direccion buscarDireccion(Long id) {
         return direccionRepository.findByIdAndEliminadoFalse(id)
                 .orElseThrow(() -> new BusinessException("NoExiste.direccion"));

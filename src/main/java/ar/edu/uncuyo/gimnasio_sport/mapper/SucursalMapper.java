@@ -20,11 +20,11 @@ public interface SucursalMapper {
     @Mapping(target = "empresa", ignore = true)
     void updateEntityFromDto(SucursalDto dto, @MappingTarget Sucursal sucursal);
 
+    SucursalDto toDto(Sucursal sucursal);
+
     @Mapping(target = "nombreProvincia", source = "direccion.localidad.departamento.provincia.nombre")
     @Mapping(target = "nombrePais", source = "direccion.localidad.departamento.provincia.pais.nombre")
     SucursalResumenDTO toSummaryDto(Sucursal sucursal);
 
     List<SucursalResumenDTO> toSummaryDtos(List<Sucursal> sucursales);
-
-    SucursalDto toDto(Sucursal sucursal);
 }

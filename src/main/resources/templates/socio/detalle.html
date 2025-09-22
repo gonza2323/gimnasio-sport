@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/adminLayout}">
+
+<head>
+    <title>Gimnasio Sport - Alta Sucursal</title>
+</head>
+
+<body>
+
+<th:block layout:fragment="content">
+    <div th:replace="~{sucursal/form :: form(title='Detalle sucursal', actionUrl='#', readOnly=true)}"></div>
+</th:block>
+
+</body>
+</html>

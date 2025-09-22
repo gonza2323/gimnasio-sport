@@ -128,8 +128,7 @@ public class DataInitialization implements CommandLineRunner {
     }
 
     private void crearSocios() {
-        socioService.crearSocio(SocioCreateFormDto.builder().persona(
-                PersonaCreateFormDTO.builder()
+        socioService.crearSocio(SocioCreateFormDto.builder()
                         .nombre("Pepe")
                         .apellido("Argento")
                         .fechaNacimiento(LocalDate.now())
@@ -147,11 +146,9 @@ public class DataInitialization implements CommandLineRunner {
                                 .confirmacionClave("1234")
                                 .build())
                         .sucursalId(1L)
-                        .build()
-        ).build());
+                        .build());
 
-        socioService.crearSocio(SocioCreateFormDto.builder().persona(
-                PersonaCreateFormDTO.builder()
+        socioService.crearSocio(SocioCreateFormDto.builder()
                         .nombre("Moni")
                         .apellido("Argento")
                         .fechaNacimiento(LocalDate.now())
@@ -169,11 +166,9 @@ public class DataInitialization implements CommandLineRunner {
                                 .confirmacionClave("1234")
                                 .build())
                         .sucursalId(1L)
-                        .build()
-        ).build());
+                        .build());
 
-        socioService.crearSocio(SocioCreateFormDto.builder().persona(
-                PersonaCreateFormDTO.builder()
+        socioService.crearSocio(SocioCreateFormDto.builder()
                         .nombre("Alberto")
                         .apellido("Fernandez")
                         .fechaNacimiento(LocalDate.now())
@@ -191,11 +186,9 @@ public class DataInitialization implements CommandLineRunner {
                                 .confirmacionClave("1234")
                                 .build())
                         .sucursalId(2L)
-                        .build()
-        ).build());
+                        .build());
 
-        socioService.crearSocio(SocioCreateFormDto.builder().persona(
-                PersonaCreateFormDTO.builder()
+        socioService.crearSocio(SocioCreateFormDto.builder()
                         .nombre("Julio")
                         .apellido("Cobos")
                         .fechaNacimiento(LocalDate.now())
@@ -213,8 +206,7 @@ public class DataInitialization implements CommandLineRunner {
                                 .confirmacionClave("1234")
                                 .build())
                         .sucursalId(3L)
-                        .build()
-        ).build());
+                        .build());
     }
 
     private void crearEmpleados() {

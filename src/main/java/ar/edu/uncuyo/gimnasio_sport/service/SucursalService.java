@@ -7,7 +7,6 @@ import ar.edu.uncuyo.gimnasio_sport.entity.Empresa;
 import ar.edu.uncuyo.gimnasio_sport.entity.Sucursal;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.SucursalMapper;
-import ar.edu.uncuyo.gimnasio_sport.repository.EmpresaRepository;
 import ar.edu.uncuyo.gimnasio_sport.repository.SucursalRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SucursalService {
-    private final EmpresaRepository empresaRepository;
     private final SucursalRepository sucursalRepository;
     private final DireccionService direccionService;
     private final SucursalMapper sucursalMapper;
@@ -61,6 +59,7 @@ public class SucursalService {
     @Transactional
     public void eliminarSucursal(Long id){
         Sucursal sucursal = buscarSucursal(id);
+        direccionService.eliminarDireccion(sucursal.getDireccion());
         sucursal.setEliminado(true);
         sucursalRepository.save(sucursal);
     }
@@ -80,5 +79,9 @@ public class SucursalService {
     @Transactional
     public SucursalDto buscarSucursalDto(Long id) {
         return sucursalMapper.toDto(buscarSucursal(id));
+    }
+
+    public List<Sucursal> listarSucursales() {
+        return sucursalRepository.findAllByEliminadoFalse();
     }
 }
