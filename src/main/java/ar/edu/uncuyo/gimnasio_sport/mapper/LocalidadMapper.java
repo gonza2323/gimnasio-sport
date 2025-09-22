@@ -1,5 +1,4 @@
 package ar.edu.uncuyo.gimnasio_sport.mapper;
-
 import ar.edu.uncuyo.gimnasio_sport.dto.LocalidadDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.Localidad;
 import org.mapstruct.Mapper;

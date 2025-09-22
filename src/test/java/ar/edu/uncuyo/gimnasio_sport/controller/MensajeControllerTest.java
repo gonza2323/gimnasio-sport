@@ -81,20 +81,22 @@ class MensajeControllerTest {
                 .eliminado(false)
                 .build();
 
+        Long mensajeId = 42L;
+
         Mensaje mensaje = new Mensaje();
-        mensaje.setId(10L);
+        mensaje.setId(mensajeId);
         mensaje.setTitulo("Titulo");
         mensaje.setTexto("Contenido");
         mensaje.setTipoMensaje(TipoMensaje.PROMOCION);
         mensaje.setEliminado(false);
         mensaje.setUsuario(autor);
 
-        MensajeDTO dto = new MensajeDTO(10L, "Titulo", "Contenido", TipoMensaje.PROMOCION, autor.getId());
+        MensajeDTO dto = new MensajeDTO(mensajeId, "Titulo", "Contenido", TipoMensaje.PROMOCION, autor.getId());
 
-        when(mensajeService.obtener(10L)).thenReturn(mensaje);
+        when(mensajeService.obtener(mensajeId)).thenReturn(mensaje);
         when(mensajeService.toDto(mensaje)).thenReturn(dto);
 
-        mockMvc.perform(get("/mensajes/editar/{id}", 10L))
+        mockMvc.perform(get("/mensajes/editar/{id}", mensajeId))
                 .andExpect(status().isOk())
                 .andExpect(view().name("view/mensaje/form"))
                 .andExpect(model().attribute("usuarioActual", samePropertyValuesAs(admin)))

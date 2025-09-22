@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "mensajes")
 @Data
@@ -17,15 +19,24 @@ public class Mensaje {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 200)
-    private String titulo;
+    @Column(name = "nombre_destinatario", nullable = false, length = 200)
+    private String nombre;
 
-    @Column(nullable = false, length = 4000)
-    private String texto;
+    @Column(name = "email_destinatario", nullable = false, length = 320)
+    private String email;
+
+    @Column(name = "titulo", nullable = false, length = 200)
+    private String asunto;
+
+    @Column(name = "texto", nullable = false, length = 4000)
+    private String cuerpo;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private TipoMensaje tipoMensaje;
+    @Column(name = "tipo_mensaje", nullable = false, length = 20)
+    private TipoMensaje tipo;
+
+    @Column(name = "fecha_programada")
+    private LocalDateTime fechaProgramada;
 
     @Column(nullable = false)
     private boolean eliminado;

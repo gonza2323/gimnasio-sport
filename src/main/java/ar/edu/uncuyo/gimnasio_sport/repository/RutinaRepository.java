@@ -14,4 +14,3 @@ public interface RutinaRepository extends JpaRepository<Rutina, Long> {
 
     List<Rutina> findAllByEliminadoFalse();
 }
-

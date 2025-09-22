@@ -2,29 +2,30 @@ package ar.edu.uncuyo.gimnasio_sport.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class PromocionDTO {
+
     private Long id;
 
     @NotBlank
-    private String nombre;
+    @Size(max = 200)
+    private String asunto;
 
     @NotBlank
-    private String descripcion;
+    @Size(max = 4000)
+    private String cuerpo;
 
     @NotNull
-    private LocalDate fechaInicio;
+    private LocalDateTime fechaProgramada;
 
-    @NotNull
-    private LocalDate fechaFin;
-
-    private String mensaje;
+    private LocalDate fechaEnvioPromocion;
+    private Long cantidadSociosEnviados;
 }

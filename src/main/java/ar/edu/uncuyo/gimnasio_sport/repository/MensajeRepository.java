@@ -12,12 +12,14 @@ import java.util.Optional;
 
 public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
 
-    @Query("select m from Mensaje m join m.usuario u " +
-            "where m.eliminado = false and (:tipo is null or m.tipoMensaje = :tipo) " +
-            "and (:titulo is null or lower(m.titulo) like lower(concat('%', :titulo, '%'))) " +
-            "and (:nombreUsuario is null or lower(u.nombreUsuario) like lower(concat('%', :nombreUsuario, '%')))")
+    @Query("SELECT m FROM Mensaje m JOIN m.usuario u " +
+            "WHERE m.eliminado = false " +
+            "AND m.tipo = :tipo " +
+            "AND m.asunto LIKE CONCAT('%', :asunto, '%') " +
+            "AND u.nombreUsuario LIKE CONCAT('%', :nombreUsuario, '%')")
+
     Page<Mensaje> filtrar(@Param("tipo") TipoMensaje tipo,
-                          @Param("titulo") String titulo,
+                          @Param("asunto") String asunto,
                           @Param("nombreUsuario") String nombreUsuario,
                           Pageable pageable);
 

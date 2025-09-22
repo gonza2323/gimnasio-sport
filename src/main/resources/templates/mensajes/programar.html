@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html class="no-js" lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/adminLayout}">
+
+<head>
+    <title>Gimnasio Sport - Programar Mensaje</title>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <section class="container my-5">
+
+        <!-- Alertas -->
+        <div th:if="${msgError}" class="alert alert-danger" role="alert" th:text="${msgError}"></div>
+        <div th:if="${msgExito}" class="alert alert-success" role="alert" th:text="${msgExito}"></div>
+
+        <!-- Título dinámico -->
+        <h3 class="text-heading mb-4"
+            th:text="${readOnly} ? 'Detalle del mensaje' : (mensajeDto.id != null ? 'Editar mensaje programado' : 'Programar nuevo mensaje')">
+            Programar nuevo mensaje
+        </h3>
+
+        <form th:action="@{/mensajes/programar}" th:object="${mensajeDto}" method="post">
+            <input type="hidden" th:field="*{id}"/>
+
+            <!-- Nombre / Email -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="nombre">Nombre *</label>
+                    <input type="text" th:field="*{nombre}" class="form-control" id="nombre"
+                           placeholder="Nombre del destinatario" th:readonly="${readOnly}">
+                    <div th:errors="*{nombre}" class="text-danger mt-1"></div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="email">Email *</label>
+                    <input type="email" th:field="*{email}" class="form-control" id="email"
+                           placeholder="correo@ejemplo.com" th:readonly="${readOnly}">
+                    <div th:errors="*{email}" class="text-danger mt-1"></div>
+                </div>
+            </div>
+
+            <!-- Asunto / Tipo -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="asunto">Asunto *</label>
+                    <input type="text" th:field="*{asunto}" class="form-control" id="asunto"
+                           placeholder="Asunto del mensaje" th:readonly="${readOnly}">
+                    <div th:errors="*{asunto}" class="text-danger mt-1"></div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="tipo">Tipo de mensaje *</label>
+                    <select th:field="*{tipo}" class="form-control" id="tipo" th:disabled="${readOnly}">
+                        <option value="">Seleccione tipo</option>
+                        <option th:each="t : ${tipos}" th:value="${t}" th:text="${t}"></option>
+                    </select>
+                    <div th:errors="*{tipo}" class="text-danger mt-1"></div>
+                </div>
+            </div>
+
+            <!-- Cuerpo -->
+            <div class="form-group">
+                <label for="cuerpo">Cuerpo *</label>
+                <textarea th:field="*{cuerpo}" class="form-control" id="cuerpo" rows="6"
+                          placeholder="Escribe el contenido del mensaje" th:readonly="${readOnly}"></textarea>
+                <div th:errors="*{cuerpo}" class="text-danger mt-1"></div>
+            </div>
+
+            <!-- Fecha programada -->
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="fechaProgramada">Fecha programada *</label>
+                    <input type="datetime-local" th:field="*{fechaProgramada}" class="form-control" id="fechaProgramada"
+                           th:readonly="${readOnly}">
+                    <small class="form-text text-muted">La fecha y hora se utilizarán para agendar el envío.</small>
+                    <div th:errors="*{fechaProgramada}" class="text-danger mt-1"></div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="mt-4 d-flex">
+                <button type="submit" class="genric-btn primary radius mr-2" th:if="${!readOnly}">
+                    Programar
+                </button>
+                <a th:href="@{/mensajes}" class="genric-btn info-border radius">Volver al listado</a>
+            </div>
+        </form>
+    </section>
+</th:block>
+</body>
+</html>

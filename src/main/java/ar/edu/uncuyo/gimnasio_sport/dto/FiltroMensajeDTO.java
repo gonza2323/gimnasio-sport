@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FiltroMensajeDTO {
     private TipoMensaje tipoMensaje;
-    private String tituloContiene;
+    private String asuntoContiene;
     private String nombreUsuario;
 }

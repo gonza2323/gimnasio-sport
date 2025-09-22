@@ -6,24 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RutinaDto {
+public class DetalleRutinaDto {
 
     private Long id;
-
-    private EstadoRutina tipo;
-
-    private Date fechaInicio;
-
-    private Date fechaFinalizacion;
-
-    private Long socioId;
-
-    private Long profesorId;
-
-    private List<DetalleRutinaDto> detalles;
+    private Date fecha;
+    private String actividad;
+    private EstadoRutina estadoRutina;
+    private boolean eliminado;
+    private Long rutinaId;
 }

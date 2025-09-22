@@ -18,9 +18,11 @@ public interface MensajeMapper {
     MensajeDTO toDto(Mensaje mensaje);
 
     @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "titulo")
-    @Mapping(target = "texto")
-    @Mapping(target = "tipoMensaje")
+    @Mapping(target = "nombre")
+    @Mapping(target = "email")
+    @Mapping(target = "asunto")
+    @Mapping(target = "cuerpo")
+    @Mapping(target = "tipo")
+    @Mapping(target = "fechaProgramada")
     void updateEntityFromDto(MensajeDTO dto, @MappingTarget Mensaje mensaje);
 }
-

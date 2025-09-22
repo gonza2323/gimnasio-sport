@@ -27,9 +27,9 @@ public class MensajeService {
     @Transactional(readOnly = true)
     public Page<Mensaje> listar(FiltroMensajeDTO filtro, Pageable pageable) {
         TipoMensaje tipo = filtro == null ? null : filtro.getTipoMensaje();
-        String titulo = limpiarCadena(filtro != null ? filtro.getTituloContiene() : null);
+        String asunto = limpiarCadena(filtro != null ? filtro.getAsuntoContiene() : null);
         String nombreUsuario = limpiarCadena(filtro != null ? filtro.getNombreUsuario() : null);
-        return mensajeRepository.filtrar(tipo, titulo, nombreUsuario, pageable);
+        return mensajeRepository.filtrar(tipo, asunto, nombreUsuario, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -80,13 +80,19 @@ public class MensajeService {
         if (dto == null) {
             throw new IllegalArgumentException("El mensaje no puede ser nulo");
         }
-        if (!StringUtils.hasText(dto.getTitulo())) {
-            throw new IllegalArgumentException("El título del mensaje es obligatorio");
+        if (!StringUtils.hasText(dto.getNombre())) {
+            throw new IllegalArgumentException("El nombre del destinatario es obligatorio");
         }
-        if (!StringUtils.hasText(dto.getTexto())) {
-            throw new IllegalArgumentException("El texto del mensaje es obligatorio");
+        if (!StringUtils.hasText(dto.getEmail())) {
+            throw new IllegalArgumentException("El correo electrónico del destinatario es obligatorio");
         }
-        if (dto.getTipoMensaje() == null) {
+        if (!StringUtils.hasText(dto.getAsunto())) {
+            throw new IllegalArgumentException("El asunto del mensaje es obligatorio");
+        }
+        if (!StringUtils.hasText(dto.getCuerpo())) {
+            throw new IllegalArgumentException("El cuerpo del mensaje es obligatorio");
+        }
+        if (dto.getTipo() == null) {
             throw new IllegalArgumentException("El tipo de mensaje es obligatorio");
         }
         if (dto.getUsuarioId() == null) {
@@ -98,8 +104,10 @@ public class MensajeService {
         if (mensaje == null) {
             return;
         }
-        mensaje.setTitulo(normalizarCadena(mensaje.getTitulo()));
-        mensaje.setTexto(normalizarCadena(mensaje.getTexto()));
+        mensaje.setNombre(normalizarCadena(mensaje.getNombre()));
+        mensaje.setEmail(normalizarCadena(mensaje.getEmail()));
+        mensaje.setAsunto(normalizarCadena(mensaje.getAsunto()));
+        mensaje.setCuerpo(normalizarCadena(mensaje.getCuerpo()));
     }
 
     private String limpiarCadena(String valor) {
