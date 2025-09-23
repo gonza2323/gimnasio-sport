@@ -1,0 +1,194 @@
+<section th:fragment="form(title, readOnly, actionUrl, empleado)" class="container my-5">
+
+    <div th:if="${msgError}" th:text="#{${msgError}}" class="alert alert-danger" role="alert"></div>
+
+    <h3 th:text="${title}" class="text-heading"></h3>
+    <form th:action="@{${actionUrl}}" th:object="${empleado}" method="post">
+        <input type="hidden" th:field="*{persona.id}" />
+
+        <!-- Nombre / Apellido / Tipo Empleado -->
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="nombre">Nombre *</label>
+                <input type="text" th:field="*{persona.nombre}" class="form-control" id="nombre" placeholder="Nombre" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('persona.nombre')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.nombre')}" th:text="${err}"></div>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="apellido">Apellido *</label>
+                <input type="text" th:field="*{persona.apellido}" class="form-control" id="apellido" placeholder="Apellido" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('persona.apellido')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.apellido')}" th:text="${err}"></div>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="tipoEmpleado">Tipo de Empleado *</label>
+                <select th:field="*{tipoEmpleado}" class="form-control" id="tipoEmpleado" th:disabled="${readOnly}">
+                    <option value="">Seleccione un tipo</option>
+                    <option th:each="t : ${tiposEmpleado}" th:value="${t}" th:text="${t}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('tipoEmpleado')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('tipoEmpleado')}" th:text="${err}"></div>
+            </div>
+
+<!--            <div class="form-group col-md-4">-->
+<!--                <label for="sucursal">Sucursal *</label>-->
+<!--                <select th:field="*{sucursalId}" class="form-control" id="sucursal" th:disabled="${readOnly}">-->
+<!--                    <option value="">Seleccione la sucursal</option>-->
+<!--                    <option th:each="s : ${sucursales}" th:value="${s.id}" th:text="${s.nombre}"></option>-->
+<!--                </select>-->
+<!--                <div th:if="${#fields.hasErrors('sucursalId')}" class="text-danger mt-1"-->
+<!--                     th:each="err : ${#fields.errors('sucursalId')}" th:text="${err}"></div>-->
+<!--            </div>-->
+        </div>
+
+        <!-- Documento -->
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="tipoDocumento">Tipo de documento *</label>
+                <select th:field="*{persona.tipoDocumento}" class="form-control" id="tipoDocumento" th:disabled="${readOnly}">
+                    <option value="">Seleccione tipo de documento</option>
+                    <option value="DNI">DNI</option>
+                    <option value="PASAPORTE">PASAPORTE</option>
+                </select>
+                <div th:if="${#fields.hasErrors('persona.tipoDocumento')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.tipoDocumento')}" th:text="${err}"></div>
+            </div>
+
+            <div class="form-group col-md-3">
+                <label for="numeroDocumento">Nº Documento *</label>
+                <input type="text" th:field="*{persona.numeroDocumento}" class="form-control" id="numeroDocumento" placeholder="Nº Documento" th:disabled="${readOnly}">
+            </div>
+
+            <div class="form-group col-md-3">
+                <label for="fechaNacimiento">Fecha de nacimiento *</label>
+                <input type="date" th:field="*{persona.fechaNacimiento}" class="form-control" id="fechaNacimiento"
+                       th:max="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" th:disabled="${readOnly}">
+            </div>
+
+            <div class="form-group col-md-3">
+                <label for="telefono">Teléfono *</label>
+                <input type="text" th:field="*{persona.telefono}" class="form-control" id="telefono" placeholder="Teléfono" th:disabled="${readOnly}">
+            </div>
+        </div>
+
+        <!-- Usuario -->
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="correo">Correo electrónico *</label>
+                <input type="email" th:field="*{persona.correoElectronico}" class="form-control" id="correo" placeholder="Correo Electrónico" th:disabled="${readOnly}">
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="clave">Contraseña *</label>
+                <input type="password" th:field="*{persona.usuario.clave}" class="form-control" id="clave" placeholder="Contraseña" th:disabled="${readOnly}">
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="confirmacionClave">Confirmación contraseña *</label>
+                <input type="password" th:field="*{persona.usuario.confirmacionClave}" class="form-control" id="confirmacionClave" placeholder="Confirme su contraseña" th:disabled="${readOnly}">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <input type="hidden" th:field="*{persona.direccion.id}" />
+
+            <div class="form-group col-md-3">
+                <label for="pais">País *</label>
+                <select th:field="*{persona.direccion.paisId}" class="form-control" id="pais" th:disabled="${readOnly}">
+                    <option value="">Seleccione país</option>
+                    <option th:each="p : ${paises}" th:value="${p.id}" th:text="${p.nombre}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('persona.direccion.paisId')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.direccion.paisId')}" th:text="${err}"></div>
+            </div>
+
+            <div class="form-group col-md-3">
+                <label for="provincia">Provincia *</label>
+                <select th:field="*{persona.direccion.provinciaId}" class="form-control" id="provincia" th:disabled="${readOnly}">
+                    <option value="">Seleccione provincia</option>
+                    <option th:each="prov : ${provincias}" th:value="${prov.id}" th:text="${prov.nombre}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('persona.direccion.provinciaId')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.direccion.provinciaId')}" th:text="${err}"></div>
+            </div>
+
+            <div class="form-group col-md-3">
+                <label for="departamento">Departamento *</label>
+                <select th:field="*{persona.direccion.departamentoId}" class="form-control" id="departamento" th:disabled="${readOnly}">
+                    <option value="">Seleccione departamento</option>
+                    <option th:each="dept : ${departamentos}" th:value="${dept.id}" th:text="${dept.nombre}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('persona.direccion.departamentoId')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.direccion.departamentoId')}" th:text="${err}"></div>
+            </div>
+
+            <div class="form-group col-md-3">
+                <label for="localidad">Localidad *</label>
+                <select th:field="*{persona.direccion.localidadId}" class="form-control" id="localidad" th:disabled="${readOnly}">
+                    <option value="">Seleccione localidad</option>
+                    <option th:each="loc : ${localidades}" th:value="${loc.id}" th:text="${loc.nombre}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('persona.direccion.localidadId')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.direccion.localidadId')}" th:text="${err}"></div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="calle">Calle *</label>
+                <input type="text" th:field="*{persona.direccion.calle}" class="form-control" id="calle"
+                       placeholder="Calle" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('persona.direccion.calle')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.direccion.calle')}" th:text="${err}"></div>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="numeracion">Numeración *</label>
+                <input type="text" th:field="*{persona.direccion.numeracion}" class="form-control" id="numeracion"
+                       placeholder="Nro" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('persona.direccion.numeracion')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.direccion.numeracion')}" th:text="${err}"></div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="barrio">Barrio</label>
+                <input type="text" th:field="*{persona.direccion.barrio}" class="form-control" id="barrio"
+                       placeholder="Barrio" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('persona.direccion.barrio')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.direccion.barrio')}" th:text="${err}"></div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="manzanaPiso">Manzana/Piso</label>
+                <input type="text" th:field="*{persona.direccion.manzanaPiso}" class="form-control" id="manzanaPiso"
+                       placeholder="Manzana/Piso" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('persona.direccion.manzanaPiso')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.direccion.manzanaPiso')}" th:text="${err}"></div>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="casaDepartamento">Casa/Departamento</label>
+                <input type="text" th:field="*{persona.direccion.casaDepartamento}" class="form-control"
+                       id="casaDepartamento" placeholder="Casa/Depto" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('persona.direccion.casaDepartamento')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.direccion.casaDepartamento')}" th:text="${err}"></div>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="referencia">Referencia</label>
+                <input type="text" th:field="*{persona.direccion.referencia}" class="form-control" id="referencia"
+                       placeholder="Referencia" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('persona.direccion.referencia')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.direccion.referencia')}" th:text="${err}"></div>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-end mt-3">
+            <a th:if="${!readOnly}" th:href="@{/empleados}" class="genric-btn primary-border radius mr-3">Cancelar</a>
+            <button th:if="${!readOnly}" type="submit" class="genric-btn primary radius">Aceptar</button>
+
+            <a th:if="${readOnly}" th:href="@{/empleados}" class="genric-btn primary radius">Aceptar</a>
+        </div>
+    </form>
+</section>

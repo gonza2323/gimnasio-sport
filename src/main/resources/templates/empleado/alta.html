@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/adminLayout}">
+
+<head>
+    <title>Gimnasio Sport - Alta Empleado</title>
+</head>
+
+<body>
+
+<th:block layout:fragment="content">
+    <div th:replace="~{empleado/form :: form(title='Agregar empleado', actionUrl='/empleados/alta', readOnly=false, empleado=${empleado})}"></div>
+</th:block>
+
+</body>
+</html>
