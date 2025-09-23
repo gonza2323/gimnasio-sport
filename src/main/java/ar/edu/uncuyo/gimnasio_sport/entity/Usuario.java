@@ -17,11 +17,15 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nombreUsuario;
+
+    @Column(nullable = false)
     private String clave;
 
     @Enumerated(EnumType.STRING)
     private RolUsuario rol;
 
+    @Column(nullable = false)
     private boolean eliminado;
 }

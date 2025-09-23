@@ -64,7 +64,7 @@ public class ValorCuotaService {
 
         /// Si ya tengo un valor vigente de enero a marzo, no puedo crear otro que también incluya febrero
         boolean existeSolapado = valorCuotaRepository
-                .existsByFechaDesdeLessThanEqualAndFechaHastaGreaterThanEqual(
+                .existsByFechaDesdeLessThanEqualAndFechaHastaGreaterThanEqualAndEliminadoFalse(
                         valorCuotaDto.getFechaHasta(), valorCuotaDto.getFechaDesde()
                 );
 
@@ -78,7 +78,12 @@ public class ValorCuotaService {
     }
 
     public List<ValorCuota> listarValoresCuotaActivos() {
-        return valorCuotaRepository.findAllByEliminadoFalse();
+        return valorCuotaRepository.findAllByEliminadoFalseOrderByFechaDesdeDesc();
+    }
+
+    public List<ValorCuotaDto> listarValoresCuotaDtosActivos() {
+        List<ValorCuota> valoresCuota = valorCuotaRepository.findAllByEliminadoFalseOrderByFechaDesdeDesc();
+        return valorCuotaMapper.toDtos(valoresCuota);
     }
 
     public CuotaMensual buscarValorCuotaVigente(Long numeroSocio) {

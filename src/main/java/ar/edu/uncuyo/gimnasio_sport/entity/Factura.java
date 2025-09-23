@@ -18,14 +18,26 @@ import java.util.List;
 public class Factura {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true)
     private Long numeroFactura;
+
+    @Column(nullable = false)
     private LocalDate fechaFactura;
+
+    @Column(nullable = false)
     private Double totalPagado;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private EstadoFactura estado;
+
+    @Column(nullable = false)
     private boolean eliminado;
+
     @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL)
     private List<DetalleFactura> detalles = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "forma_de_pago_id")
     private FormaDePago formaDePago;

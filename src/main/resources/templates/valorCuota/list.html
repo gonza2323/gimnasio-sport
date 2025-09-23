@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/adminLayout}">
+
+<head>
+    <title>Gimnasio Sport - Valor Cuota</title>
+</head>
+
+<body>
+
+<th:block layout:fragment="content">
+    <section class="my-5">
+        <div class="container">
+
+            <div th:if="${msgError}" th:text="#{${msgError}}" class="alert alert-danger" role="alert">MENSAJE ERROR</div>
+
+            <div class="d-flex align-items-center mb-3 flex-wrap">
+                <h3 class="m-0 mr-3">Valor Cuota</h3>
+                <a th:href="@{/valoresCuota/alta}" class="genric-btn primary radius mr-3">Agregar valor cuota</a>
+                <form th:action="@{/cuotas/emitirCuotasMesActual}" method="post" style="display:inline"
+                      th:onsubmit="'return confirm(\'Está seguro de qué desea emitir las cuotas del mes para todos los usuarios?\')'">
+                    <button type="submit" class="genric-btn primary radius">
+                        Emitir cuotas del mes
+                    </button>
+                </form>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Desde</th>
+                        <th>Hasta</th>
+                        <th>Valor</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="valorCuota : ${valoresCuota}">
+                        <td th:text="${valorCuota.fechaDesde}">Fecha desde</td>
+                        <td th:text="${valorCuota.fechaHasta}">Fecha hasta</td>
+                        <td th:text="${#numbers.formatCurrency(valorCuota.valorCuota)}">Valor</td>
+
+                        <td>
+                            <a th:href="@{/valoresCuota/{id}/edit(id=${valorCuota.id})}" class="btn btn-warning btn-sm me-1" title="Edit">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <form th:action="@{/valoresCuota/{id}/baja(id=${valorCuota.id})}" method="post" style="display:inline"
+                                  th:onsubmit="'return confirm(\'Está seguro de qué desea borrar este elemento?\')'">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+</th:block>
+
+</body>
+</html>
