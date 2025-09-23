@@ -2,16 +2,19 @@ package ar.edu.uncuyo.gimnasio_sport.service;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.CuotaMensualDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.CuotaMensual;
+import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
+import ar.edu.uncuyo.gimnasio_sport.entity.ValorCuota;
 import ar.edu.uncuyo.gimnasio_sport.enums.EstadoCuota;
-import ar.edu.uncuyo.gimnasio_sport.enums.Mes;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.CuotaMensualMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.CuotaMensualRepository;
 import ar.edu.uncuyo.gimnasio_sport.repository.ValorCuotaRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 
 @Service
@@ -20,19 +23,49 @@ public class CuotaMensualService {
     private final CuotaMensualRepository cuotaMensualRepository;
     private final CuotaMensualMapper cuotaMensualMapper;
     private final ValorCuotaRepository valorCuotaRepository;
+    private final SocioService socioService;
+    private final ValorCuotaService valorCuotaService;
 
     public CuotaMensual crearCuotaMensual(CuotaMensualDto cuotaMensualDto) throws BusinessException {
-        if (cuotaMensualRepository.existsBySocioIdAndMesAndAnio(
-                cuotaMensualDto.getIdSocio(),
+        if (cuotaMensualRepository.existsBySocioIdAndMesAndAnioAndEliminadoFalse(
+                cuotaMensualDto.getSocioId(),
                 cuotaMensualDto.getMes(),
                 cuotaMensualDto.getAnio())) {
             throw new BusinessException("socio.cuota.existe");
         }
 
+        Socio socio = socioService.buscarSocio(cuotaMensualDto.getSocioId());
+
         CuotaMensual cuota = cuotaMensualMapper.toEntity(cuotaMensualDto);
+        cuota.setSocio(socio);
+
         return cuotaMensualRepository.save(cuota);
     }
 
+    @Transactional
+    public long emitirCuotasMesActual() {
+        LocalDate fechaActual = LocalDate.now();
+        Month mes = fechaActual.getMonth();
+        Long anio = (long) fechaActual.getYear();
+        List<Socio> sociosSinCuota = socioService.buscarSociosSinCuotaMesYAnioActual(mes, anio);
+        ValorCuota valorCuota = valorCuotaService.buscarValorCuotaVigente();
+        
+        List<CuotaMensual> cuotasMensuales = sociosSinCuota.stream().map(socio ->
+            CuotaMensual.builder()
+                    .mes(LocalDate.now().getMonth())
+                    .anio(anio)
+                    .estado(EstadoCuota.ADEUDADA)
+                    .fechaVencimiento(fechaActual.plusDays(10))
+                    .socio(socio)
+                    .valorCuota(valorCuota)
+                    .eliminado(false)
+                    .build()
+        ).toList();
+
+        cuotaMensualRepository.saveAll(cuotasMensuales);
+        return (long) cuotasMensuales.size();
+    }
+    
     public CuotaMensual buscarCuotaMensual(Long id) throws BusinessException {
         return cuotaMensualRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("cuota.no.existe"));
@@ -43,7 +76,7 @@ public class CuotaMensualService {
 
         if (!cuotaExistente.getMes().equals(cuotaMensualDto.getMes()) ||
             !cuotaExistente.getAnio().equals(cuotaMensualDto.getAnio())) {
-            if (cuotaMensualRepository.existsBySocioIdAndMesAndAnio(
+            if (cuotaMensualRepository.existsBySocioIdAndMesAndAnioAndEliminadoFalse(
                     cuotaExistente.getSocio().getId(),
                     cuotaMensualDto.getMes(),
                     cuotaMensualDto.getAnio())) {
@@ -86,7 +119,7 @@ public class CuotaMensualService {
     }
 
 
-    public void validar(Mes mes, Long anio, Long idValorCuota) {
+    public void validar(Month mes, Long anio, Long idValorCuota) {
         if (mes == null) {
             throw new BusinessException("El mes no puede ser nulo");
         }

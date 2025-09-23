@@ -15,6 +15,8 @@
         <div class="container">
 
             <div th:if="${msgError}" th:text="#{${msgError}}" class="alert alert-danger" role="alert">MENSAJE ERROR</div>
+            <div th:if="${msgExito}" th:text="${msgExito}" class="alert alert-success" role="alert">MENSAJE ÉXITO</div>
+            <div th:if="${msg}" th:text="${msg}" class="alert alert-info" role="alert">MENSAJE NEUTRO</div>
 
             <div class="d-flex align-items-center mb-3 flex-wrap">
                 <h3 class="m-0 mr-3">Valor Cuota</h3>

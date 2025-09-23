@@ -1,11 +1,12 @@
 package ar.edu.uncuyo.gimnasio_sport.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @SuperBuilder
@@ -15,7 +16,4 @@ import java.util.List;
 public class Socio extends Persona {
     @Column(nullable = false, unique = true)
     private Long numeroSocio;
-
-    @OneToMany(mappedBy = "socio", cascade = CascadeType.PERSIST)
-    private List<CuotaMensual> cuotasMensuales = new ArrayList<>();
 }
