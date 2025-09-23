@@ -1,5 +1,6 @@
 package ar.edu.uncuyo.gimnasio_sport.service;
 
+import ar.edu.uncuyo.gimnasio_sport.dto.CuotaMensualCreateDto;
 import ar.edu.uncuyo.gimnasio_sport.dto.CuotaMensualDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.CuotaMensual;
 import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
@@ -26,7 +27,7 @@ public class CuotaMensualService {
     private final SocioService socioService;
     private final ValorCuotaService valorCuotaService;
 
-    public CuotaMensual crearCuotaMensual(CuotaMensualDto cuotaMensualDto) throws BusinessException {
+    public CuotaMensual crearCuotaMensual(CuotaMensualCreateDto cuotaMensualDto) throws BusinessException {
         if (cuotaMensualRepository.existsBySocioIdAndMesAndAnioAndEliminadoFalse(
                 cuotaMensualDto.getSocioId(),
                 cuotaMensualDto.getMes(),
@@ -36,8 +37,11 @@ public class CuotaMensualService {
 
         Socio socio = socioService.buscarSocio(cuotaMensualDto.getSocioId());
 
+        ValorCuota valorCuota = valorCuotaService.buscarValorCuota(cuotaMensualDto.getValorCuotaId());
+
         CuotaMensual cuota = cuotaMensualMapper.toEntity(cuotaMensualDto);
         cuota.setSocio(socio);
+        cuota.setValorCuota(valorCuota);
 
         return cuotaMensualRepository.save(cuota);
     }
@@ -131,5 +135,24 @@ public class CuotaMensualService {
         if (!valorCuotaRepository.existsById(idValorCuota)) {
             throw new BusinessException("El valor de cuota no existe");
         }
+    }
+
+    public List<CuotaMensualDto> listarCuotasMensualesDtoPorSocio(Long socioId) {
+        var cuotas = cuotaMensualRepository.findAllBySocioIdAndEliminadoFalse(socioId);
+        return cuotaMensualMapper.toDtos(cuotas);
+    }
+
+    public List<CuotaMensualDto> listarCuotasMensualesDtosPropias() {
+        Socio socioActual = socioService.buscarSocioActual();
+        return listarCuotasMensualesDtoPorSocio(socioActual.getId());
+    }
+
+    public double getDeudaTotalDeSocio(Long socioId) {
+        return cuotaMensualRepository.getDeudaTotalDeSocio(socioId);
+    }
+
+    public double getDeudaTotalSocioActual() {
+        Socio socioActual = socioService.buscarSocioActual();
+        return getDeudaTotalDeSocio(socioActual.getId());
     }
 }

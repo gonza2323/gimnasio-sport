@@ -6,8 +6,6 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
@@ -39,13 +37,10 @@ public class CuotaMensual {
     private boolean eliminado;
 
     @ManyToOne
-    @JoinColumn(name = "socio_id", nullable = false) // FK a Socio
-    private Socio socio;
-
-    @ManyToOne
     @JoinColumn(nullable = false)
     private ValorCuota valorCuota;
 
-    @OneToMany(mappedBy = "cuotaMensual", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetalleFactura> detalleCollection = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Socio socio;
 }
