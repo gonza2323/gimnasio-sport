@@ -4,5 +4,31 @@
 <div>
     <a th:href="@{/mensajes/enviar}">Nuevo mensaje</a>
 </div>
+
+<section>
+    <h2>Mensajes</h2>
+    <div th:if="${mensajes == null || #lists.isEmpty(mensajes)}">No hay mensajes registrados.</div>
+
+    <table th:if="${mensajes != null && !#lists.isEmpty(mensajes)}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Asunto</th>
+            <th>Tipo</th>
+            <th>Fecha programada</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="mensaje : ${mensajes}">
+            <td th:text="${mensaje.id}">1</td>
+            <td th:text="${mensaje.email}">correo@example.com</td>
+            <td th:text="${mensaje.asunto}">Asunto</td>
+            <td th:text="${mensaje.tipo}">OTROS</td>
+            <td th:text="${mensaje.fechaProgramada}">2024-01-01T12:00</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
 </body>
 </html>

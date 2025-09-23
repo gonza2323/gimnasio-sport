@@ -219,7 +219,7 @@ public class DataInitialization implements CommandLineRunner {
                         .tipoDocumento(TipoDocumento.DNI)
                         .numeroDocumento("25468231")
                         .telefono("11 5486 9235")
-                        .correoElectronico("admin")
+                        .correoElectronico("gimnasiosport21@gmail.com")
                         .direccion(DireccionDto.builder()
                                 .calle("Av. 9 de Julio")
                                 .numeracion("400")

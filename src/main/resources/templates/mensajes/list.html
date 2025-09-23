@@ -9,7 +9,6 @@
 </head>
 
 <body>
-
 <th:block layout:fragment="content">
     <section class="my-5">
         <div class="container">
@@ -18,55 +17,32 @@
             <div th:if="${msgExito}" th:text="#{${msgExito}}" class="alert alert-success" role="alert">MENSAJE ÉXITO</div>
 
             <div class="d-flex align-items-center mb-3 flex-wrap">
-                <h3 class="m-0 mr-3">Mensajes programados</h3>
+                <h3 class="m-0 mr-3">Mensajes enviadas/programados</h3>
                 <a th:href="@{/mensajes/programar}" class="genric-btn primary radius">Nuevo mensaje</a>
             </div>
 
-            <div th:if="${#lists.isEmpty(mensajes)}" class="alert alert-info" role="alert">
+            <div th:if="${mensajes == null || #lists.isEmpty(mensajes)}" class="alert alert-info" role="alert">
                 No hay mensajes para mostrar.
             </div>
 
-            <div th:if="${!#lists.isEmpty(mensajes)}" class="table-responsive">
+            <div th:if="${mensajes != null && !#lists.isEmpty(mensajes)}" class="table-responsive">
                 <table class="table table-striped table-bordered align-middle">
                     <thead class="table-light">
                     <tr>
                         <th>ID</th>
-                        <th>Nombre</th>
                         <th>Email</th>
                         <th>Asunto</th>
                         <th>Tipo</th>
                         <th>Fecha programada</th>
-                        <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="mensaje : ${mensajes}">
                         <td th:text="${mensaje.id}">1</td>
-                        <td th:text="${mensaje.nombre}">Nombre</td>
                         <td th:text="${mensaje.email}">correo@example.com</td>
-                        <td th:text="${mensaje.asunto}">Asunto del mensaje</td>
-                        <td th:text="${mensaje.tipo}">PROMOCION</td>
-                        <td>
-                            <span th:if="${mensaje.fechaProgramada != null}"
-                                  th:text="${#temporals.format(mensaje.fechaProgramada, 'dd/MM/yyyy HH:mm')}" >01/01/2024 12:00</span>
-                            <span th:if="${mensaje.fechaProgramada == null}">Sin programar</span>
-                        </td>
-                        <td class="d-flex">
-                            <a th:href="@{/mensajes/{id}(id=${mensaje.id})}"
-                               class="btn btn-primary btn-sm me-1" title="Ver">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                            <a th:href="@{/mensajes/programar(id=${mensaje.id})}"
-                               class="btn btn-warning btn-sm me-1" title="Editar">
-                                <i class="bi bi-pencil-square"></i>
-                            </a>
-                            <form th:action="@{/mensajes/eliminar/{id}(id=${mensaje.id})}" method="post" style="display:inline"
-                                  th:onsubmit="'return confirm(\'¿Está seguro de que desea eliminar este mensaje?\')'">
-                                <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                        </td>
+                        <td th:text="${mensaje.asunto}">Asunto</td>
+                        <td th:text="${mensaje.tipo}">OTROS</td>
+                        <td th:text="${mensaje.fechaProgramada}">2024-01-01T12:00</td>
                     </tr>
                     </tbody>
                 </table>
@@ -74,6 +50,5 @@
         </div>
     </section>
 </th:block>
-
 </body>
 </html>
