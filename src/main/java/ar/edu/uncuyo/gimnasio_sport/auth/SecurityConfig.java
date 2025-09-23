@@ -39,16 +39,7 @@ public class SecurityConfig {
                         .usernameParameter("nombreUsuario")  // <---- coincide con tu DTO/campos
                         .passwordParameter("clave")
                         .defaultSuccessUrl("/", true)    // redirect after successful login
-                        .failureHandler((request, response, exception) -> {
-                            if (exception instanceof org.springframework.security.authentication.BadCredentialsException) {
-                                request.getSession().setAttribute("loginError", "Usuario o contraseña incorrectos");
-                            } else if (exception instanceof org.springframework.security.core.userdetails.UsernameNotFoundException) {
-                                request.getSession().setAttribute("loginError", "El usuario no existe");
-                            } else {
-                                request.getSession().setAttribute("loginError", "Error inesperado");
-                            }
-                            response.sendRedirect("/login?error=true");
-                        })
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .formLogin(form -> form.permitAll())
