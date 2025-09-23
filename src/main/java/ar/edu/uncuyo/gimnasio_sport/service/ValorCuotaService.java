@@ -1,10 +1,7 @@
 package ar.edu.uncuyo.gimnasio_sport.service;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.ValorCuotaDto;
-import ar.edu.uncuyo.gimnasio_sport.entity.CuotaMensual;
-import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
 import ar.edu.uncuyo.gimnasio_sport.entity.ValorCuota;
-import ar.edu.uncuyo.gimnasio_sport.enums.EstadoCuota;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.ValorCuotaMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.CuotaMensualRepository;
@@ -64,7 +61,7 @@ public class ValorCuotaService {
 
         /// Si ya tengo un valor vigente de enero a marzo, no puedo crear otro que también incluya febrero
         boolean existeSolapado = valorCuotaRepository
-                .existsByFechaDesdeLessThanEqualAndFechaHastaGreaterThanEqualAndEliminadoFalse(
+                .existeValorCuotaRangoVigenciaSuperpuesto(
                         valorCuotaDto.getFechaHasta(), valorCuotaDto.getFechaDesde()
                 );
 
@@ -86,17 +83,10 @@ public class ValorCuotaService {
         return valorCuotaMapper.toDtos(valoresCuota);
     }
 
-    public CuotaMensual buscarValorCuotaVigente(Long numeroSocio) {
-        Socio socio = socioRepository.findById(numeroSocio)
-                .orElseThrow(() -> new BusinessException("socio.noEncontrado"));
-
+    public ValorCuota buscarValorCuotaVigente() {
         LocalDate hoy = LocalDate.now();
 
-        return cuotaMensualRepository
-                .findFirstBySocioAndEstadoAndFechaVencimientoGreaterThanEqualAndEliminadoFalse(
-                        socio, EstadoCuota.ADEUDADA, hoy
-                )
+        return valorCuotaRepository.buscarValorCuotaVigente(hoy)
                 .orElseThrow(() -> new BusinessException("cuota.noVigente"));
     }
-
 }

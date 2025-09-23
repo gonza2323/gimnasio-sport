@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Month;
 import java.util.List;
 
 @Service
@@ -51,8 +52,12 @@ public class SocioService {
         return socioMapper.toDto(socio);
     }
 
-    private Socio buscarSocio(Long id) {
+    public Socio buscarSocio(Long id) {
         return socioRepository.findByIdAndEliminadoFalse(id)
                 .orElseThrow(() -> new BusinessException("NotFound.socio"));
+    }
+
+    public List<Socio> buscarSociosSinCuotaMesYAnioActual(Month mes, Long anio) {
+        return socioRepository.buscarSociosSinCuotaMesYAnioActual(mes, anio);
     }
 }
