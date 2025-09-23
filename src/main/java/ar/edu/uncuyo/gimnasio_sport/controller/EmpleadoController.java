@@ -34,7 +34,6 @@ public class EmpleadoController {
     private final String editView = "empleado/edit";
     private final String redirect = "/empleados";
 
-    // --- LISTAR EMPLEADOS ---
     @GetMapping("/empleados")
     public String listarEmpleados(Model model) {
         try {
@@ -47,9 +46,9 @@ public class EmpleadoController {
         return listView;
     }
 
-    // --- ALTA EMPLEADO (FORMULARIO GET) ---
     @GetMapping("/empleados/alta")
     public String altaEmpleado(Model model) {
+
         try {
             return prepararVistaFormularioAlta(model);
         } catch (BusinessException e) {
@@ -60,11 +59,12 @@ public class EmpleadoController {
         return prepararVistaListaEmpleados(model);
     }
 
-    // --- ALTA EMPLEADO (POST) ---
     @PostMapping("/empleados/alta")
     public String altaEmpleado(Model model,
                                @Valid @ModelAttribute("empleado") EmpleadoCreateForm empleado,
                                BindingResult bindingResult) {
+        System.out.println("Empleado recibido: " + empleado);
+        System.out.println("Errores de binding: " + bindingResult.getAllErrors());
         if (bindingResult.hasErrors())
             return prepararVistaFormularioAlta(model, empleado);
 
@@ -80,7 +80,6 @@ public class EmpleadoController {
         }
     }
 
-    // --- BAJA EMPLEADO ---
     @PostMapping("/empleados/{id}/baja")
     public String eliminarEmpleado(Model model, @PathVariable Long id) {
         try {
@@ -136,6 +135,9 @@ public class EmpleadoController {
         // cargar enums y combos
         model.addAttribute("tiposEmpleado", TipoEmpleado.values());
         model.addAttribute("tiposDocumento", TipoDocumento.values());
+        model.addAttribute("sucursales", sucursalService.listarSucursalResumenDto());
+
+        poblarCamposDireccion(model, form.getPersona().getDireccion());
 
         return createView;
     }
@@ -156,10 +158,10 @@ public class EmpleadoController {
         // cargar enums y combos
         model.addAttribute("tiposEmpleado", TipoEmpleado.values());
         model.addAttribute("tiposDocumento", TipoDocumento.values());
+        model.addAttribute("sucursales", sucursalService.listarSucursalResumenDto());
 
         return createView;
     }
-
 
     private String prepararVistaListaEmpleados(Model model) {
         List<EmpleadoResumenDto> empleados = empleadoService.listarEmpleadoResumenDtos();

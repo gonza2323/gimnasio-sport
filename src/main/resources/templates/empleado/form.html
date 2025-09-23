@@ -21,6 +21,15 @@
                 <div th:if="${#fields.hasErrors('persona.apellido')}" class="text-danger mt-1"
                      th:each="err : ${#fields.errors('persona.apellido')}" th:text="${err}"></div>
             </div>
+            <div class="form-group col-md-4">
+                <label for="sucursal">Sucursal *</label>
+                <select th:field="*{persona.sucursalId}" class="form-control" id="sucursal" th:disabled="${readOnly}">
+                    <option value="">Seleccione la sucursal</option>
+                    <option th:each="s : ${sucursales}" th:value="${s.id}" th:text="${s.nombre}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('persona.sucursalId')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.sucursalId')}" th:text="${err}"></div>
+            </div>
 
             <div class="form-group col-md-4">
                 <label for="tipoEmpleado">Tipo de Empleado *</label>
@@ -83,12 +92,18 @@
             <div class="form-group col-md-4">
                 <label for="clave">Contraseña *</label>
                 <input type="password" th:field="*{persona.usuario.clave}" class="form-control" id="clave" placeholder="Contraseña" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('persona.usuario.clave')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.usuario.clave')}" th:text="${err}"></div>
             </div>
+
 
             <div class="form-group col-md-4">
                 <label for="confirmacionClave">Confirmación contraseña *</label>
                 <input type="password" th:field="*{persona.usuario.confirmacionClave}" class="form-control" id="confirmacionClave" placeholder="Confirme su contraseña" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('persona.usuario.confirmacionClave')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('persona.usuario.confirmacionClave')}" th:text="${err}"></div>
             </div>
+
         </div>
 
         <div class="form-row">
@@ -191,4 +206,93 @@
             <a th:if="${readOnly}" th:href="@{/empleados}" class="genric-btn primary radius">Aceptar</a>
         </div>
     </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const paisSelect = document.getElementById('pais');
+            const provinciaSelect = document.getElementById('provincia');
+            const departamentoSelect = document.getElementById('departamento');
+            const localidadSelect = document.getElementById('localidad');
+
+            const provinciasByPais = {};
+            const departamentosByProvincia = {};
+            const localidadesByDepartamento = {};
+
+            // Utility to populate a select
+            function populateSelect(select, items, placeholder) {
+                select.innerHTML = '';
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = placeholder;
+                select.appendChild(defaultOption);
+
+                items.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = item.nombre;
+                    select.appendChild(option);
+                });
+            }
+
+            // Fetch provincias when pais changes
+            paisSelect.addEventListener('change', function () {
+                const paisId = this.value;
+                if (!paisId) {
+                    populateSelect(provinciaSelect, [], 'Seleccione provincia');
+                    populateSelect(departamentoSelect, [], 'Seleccione departamento');
+                    populateSelect(localidadSelect, [], 'Seleccione localidad');
+                    return;
+                }
+
+                fetch(`/provincias?paisId=${paisId}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        populateSelect(provinciaSelect, data, 'Seleccione provincia');
+                        populateSelect(departamentoSelect, [], 'Seleccione departamento');
+                        populateSelect(localidadSelect, [], 'Seleccione localidad');
+                    });
+            });
+
+            // Fetch departamentos when provincia changes
+            provinciaSelect.addEventListener('change', function () {
+                const provinciaId = this.value;
+                if (!provinciaId) {
+                    populateSelect(departamentoSelect, [], 'Seleccione departamento');
+                    populateSelect(localidadSelect, [], 'Seleccione localidad');
+                    return;
+                }
+
+                fetch(`/departamentos?provinciaId=${provinciaId}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        populateSelect(departamentoSelect, data, 'Seleccione departamento');
+                        populateSelect(localidadSelect, [], 'Seleccione localidad');
+                    });
+            });
+
+            // Fetch localidades when departamento changes
+            departamentoSelect.addEventListener('change', function () {
+                const departamentoId = this.value;
+                if (!departamentoId) {
+                    populateSelect(localidadSelect, [], 'Seleccione localidad');
+                    return;
+                }
+
+                fetch(`/localidades?departamentoId=${departamentoId}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        populateSelect(localidadSelect, data, 'Seleccione localidad');
+                    });
+            });
+
+        });
+    </script>
 </section>
