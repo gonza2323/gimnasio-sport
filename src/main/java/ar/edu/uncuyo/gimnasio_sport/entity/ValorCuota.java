@@ -1,9 +1,6 @@
 package ar.edu.uncuyo.gimnasio_sport.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -19,9 +16,16 @@ public class ValorCuota {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    LocalDate fechaDesde;
-    LocalDate fechaHasta;
-    Double valorCuota;
-    boolean eliminado;
 
+    @Column(nullable = false)
+    LocalDate fechaDesde;
+
+    @Column(nullable = false)
+    LocalDate fechaHasta;
+
+    @Column(nullable = false)
+    Double valorCuota;
+
+    @Column(nullable = false)
+    boolean eliminado;
 }

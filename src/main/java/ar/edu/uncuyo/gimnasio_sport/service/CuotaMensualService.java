@@ -75,12 +75,12 @@ public class CuotaMensualService {
         return cuotaMensualMapper.toDtos(cuotas);
     }
 
-    public List<CuotaMensualDto> listarcuotasPorEstado(EstadoCuota estado) {
+    public List<CuotaMensualDto> listarCuotasPorEstado(EstadoCuota estado) {
         List<CuotaMensual> cuotas = cuotaMensualRepository.findAllByEliminadoFalseAndEstado(estado);
         return cuotaMensualMapper.toDtos(cuotas);
     }
 
-    public List<CuotaMensualDto> listarcuotasPorFecha(LocalDate fechaDesde, LocalDate fechaHasta) {
+    public List<CuotaMensualDto> listarCuotasPorFecha(LocalDate fechaDesde, LocalDate fechaHasta) {
         List<CuotaMensual> cuotas = cuotaMensualRepository.findAllByFechaVencimientoBetween(fechaDesde, fechaHasta);
         return cuotaMensualMapper.toDtos(cuotas);
     }
@@ -99,7 +99,4 @@ public class CuotaMensualService {
             throw new BusinessException("El valor de cuota no existe");
         }
     }
-
-
-
 }

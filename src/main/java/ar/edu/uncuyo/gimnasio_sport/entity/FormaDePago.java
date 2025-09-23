@@ -16,8 +16,12 @@ public class FormaDePago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String observacion;
+
+    @Column(nullable = false)
     private boolean eliminado;
+
     @Enumerated(EnumType.STRING)
     private TipoDePago tipoDePago;
 }
