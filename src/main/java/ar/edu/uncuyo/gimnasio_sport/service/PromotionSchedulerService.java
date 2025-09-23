@@ -61,4 +61,7 @@ public class PromotionSchedulerService {
             mensajeService.crear(dto);
         }
     }
+
+
 }
+
