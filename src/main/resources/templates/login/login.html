@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/adminLayout}">
+
+<head>
+    <title>Gimnasio Sport - Inicio de Sesión</title>
+</head>
+
+<body>
+
+<th:block layout:fragment="content">
+    <div th:replace="~{login/form :: form(title='Inicia Sesion', actionUrl='/login', readOnly=false, loginForm=${loginForm})}"></div>
+</th:block>
+
+
+</body>
+</html>

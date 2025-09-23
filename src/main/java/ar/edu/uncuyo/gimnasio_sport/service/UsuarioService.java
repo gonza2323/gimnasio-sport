@@ -33,4 +33,13 @@ public class UsuarioService {
         if (!clave.equals(confirmacionClave))
             throw new BusinessException("NoIguales.usuario.confirmacionClave");
     }
+
+    public void validarCredenciales(String nombreUsuario, String clave) {
+        Usuario usuario = usuarioRepository.findByNombreUsuarioAndEliminadoFalse(nombreUsuario)
+                .orElseThrow(() -> new BusinessException("usuario.noEncontrado"));
+
+        if (!passwordEncoder.matches(clave, usuario.getClave())) {
+            throw new BusinessException("usuario.claveIncorrecta");
+        }
+    }
 }

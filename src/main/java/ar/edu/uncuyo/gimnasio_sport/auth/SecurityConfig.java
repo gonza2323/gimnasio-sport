@@ -33,13 +33,24 @@ public class SecurityConfig {
                         .requestMatchers("/paises/**").hasRole("ADMINISTRATIVO")
                         .anyRequest().authenticated()
                 )
-//                .formLogin(form -> form
-//                        .loginPage("/login")
-//                        .loginProcessingUrl("/login")
-//                        .defaultSuccessUrl("/", true)    // redirect after successful login
-//                        .failureUrl("/login?error=true")
-//                        .permitAll()
-//                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .usernameParameter("nombreUsuario")  // <---- coincide con tu DTO/campos
+                        .passwordParameter("clave")
+                        .defaultSuccessUrl("/", true)    // redirect after successful login
+                        .failureHandler((request, response, exception) -> {
+                            if (exception instanceof org.springframework.security.authentication.BadCredentialsException) {
+                                request.getSession().setAttribute("loginError", "Usuario o contraseña incorrectos");
+                            } else if (exception instanceof org.springframework.security.core.userdetails.UsernameNotFoundException) {
+                                request.getSession().setAttribute("loginError", "El usuario no existe");
+                            } else {
+                                request.getSession().setAttribute("loginError", "Error inesperado");
+                            }
+                            response.sendRedirect("/login?error=true");
+                        })
+                        .permitAll()
+                )
                 .formLogin(form -> form.permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
