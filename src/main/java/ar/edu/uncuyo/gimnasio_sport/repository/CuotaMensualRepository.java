@@ -28,4 +28,6 @@ public interface CuotaMensualRepository extends JpaRepository<CuotaMensual, Long
             AND c.socio.id = :socioId
             """)
     double getDeudaTotalDeSocio(Long socioId);
+
+    List<CuotaMensual> findAllByIdInAndSocioIdAndEliminadoFalse(List<Long> cuotasIds, Long id);
 }

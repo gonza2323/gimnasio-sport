@@ -44,7 +44,7 @@ public class DataInitialization implements CommandLineRunner {
 
     @Transactional
     protected void crearDatosIniciales() {
-        if (usuarioRepository.existsByNombreUsuarioAndEliminadoFalse("admin")) {
+        if (usuarioRepository.existsByNombreUsuarioAndEliminadoFalse("pepeargento@gmail.com")) {
             System.out.println("Datos iniciales ya creados. Salteando creación de datos iniciales. Para forzar su creación, borrar la base de datos");
             return;
         }

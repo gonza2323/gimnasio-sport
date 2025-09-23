@@ -12,7 +12,9 @@ import ar.edu.uncuyo.gimnasio_sport.repository.CuotaMensualRepository;
 import ar.edu.uncuyo.gimnasio_sport.repository.ValorCuotaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -154,5 +156,17 @@ public class CuotaMensualService {
     public double getDeudaTotalSocioActual() {
         Socio socioActual = socioService.buscarSocioActual();
         return getDeudaTotalDeSocio(socioActual.getId());
+    }
+
+    public List<CuotaMensualDto> buscarCuotasParaPagoDeSocioActual(List<Long> cuotasIds) {
+        Socio socioActual = socioService.buscarSocioActual();
+
+        // TODO: Permite pagar cuotas ya pagadas, aunque el front no lo permita
+        List<CuotaMensual> cuotasPertenecientesAlSocio = cuotaMensualRepository.findAllByIdInAndSocioIdAndEliminadoFalse(cuotasIds, socioActual.getId());
+
+        if (cuotasPertenecientesAlSocio.size() != cuotasIds.size())
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+        return cuotaMensualMapper.toDtos(cuotasPertenecientesAlSocio);
     }
 }
