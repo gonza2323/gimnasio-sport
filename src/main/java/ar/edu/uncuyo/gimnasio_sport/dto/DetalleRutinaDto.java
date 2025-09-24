@@ -5,15 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class DetalleRutinaDto {
-
     private Long id;
-    private Date fecha;
+    private LocalDate fecha;
     private String actividad;
     private EstadoRutina estadoRutina;
     private boolean eliminado;

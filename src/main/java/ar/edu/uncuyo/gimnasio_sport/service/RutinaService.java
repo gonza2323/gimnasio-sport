@@ -2,11 +2,7 @@ package ar.edu.uncuyo.gimnasio_sport.service;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.DetalleRutinaDto;
 import ar.edu.uncuyo.gimnasio_sport.dto.RutinaDto;
-import ar.edu.uncuyo.gimnasio_sport.entity.DetalleRutina;
-import ar.edu.uncuyo.gimnasio_sport.entity.Empleado;
-import ar.edu.uncuyo.gimnasio_sport.entity.Persona;
-import ar.edu.uncuyo.gimnasio_sport.entity.Rutina;
-import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
+import ar.edu.uncuyo.gimnasio_sport.entity.*;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.DetalleRutinaMapper;
 import ar.edu.uncuyo.gimnasio_sport.mapper.RutinaMapper;
@@ -19,16 +15,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class RutinaService {
 
-    private static final long DURACION_MINIMA_MS = TimeUnit.DAYS.toMillis(1);
-    private static final long DURACION_MAXIMA_MS = TimeUnit.DAYS.toMillis(365);
+    private static final long DURACION_MINIMA_MS = 1;
+    private static final long DURACION_MAXIMA_MS = 365;
 
     private final RutinaRepository rutinaRepository;
     private final SocioRepository socioRepository;
@@ -177,20 +173,20 @@ public class RutinaService {
             throw new BusinessException("rutina.tipo.requerido");
         }
 
-        Date inicio = dto.getFechaInicio();
+        LocalDate inicio = dto.getFechaInicio();
         if (inicio == null) {
             throw new BusinessException("rutina.fechaInicio.requerida");
         }
 
-        Date fin = dto.getFechaFinalizacion();
+        LocalDate fin = dto.getFechaFinalizacion();
         if (fin == null) {
             throw new BusinessException("rutina.fechaFin.requerida");
         }
-        if (!fin.after(inicio)) {
+        if (!fin.isAfter(inicio)) {
             throw new BusinessException("rutina.fechas.orden");
         }
 
-        long duracion = fin.getTime() - inicio.getTime();
+        long duracion = ChronoUnit.DAYS.between(inicio, fin);
         if (duracion < DURACION_MINIMA_MS) {
             throw new BusinessException("rutina.duracion.minima");
         }

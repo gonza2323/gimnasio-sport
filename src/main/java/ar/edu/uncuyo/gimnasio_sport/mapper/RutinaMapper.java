@@ -7,8 +7,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import java.util.Date;
-
 @Mapper(componentModel = "spring", uses = {DetalleRutinaMapper.class})
 public interface RutinaMapper {
 
@@ -16,12 +14,8 @@ public interface RutinaMapper {
     @Mapping(target = "profesor", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
     @Mapping(target = "detalles", source = "detalles")
-    @Mapping(target = "fechaInicio", expression = "java(cloneDate(dto.getFechaInicio()))")
-    @Mapping(target = "fechaFinalizacion", expression = "java(cloneDate(dto.getFechaFinalizacion()))")
     Rutina toEntity(RutinaDto dto);
 
-    @Mapping(target = "fechaInicio", expression = "java(cloneDate(rutina.getFechaInicio()))")
-    @Mapping(target = "fechaFinalizacion", expression = "java(cloneDate(rutina.getFechaFinalizacion()))")
     @Mapping(target = "socioId", expression = "java(rutina.getUsuario() != null ? rutina.getUsuario().getId() : null)")
     @Mapping(target = "profesorId", expression = "java(rutina.getProfesor() != null ? rutina.getProfesor().getId() : null)")
     @Mapping(target = "detalles", source = "detalles")
@@ -33,11 +27,5 @@ public interface RutinaMapper {
 
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "tipo", source = "tipo")
-    @Mapping(target = "fechaInicio", expression = "java(cloneDate(dto.getFechaInicio()))")
-    @Mapping(target = "fechaFinalizacion", expression = "java(cloneDate(dto.getFechaFinalizacion()))")
     void updateEntityFromDto(RutinaDto dto, @MappingTarget Rutina rutina);
-
-    default Date cloneDate(Date source) {
-        return source == null ? null : new Date(source.getTime());
-    }
 }

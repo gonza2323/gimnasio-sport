@@ -18,9 +18,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/rutinas")
@@ -265,8 +267,8 @@ public class RutinaController {
     private RutinaDto nuevaRutina(Long profesorId) {
         RutinaDto rutina = new RutinaDto();
         rutina.setProfesorId(profesorId);
-        rutina.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
-        rutina.setFechaFinalizacion(Timestamp.valueOf(LocalDateTime.now().plusDays(7)));
+        rutina.setFechaInicio(LocalDate.now());
+        rutina.setFechaFinalizacion(LocalDate.now().plusDays(7));
         return rutina;
     }
 }

@@ -4,8 +4,8 @@ import ar.edu.uncuyo.gimnasio_sport.enums.EstadoRutina;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Table(name = "rutinas")
@@ -20,11 +20,9 @@ public class Rutina {
     @Enumerated(EnumType.STRING)
     private EstadoRutina tipo;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaInicio;
+    private LocalDate fechaInicio;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaFinalizacion;
+    private LocalDate fechaFinalizacion;
 
     @JoinColumn
     @ManyToOne(cascade = CascadeType.PERSIST)
