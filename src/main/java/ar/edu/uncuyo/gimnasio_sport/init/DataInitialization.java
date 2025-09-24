@@ -267,25 +267,25 @@ public class DataInitialization implements CommandLineRunner {
         valorCuotaService.crearValorCuota(ValorCuotaDto.builder()
                 .fechaHasta(LocalDate.of(2025, 12, 31))
                 .fechaDesde(LocalDate.of(2025, 7, 1))
-                .valorCuota(30000d)
+                .valorCuota(30d)
                 .build());
 
         valorCuotaService.crearValorCuota(ValorCuotaDto.builder()
                 .fechaHasta(LocalDate.of(2025, 6, 30))
                 .fechaDesde(LocalDate.of(2025, 1, 1))
-                .valorCuota(20000d)
+                .valorCuota(20d)
                 .build());
 
         valorCuotaService.crearValorCuota(ValorCuotaDto.builder()
                 .fechaHasta(LocalDate.of(2024, 12, 31))
                 .fechaDesde(LocalDate.of(2024, 7, 1))
-                .valorCuota(10000d)
+                .valorCuota(10d)
                 .build());
 
         valorCuotaService.crearValorCuota(ValorCuotaDto.builder()
                 .fechaHasta(LocalDate.of(2024, 6, 30))
                 .fechaDesde(LocalDate.of(2024, 1, 1))
-                .valorCuota(5000d)
+                .valorCuota(5d)
                 .build());
     }
 

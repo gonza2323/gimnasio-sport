@@ -6,6 +6,7 @@ import ar.edu.uncuyo.gimnasio_sport.entity.CuotaMensual;
 import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
 import ar.edu.uncuyo.gimnasio_sport.entity.ValorCuota;
 import ar.edu.uncuyo.gimnasio_sport.enums.EstadoCuota;
+import ar.edu.uncuyo.gimnasio_sport.enums.TipoDePago;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.CuotaMensualMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.CuotaMensualRepository;
@@ -28,6 +29,7 @@ public class CuotaMensualService {
     private final ValorCuotaRepository valorCuotaRepository;
     private final SocioService socioService;
     private final ValorCuotaService valorCuotaService;
+    private final FacturaService facturaService;
 
     public CuotaMensual crearCuotaMensual(CuotaMensualCreateDto cuotaMensualDto) throws BusinessException {
         if (cuotaMensualRepository.existsBySocioIdAndMesAndAnioAndEliminadoFalse(
@@ -161,12 +163,25 @@ public class CuotaMensualService {
     public List<CuotaMensualDto> buscarCuotasParaPagoDeSocioActual(List<Long> cuotasIds) {
         Socio socioActual = socioService.buscarSocioActual();
 
-        // TODO: Permite pagar cuotas ya pagadas, aunque el front no lo permita
-        List<CuotaMensual> cuotasPertenecientesAlSocio = cuotaMensualRepository.findAllByIdInAndSocioIdAndEliminadoFalse(cuotasIds, socioActual.getId());
+        List<CuotaMensual> cuotasPertenecientesAlSocio = cuotaMensualRepository.buscarCuotasAdeudadasPorIdsDeSocio(cuotasIds, socioActual.getId());
 
         if (cuotasPertenecientesAlSocio.size() != cuotasIds.size())
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
         return cuotaMensualMapper.toDtos(cuotasPertenecientesAlSocio);
+    }
+
+    public void pagarCuotas(List<Long> cuotasIds, TipoDePago tipoDePago) {
+        List<CuotaMensual> cuotasAPagar = cuotaMensualRepository.buscarCuotasAdeudadasPorIds(cuotasIds);
+
+        if (cuotasAPagar.size() != cuotasIds.size())
+            return;
+
+        for (CuotaMensual cuota : cuotasAPagar) {
+            cuota.setEstado(EstadoCuota.PAGADA);
+        }
+
+        cuotaMensualRepository.saveAll(cuotasAPagar);
+        // TODO: Crear factura
     }
 }

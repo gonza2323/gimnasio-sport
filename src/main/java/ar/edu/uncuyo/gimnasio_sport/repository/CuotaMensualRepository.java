@@ -29,5 +29,22 @@ public interface CuotaMensualRepository extends JpaRepository<CuotaMensual, Long
             """)
     double getDeudaTotalDeSocio(Long socioId);
 
-    List<CuotaMensual> findAllByIdInAndSocioIdAndEliminadoFalse(List<Long> cuotasIds, Long id);
+    @Query("""
+                SELECT c
+                FROM CuotaMensual c
+                WHERE c.id IN :cuotasIds
+                  AND c.socio.id = :socioId
+                  AND c.estado = ar.edu.uncuyo.gimnasio_sport.enums.EstadoCuota.ADEUDADA
+                  AND c.eliminado = false
+            """)
+    List<CuotaMensual> buscarCuotasAdeudadasPorIdsDeSocio(List<Long> cuotasIds, Long socioId);
+
+    @Query("""
+                SELECT c
+                FROM CuotaMensual c
+                WHERE c.id IN :cuotasIds
+                  AND c.estado = ar.edu.uncuyo.gimnasio_sport.enums.EstadoCuota.ADEUDADA
+                  AND c.eliminado = false
+            """)
+    List<CuotaMensual> buscarCuotasAdeudadasPorIds(List<Long> cuotasIds);
 }
