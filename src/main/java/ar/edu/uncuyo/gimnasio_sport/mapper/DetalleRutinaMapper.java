@@ -14,6 +14,7 @@ public interface DetalleRutinaMapper {
 
     @Mapping(target = "fecha", expression = "java(cloneDate(dto.getFecha()))")
     @Mapping(target = "rutina", ignore = true)
+    @Mapping(target = "estadoRutina", ignore = true)
     DetalleRutina toEntity(DetalleRutinaDto dto);
 
     @Mapping(target = "fecha", expression = "java(cloneDate(detalle.getFecha()))")

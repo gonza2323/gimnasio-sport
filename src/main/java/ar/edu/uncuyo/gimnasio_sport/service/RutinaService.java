@@ -40,30 +40,18 @@ public class RutinaService {
 
     @Transactional
     public RutinaDto crear(RutinaDto dto) {
+
         validarRutina(dto);
         Rutina rutina = rutinaMapper.toEntity(dto);
         rutina.setEliminado(false);
         relacionarSocioYProfesor(rutina, dto.getSocioId(), dto.getProfesorId());
 
         if (dto.getDetalles() != null && !dto.getDetalles().isEmpty()) {
-            String raw = dto.getDetalles().get(0).getActividad(); // texto plano: "Pecho; Espalda; Piernas"
-            if (raw != null && !raw.isBlank()) {
-                // limpiamos lo que pudo mapear el mapper (evita guardar el item "crudo")
-                rutina.getDetalles().clear();
-
-                String[] partes = raw.split(";");
-                for (String parte : partes) {
-                    String texto = parte.trim();
-                    if (!texto.isEmpty()) {
-                        DetalleRutina detalle = new DetalleRutina();
-                        detalle.setRutina(rutina);
-                        detalle.setActividad(texto);
-                        detalle.setFecha(new Date());
-                        detalle.setEstadoRutina(dto.getTipo()); // o un valor por defecto (p.ej. EstadoRutina.SIN_FINALIZAR)
-                        detalle.setEliminado(false);
-                        rutina.getDetalles().add(detalle);
-                    }
-                }
+            for (DetalleRutinaDto detalleDto : dto.getDetalles()) {
+                detalleDto.setEliminado(false);
+                DetalleRutina detalle = detalleRutinaMapper.toEntity(detalleDto);
+                detalle.setRutina(rutina); // relación bidireccional
+                rutina.getDetalles().add(detalle);
             }
         }
 
@@ -108,51 +96,29 @@ public class RutinaService {
         Rutina rutina = obtenerRutina(id);
         rutinaMapper.updateEntityFromDto(dto, rutina);
         relacionarSocioYProfesor(rutina, dto.getSocioId(), dto.getProfesorId());
-
+        rutina.getDetalles().clear();
 
         if (dto.getDetalles() != null && !dto.getDetalles().isEmpty()) {
-            String raw = dto.getDetalles().get(0).getActividad(); // texto plano: "Pecho; Espalda; Piernas"
-            if (raw != null && !raw.isBlank()) {
-                // limpiamos los detalles existentes
-                rutina.getDetalles().clear();
-
-                String[] partes = raw.split(";");
-                for (String parte : partes) {
-                    String texto = parte.trim();
-                    if (!texto.isEmpty()) {
-                        DetalleRutina detalle = new DetalleRutina();
-                        detalle.setRutina(rutina);
-                        detalle.setActividad(texto);
-                        detalle.setFecha(new Date());
-                        detalle.setEstadoRutina(dto.getTipo()); // o un valor por defecto (p.ej. EstadoRutina.SIN_FINALIZAR)
-                        detalle.setEliminado(false);
-                        rutina.getDetalles().add(detalle);
-                    }
-                }
+            for (DetalleRutinaDto detalleDto : dto.getDetalles()) {
+                detalleDto.setEliminado(false);
+                DetalleRutina detalle = detalleRutinaMapper.toEntity(detalleDto);
+                detalle.setRutina(rutina); // relación bidireccional
+                rutina.getDetalles().add(detalle);
             }
         }
 
-        Rutina actualizada = rutinaRepository.save(rutina);
+        Rutina actualizada = rutinaRepository.save(rutina); // cascade guarda detalles
         return toDto(actualizada);
     }
+
 
 
     @Transactional
     public void eliminar(Long id) {
         Rutina rutina = obtenerRutina(id);
         rutina.setEliminado(true);
+        rutina.getDetalles().forEach(d -> d.setEliminado(true));
         rutinaRepository.save(rutina);
-    }
-
-    @Transactional
-    public DetalleRutinaDto crearDetalle(Long rutinaId, DetalleRutinaDto dto) {
-        validarDetalleRutina(dto);
-        Rutina rutina = obtenerRutina(rutinaId);
-        DetalleRutina detalle = detalleRutinaMapper.toEntity(dto);
-        detalle.setRutina(rutina);
-        detalle.setEliminado(false);
-        DetalleRutina guardado = detalleRutinaRepository.save(detalle);
-        return toDetalleDto(guardado);
     }
 
     @Transactional(readOnly = true)
@@ -168,13 +134,6 @@ public class RutinaService {
         detalleRutinaMapper.updateFromDto(dto, detalle);
         DetalleRutina actualizado = detalleRutinaRepository.save(detalle);
         return toDetalleDto(actualizado);
-    }
-
-    @Transactional
-    public void eliminarDetalle(Long idDetalle) {
-        DetalleRutina detalle = obtenerDetalle(idDetalle);
-        detalle.setEliminado(true);
-        detalleRutinaRepository.save(detalle);
     }
 
     private Rutina obtenerRutina(Long id) {

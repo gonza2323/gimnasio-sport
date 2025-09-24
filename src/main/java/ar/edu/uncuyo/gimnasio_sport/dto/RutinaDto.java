@@ -27,7 +27,6 @@ public class RutinaDto {
 
     private List<DetalleRutinaDto> detalles;
 
-
     private String socioNombre;
 
     private String socioEmail;
