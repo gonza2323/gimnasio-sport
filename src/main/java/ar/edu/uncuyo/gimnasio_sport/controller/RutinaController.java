@@ -70,7 +70,7 @@ public class RutinaController {
             model.addAttribute("rutinasPorSocio", rutinasPorSocio);
             model.addAttribute("resumenSocios", resumen);
 
-            // 🔹 Cargar todos los socios activos para el combo del formulario
+
             Map<Long, String> socios = new LinkedHashMap<>();
             for (Socio s : socioRepository.findAllByEliminadoFalse()) {
                 String nombre = (s.getNombre() != null ? s.getNombre() : "") + " " +
@@ -125,6 +125,27 @@ public class RutinaController {
             model.addAttribute("msgError", "error.sistema");
         }
         return "socio/listaRutina";
+    }
+
+    @GetMapping("/profesor/{profesorId}/{rutinaId}")
+    public String verRutinaDeSocio(@PathVariable Long profesorId,
+                                   @PathVariable Long rutinaId,
+                                   Model model) {
+        try {
+            Empleado profesor = profesorActual();
+            if (profesor == null || profesor.getTipoEmpleado() != TipoEmpleado.PROFESOR) {
+                throw new BusinessException("acceso.denegado");
+            }
+
+            return tableroProfesor(profesorId, rutinaId, model);
+
+        } catch (BusinessException e) {
+            model.addAttribute("msgError", e.getMessageKey());
+            return "rutina/list";
+        } catch (Exception e) {
+            model.addAttribute("msgError", "error.sistema");
+            return "rutina/list";
+        }
     }
 
     @PostMapping("/profesor/{profesorId}/rutinas/{rutinaId}/eliminar")
