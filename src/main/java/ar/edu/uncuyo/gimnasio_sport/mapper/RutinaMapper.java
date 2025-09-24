@@ -25,6 +25,10 @@ public interface RutinaMapper {
     @Mapping(target = "socioId", expression = "java(rutina.getUsuario() != null ? rutina.getUsuario().getId() : null)")
     @Mapping(target = "profesorId", expression = "java(rutina.getProfesor() != null ? rutina.getProfesor().getId() : null)")
     @Mapping(target = "detalles", source = "detalles")
+    @Mapping(target = "socioNombre", ignore = true)
+    @Mapping(target = "socioEmail", ignore = true)
+    @Mapping(target = "socioNumero", ignore = true)
+    @Mapping(target = "profesorNombre", ignore = true)
     RutinaDto toDto(Rutina rutina);
 
     @BeanMapping(ignoreByDefault = true)

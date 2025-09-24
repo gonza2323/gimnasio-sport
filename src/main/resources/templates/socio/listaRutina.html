@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/adminLayout}">
+
+<head>
+    <title>Gimnasio Sport - Rutinas</title>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <section class="my-5">
+        <div class="container">
+
+            <div th:if="${msgError}" th:text="#{${msgError}}" class="alert alert-danger" role="alert">MENSAJE ERROR</div>
+            <div th:if="${msgExito}" th:text="${msgExito}" class="alert alert-success" role="alert">MENSAJE EXITO</div>
+
+            <div class="d-flex align-items-center mb-3 flex-wrap">
+                <h3 class="m-0 mr-3">Rutinas</h3>
+                <span class="text-muted" th:if="${socioNombre}" th:text="${socioNombre}"></span>
+            </div>
+
+            <div th:if="${rutinas == null || #lists.isEmpty(rutinas)}" class="alert alert-secondary">
+                No se registran rutinas para mostrar.
+            </div>
+
+            <div class="table-responsive" th:if="${rutinas != null && !#lists.isEmpty(rutinas)}">
+                <table class="table table-striped table-bordered align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Estado</th>
+                        <th>Profesor</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="rutina : ${rutinas}">
+                        <td>
+                            <span class="badge bg-primary px-3 py-2" th:text="${rutina.tipo}">EN_PROCESO</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center" th:if="${rutina.profesorNombre != null}">
+                                <i class="bi bi-person-badge text-primary me-2"></i>
+                                <span class="fw-semibold" th:text="${rutina.profesorNombre}">Juan Pérez</span>
+                            </div>
+                            <span class="text-muted" th:unless="${rutina.profesorNombre != null}">Sin profesor asignado</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/rutinas/{id}(id=${rutina.id})}" class="btn btn-primary btn-sm" title="Ver detalle">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</th:block>
+</body>
+</html>
