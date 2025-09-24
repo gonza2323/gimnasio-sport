@@ -116,6 +116,36 @@ public class RutinaController {
         return "redirect:" + redirectProfesor + profesorId;
     }
 
+    @GetMapping("/socio/{socioId}/rutinas/{rutinaId}")
+    public String verUnaRutinaSocio(@PathVariable Long socioId,
+                                    @PathVariable Long rutinaId,
+                                    Model model) {
+        try {
+            Socio socio = socioRepository.findByIdAndEliminadoFalse(socioId)
+                    .orElseThrow(() -> new BusinessException("rutina.socio.noEncontrado"));
+
+            RutinaDto rutina = rutinaService.buscarPorId(rutinaId);
+
+            if (rutina.getSocioId() == null || !rutina.getSocioId().equals(socioId)) {
+                throw new BusinessException("rutina.no.pertenece.socio");
+            }
+
+            model.addAttribute("socioNombre", (socio.getNombre() + " " + socio.getApellido()).trim());
+            model.addAttribute("rutina", rutina);
+
+            // 5. Retornar vista individual (ej: socio/vistaRutina.html)
+            return "socio/vistaRutina";
+
+        } catch (BusinessException e) {
+            model.addAttribute("msgError", e.getMessageKey());
+            return "socio/listaRutina"; // fallback
+        } catch (Exception e) {
+            model.addAttribute("msgError", "error.sistema");
+            return "socio/listaRutina"; // fallback
+        }
+    }
+
+
     @GetMapping("/socio/{socioId}/rutinas")
     public String verRutinasPorSocio(@PathVariable Long socioId, Model model) {
         try {
@@ -166,6 +196,38 @@ public class RutinaController {
         }
         return "redirect:" + redirectProfesor + profesorId;
     }
+
+    @GetMapping("/socio/{socioId}/{rutinaId}")
+    public String verDetallesRutina(@PathVariable Long socioId,
+                                    @PathVariable Long rutinaId,
+                                    Model model) {
+        try {
+            Socio socio = socioRepository.findByIdAndEliminadoFalse(socioId)
+                    .orElseThrow(() -> new BusinessException("rutina.socio.noEncontrado"));
+
+            RutinaDto rutina = rutinaService.buscarPorId(rutinaId);
+
+            if (rutina.getSocioId() == null || !rutina.getSocioId().equals(socioId)) {
+                throw new BusinessException("rutina.no.pertenece.socio");
+            }
+
+            model.addAttribute("socioNombre", (socio.getNombre() + " " + socio.getApellido()).trim());
+            model.addAttribute("rutina", rutina);
+
+            return "socio/vistaRutina";
+
+        } catch (BusinessException e) {
+            model.addAttribute("msgError", e.getMessageKey());
+            return "socio/listaRutina"; // fallback
+        } catch (Exception e) {
+            model.addAttribute("msgError", "error.sistema");
+            return "socio/listaRutina"; // fallback
+        }
+    }
+
+
+
+
 
     // --- Métodos auxiliares ---
 

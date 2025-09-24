@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html class="no-js" lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/adminLayout}">
+
+<head>
+    <title>Gimnasio Sport - Rutina</title>
+</head>
+
+<body>
+<th:block layout:fragment="content">
+    <section class="my-5">
+        <div class="container">
+            <div th:if="${msgError}" th:text="#{${msgError}}"
+                 class="alert alert-danger" role="alert"></div>
+            <div th:if="${msgExito}" th:text="${msgExito}"
+                 class="alert alert-success" role="alert"></div>
+
+            <div th:if="${rutina == null}" class="alert alert-secondary" role="alert">
+                No se encontró la rutina solicitada.
+            </div>
+
+            <div class="card shadow-sm border-0" th:if="${rutina != null}">
+                <div class="card-header bg-white py-4">
+                    <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
+                        <div>
+                            <span class="text-muted text-uppercase small">Socio</span>
+                            <h4 class="mb-1"
+                                th:text="${rutina.socioNombre != null ? rutina.socioNombre : 'Socio'}">Nombre del socio</h4>
+                            <span class="text-muted"
+                                  th:text="${rutina.socioEmail}"
+                                  th:if="${rutina.socioEmail != null}">correo@socio.com</span>
+                        </div>
+                        <div class="text-md-end">
+                            <span class="text-muted text-uppercase small">Profesor</span>
+                            <h5 class="mb-0"
+                                th:text="${rutina.profesorNombre != null ? rutina.profesorNombre : 'Sin asignar'}">Nombre del profesor</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <span class="text-muted text-uppercase small d-block">Estado</span>
+                            <span class="badge px-3 py-2"
+                                  th:classappend="${rutina.tipo == T(ar.edu.uncuyo.gimnasio_sport.enums.EstadoRutina).FINALIZADA} ? ' bg-success' :
+                                                  (${rutina.tipo == T(ar.edu.uncuyo.gimnasio_sport.enums.EstadoRutina).ANULADA} ? ' bg-danger' : ' bg-primary')"
+                                  th:text="${rutina.tipo}">EN_PROCESO</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted text-uppercase small d-block">Fecha de inicio</span>
+                            <p class="mb-0 fw-semibold" th:text="${rutina.fechaInicio}">2024-01-01</p>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted text-uppercase small d-block">Fecha de finalización</span>
+                            <p class="mb-0 fw-semibold" th:text="${rutina.fechaFinalizacion}">2024-01-07</p>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered align-middle">
+                            <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha</th>
+                                <th>Actividad</th>
+                                <th>Estado</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${rutina.detalles == null || #lists.isEmpty(rutina.detalles)}">
+                                <td colspan="4" class="text-center text-muted">
+                                    No se registran actividades para esta rutina.
+                                </td>
+                            </tr>
+                            <tr th:each="detalle, iterStat : ${rutina.detalles}">
+                                <td th:text="${iterStat.index + 1}">1</td>
+                                <td th:text="${detalle.fecha}">2024-01-01</td>
+                                <td th:text="${detalle.actividad}">Descripción de la actividad</td>
+                                <td>
+                                    <span class="badge px-3 py-2"
+                                          th:classappend="${detalle.estadoRutina == T(ar.edu.uncuyo.gimnasio_sport.enums.EstadoRutina).FINALIZADA} ? ' bg-success' :
+                                                          (${detalle.estadoRutina == T(ar.edu.uncuyo.gimnasio_sport.enums.EstadoRutina).ANULADA} ? ' bg-danger' : ' bg-secondary')"
+                                          th:text="${detalle.estadoRutina}">EN_PROCESO</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <a class="btn btn-outline-secondary"
+                           th:href="@{'/rutinas/socio/' + ${rutina.socioId} + '/rutinas'}">
+                            <i class="bi bi-arrow-left"></i>
+                            Volver
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</th:block>
+</body>
+</html>

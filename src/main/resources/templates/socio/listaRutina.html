@@ -57,14 +57,13 @@
                         <td>
                             <!-- Botón que abre el modal -->
                             <button type="button"
-                                    class="btn btn-primary btn-sm ver-detalle"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalDetalle"
-                                    th:data-id="${rutina.id}"
-                                    th:data-estado="${rutina.tipo}"
-                                    th:data-profesor="${rutina.profesorNombre}"
-                                    th:data-detalles="${#lists.size(rutina.detalles) > 0 ? rutina.detalles : '[]'}">
-                                <i class="bi bi-eye"></i>
+                                    class="btn btn-primary btn-sm ver-detalle">
+                                    <a th:href="@{/rutinas/socio/{socioId}/{rutinaId}(socioId=${socioId}, rutinaId=${rutina.id})}"
+                                       class="btn btn-primary btn-sm me-1" title="Ver">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                </i>
                             </button>
                         </td>
                     </tr>
