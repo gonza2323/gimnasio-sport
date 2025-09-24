@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/fonts/**", "/img/**", "/js/**").permitAll()
                         .requestMatchers("/", "/about", "/blog", "/contact", "/elements",
-                                "gallery", "pricing", "single-blog", "/error").permitAll()
+                                "gallery", "pricing", "single-blog", "/error", "/webhook/mercadopago").permitAll()
                         .requestMatchers("/paises/**").hasRole("ADMINISTRATIVO")
                         .anyRequest().authenticated()
                 )
