@@ -9,15 +9,11 @@ import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.repository.SocioRepository;
 import ar.edu.uncuyo.gimnasio_sport.service.PersonaService;
 import ar.edu.uncuyo.gimnasio_sport.service.RutinaService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -144,77 +140,6 @@ public class RutinaController {
             redirectAttributes.addFlashAttribute("msgError", "error.sistema");
         }
         return "redirect:" + redirectProfesor + profesorId;
-    }
-
-    // --- API REST ---
-
-    @PostMapping(value = "/api", consumes = "application/json", produces = "application/json")
-    @ResponseBody
-    public ResponseEntity<?> crear(@RequestBody RutinaDto dto, UriComponentsBuilder uriBuilder) {
-        try {
-            RutinaDto creada = rutinaService.crear(dto);
-            if (creada.getId() == null) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-            URI location = uriBuilder.path("/rutinas/{id}")
-                    .buildAndExpand(creada.getId())
-                    .toUri();
-            return ResponseEntity.created(location).body(creada);
-        } catch (BusinessException e) {
-            return ResponseEntity.badRequest().body(e.getMessageKey());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping(value = "/api", produces = "application/json")
-    @ResponseBody
-    public ResponseEntity<?> listar() {
-        try {
-            return ResponseEntity.ok(rutinaService.listar());
-        } catch (BusinessException e) {
-            return ResponseEntity.badRequest().body(e.getMessageKey());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping(value = "/{id}", produces = "application/json")
-    @ResponseBody
-    public ResponseEntity<?> buscarPorId(@PathVariable("id") Long id) {
-        try {
-            return ResponseEntity.ok(rutinaService.buscarPorId(id));
-        } catch (BusinessException e) {
-            return ResponseEntity.badRequest().body(e.getMessageKey());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
-    @ResponseBody
-    public ResponseEntity<?> actualizar(@PathVariable("id") Long id,
-                                        @RequestBody RutinaDto dto) {
-        try {
-            return ResponseEntity.ok(rutinaService.actualizar(id, dto));
-        } catch (BusinessException e) {
-            return ResponseEntity.badRequest().body(e.getMessageKey());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @DeleteMapping(value = "/{id}")
-    @ResponseBody
-    public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) {
-        try {
-            rutinaService.eliminar(id);
-            return ResponseEntity.noContent().build();
-        } catch (BusinessException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
     }
 
     // --- Métodos auxiliares ---

@@ -35,24 +35,25 @@ public class RutinaService {
 
 
     @Transactional
-    public RutinaDto crear(RutinaDto dto) {
+    public Rutina crear(RutinaDto dto) {
 
         validarRutina(dto);
         Rutina rutina = rutinaMapper.toEntity(dto);
         rutina.setEliminado(false);
         relacionarSocioYProfesor(rutina, dto.getSocioId(), dto.getProfesorId());
+        rutinaRepository.save(rutina);
 
         if (dto.getDetalles() != null && !dto.getDetalles().isEmpty()) {
-            for (DetalleRutinaDto detalleDto : dto.getDetalles()) {
-                detalleDto.setEliminado(false);
+            List<DetalleRutina> detalles = dto.getDetalles().stream().map(detalleDto -> {
                 DetalleRutina detalle = detalleRutinaMapper.toEntity(detalleDto);
-                detalle.setRutina(rutina); // relación bidireccional
-                rutina.getDetalles().add(detalle);
-            }
+                detalle.setRutina(rutina);
+                return detalle;
+            }).toList();
+
+            detalleRutinaRepository.saveAll(detalles);
         }
 
-        Rutina guardada = rutinaRepository.save(rutina);
-        return toDto(guardada);
+        return rutina;
     }
 
 

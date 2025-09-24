@@ -13,7 +13,7 @@ public interface RutinaMapper {
     @Mapping(target = "usuario", ignore = true)
     @Mapping(target = "profesor", ignore = true)
     @Mapping(target = "eliminado", ignore = true)
-    @Mapping(target = "detalles", source = "detalles")
+    @Mapping(target = "detalles", ignore = true)
     Rutina toEntity(RutinaDto dto);
 
     @Mapping(target = "socioId", expression = "java(rutina.getUsuario() != null ? rutina.getUsuario().getId() : null)")
