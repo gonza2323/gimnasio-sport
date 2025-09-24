@@ -42,12 +42,16 @@ public class RutinaController {
     @GetMapping
     public String inicioRutinas() {
         Empleado profesor = profesorActual();
-        if (profesor == null) {
+        Socio socio = socioActual();
+
+        if (profesor != null && profesor.getTipoEmpleado() == TipoEmpleado.PROFESOR) {
+            return "redirect:" + redirectProfesor + profesor.getId();
+        } else if (socio != null && !socio.isEliminado()) {
+            return "redirect:/rutinas/socio/" + socio.getId() + "/rutinas";
+        } else {
             return "redirect:/";
         }
-        return "redirect:" + redirectProfesor + profesor.getId();
     }
-
     @GetMapping("/profesor/{profesorId}")
     public String tableroProfesor(@PathVariable Long profesorId,
                                   @RequestParam(value = "rutinaId", required = false) Long rutinaId,
@@ -172,6 +176,22 @@ public class RutinaController {
                 Empleado empleado = (Empleado) persona;
                 if (empleado.getTipoEmpleado() == TipoEmpleado.PROFESOR) {
                     return empleado;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    private Socio socioActual() {
+        try {
+            Object persona = personaService.buscarPersonaActual();
+            if (persona instanceof Socio) {
+                Socio socio = (Socio) persona;
+                if(!socio.isEliminado()) {
+                    return socio;
+                } else {
+                    return null;
                 }
             }
         } catch (Exception e) {
