@@ -1,53 +1,272 @@
 package ar.edu.uncuyo.gimnasio_sport.controller;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.RutinaDto;
+import ar.edu.uncuyo.gimnasio_sport.entity.Empleado;
+import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
+import ar.edu.uncuyo.gimnasio_sport.enums.EstadoRutina;
+import ar.edu.uncuyo.gimnasio_sport.enums.TipoEmpleado;
+import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
+import ar.edu.uncuyo.gimnasio_sport.repository.SocioRepository;
+import ar.edu.uncuyo.gimnasio_sport.service.PersonaService;
 import ar.edu.uncuyo.gimnasio_sport.service.RutinaService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.*;
 
-@RestController
+@Controller
 @RequestMapping("/rutinas")
-@RequiredArgsConstructor
 public class RutinaController {
 
     private final RutinaService rutinaService;
+    private final PersonaService personaService;
+    private final SocioRepository socioRepository;
 
-    @PostMapping
-    public ResponseEntity<RutinaDto> crear(@RequestBody RutinaDto dto, UriComponentsBuilder uriBuilder) {
-        RutinaDto creada = rutinaService.crear(dto);
-        if (creada.getId() == null) {
-            throw new IllegalStateException("Rutina creada sin identificador");
-        }
-        URI location = uriBuilder.path("/rutinas/{id}")
-                .buildAndExpand(creada.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(creada);
+    private final String listView = "rutina/list";
+    private final String redirectProfesor = "/rutinas/profesor/";
+
+    public RutinaController(RutinaService rutinaService,
+                            PersonaService personaService,
+                            SocioRepository socioRepository) {
+        this.rutinaService = rutinaService;
+        this.personaService = personaService;
+        this.socioRepository = socioRepository;
     }
 
     @GetMapping
-    public ResponseEntity<List<RutinaDto>> listar() {
-        return ResponseEntity.ok(rutinaService.listar());
+    public String inicioRutinas() {
+        Empleado profesor = profesorActual();
+        if (profesor == null) {
+            return "redirect:/";
+        }
+        return "redirect:" + redirectProfesor + profesor.getId();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RutinaDto> buscarPorId(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(rutinaService.buscarPorId(id));
+    @GetMapping("/profesor/{profesorId}")
+    public String tableroProfesor(@PathVariable Long profesorId,
+                                  @RequestParam(value = "rutinaId", required = false) Long rutinaId,
+                                  Model model) {
+
+        model.addAttribute("profesorId", profesorId);
+        model.addAttribute("estadosRutina", EstadoRutina.values());
+        model.addAttribute("rutinas", new ArrayList<RutinaDto>());
+        model.addAttribute("rutinasPorSocio", new LinkedHashMap<Long, List<RutinaDto>>());
+        model.addAttribute("resumenSocios", new LinkedHashMap<Long, RutinaDto>());
+        model.addAttribute("socios", new LinkedHashMap<Long, String>());
+        model.addAttribute("rutinaForm", nuevaRutina(profesorId));
+
+        try {
+            List<RutinaDto> rutinas = rutinaService.listarPorProfesor(profesorId);
+            Map<Long, List<RutinaDto>> rutinasPorSocio = agruparPorSocio(rutinas);
+            Map<Long, RutinaDto> resumen = crearResumenSocios(rutinasPorSocio);
+
+            model.addAttribute("rutinas", rutinas);
+            model.addAttribute("rutinasPorSocio", rutinasPorSocio);
+            model.addAttribute("resumenSocios", resumen);
+
+            // 🔹 Cargar todos los socios activos para el combo del formulario
+            Map<Long, String> socios = new LinkedHashMap<>();
+            for (Socio s : socioRepository.findAllByEliminadoFalse()) {
+                String nombre = (s.getNombre() != null ? s.getNombre() : "") + " " +
+                        (s.getApellido() != null ? s.getApellido() : "");
+                String correo = s.getCorreoElectronico();
+                socios.put(s.getId(), correo != null ? nombre + " (" + correo + ")" : nombre);
+            }
+            model.addAttribute("socios", socios);
+
+            model.addAttribute("rutinaForm", prepararRutinaForm(profesorId, rutinaId));
+
+        } catch (BusinessException e) {
+            model.addAttribute("msgError", e.getMessageKey());
+        } catch (Exception e) {
+            model.addAttribute("msgError", "error.sistema");
+        }
+
+        return listView;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<RutinaDto> actualizar(@PathVariable("id") Long id,
-                                                @RequestBody RutinaDto dto) {
-        return ResponseEntity.ok(rutinaService.actualizar(id, dto));
+    @PostMapping("/profesor/{profesorId}")
+    public String guardarRutina(@PathVariable Long profesorId,
+                                @ModelAttribute("rutinaForm") RutinaDto dto,
+                                RedirectAttributes redirectAttributes) {
+        dto.setProfesorId(profesorId);
+        try {
+            if (dto.getId() == null) {
+                rutinaService.crear(dto);
+                redirectAttributes.addFlashAttribute("msgExito", "Rutina creada correctamente");
+            } else {
+                rutinaService.actualizar(dto.getId(), dto);
+                redirectAttributes.addFlashAttribute("msgExito", "Rutina actualizada correctamente");
+            }
+        } catch (BusinessException e) {
+            redirectAttributes.addFlashAttribute("msgError", e.getMessageKey());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("msgError", "error.sistema");
+        }
+        return "redirect:" + redirectProfesor + profesorId;
     }
 
-    @DeleteMapping("/{id}")
+    @GetMapping("/socio/{socioId}/rutinas")
+    public String verRutinasPorSocio(@PathVariable Long socioId, Model model) {
+        try {
+            Socio socio = socioRepository.findByIdAndEliminadoFalse(socioId)
+                    .orElseThrow(() -> new BusinessException("rutina.socio.noEncontrado"));
+            model.addAttribute("socioNombre", (socio.getNombre() + " " + socio.getApellido()).trim());
+            model.addAttribute("rutinas", rutinaService.listarPorSocio(socioId));
+        } catch (BusinessException e) {
+            model.addAttribute("msgError", e.getMessageKey());
+        } catch (Exception e) {
+            model.addAttribute("msgError", "error.sistema");
+        }
+        return "socio/listaRutina";
+    }
+
+    @PostMapping("/profesor/{profesorId}/rutinas/{rutinaId}/eliminar")
+    public String eliminarRutina(@PathVariable Long profesorId,
+                                 @PathVariable Long rutinaId,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            rutinaService.eliminar(rutinaId);
+            redirectAttributes.addFlashAttribute("msgExito", "Rutina eliminada correctamente");
+        } catch (BusinessException e) {
+            redirectAttributes.addFlashAttribute("msgError", e.getMessageKey());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("msgError", "error.sistema");
+        }
+        return "redirect:" + redirectProfesor + profesorId;
+    }
+
+    // --- API REST ---
+
+    @PostMapping(value = "/api", consumes = "application/json", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> crear(@RequestBody RutinaDto dto, UriComponentsBuilder uriBuilder) {
+        try {
+            RutinaDto creada = rutinaService.crear(dto);
+            if (creada.getId() == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+            URI location = uriBuilder.path("/rutinas/{id}")
+                    .buildAndExpand(creada.getId())
+                    .toUri();
+            return ResponseEntity.created(location).body(creada);
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessageKey());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping(value = "/api", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> listar() {
+        try {
+            return ResponseEntity.ok(rutinaService.listar());
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessageKey());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping(value = "/{id}", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> buscarPorId(@PathVariable("id") Long id) {
+        try {
+            return ResponseEntity.ok(rutinaService.buscarPorId(id));
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessageKey());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> actualizar(@PathVariable("id") Long id,
+                                        @RequestBody RutinaDto dto) {
+        try {
+            return ResponseEntity.ok(rutinaService.actualizar(id, dto));
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().body(e.getMessageKey());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @DeleteMapping(value = "/{id}")
+    @ResponseBody
     public ResponseEntity<Void> eliminar(@PathVariable("id") Long id) {
-        rutinaService.eliminar(id);
-        return ResponseEntity.noContent().build();
+        try {
+            rutinaService.eliminar(id);
+            return ResponseEntity.noContent().build();
+        } catch (BusinessException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // --- Métodos auxiliares ---
+
+    private Empleado profesorActual() {
+        try {
+            Object persona = personaService.buscarPersonaActual();
+            if (persona instanceof Empleado) {
+                Empleado empleado = (Empleado) persona;
+                if (empleado.getTipoEmpleado() == TipoEmpleado.PROFESOR) {
+                    return empleado;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    private Map<Long, List<RutinaDto>> agruparPorSocio(List<RutinaDto> rutinas) {
+        Map<Long, List<RutinaDto>> resultado = new LinkedHashMap<>();
+        for (RutinaDto rutina : rutinas) {
+            Long socioId = rutina.getSocioId();
+            if (socioId == null) continue;
+            if (!resultado.containsKey(socioId)) {
+                resultado.put(socioId, new ArrayList<RutinaDto>());
+            }
+            resultado.get(socioId).add(rutina);
+        }
+        return resultado;
+    }
+
+    private Map<Long, RutinaDto> crearResumenSocios(Map<Long, List<RutinaDto>> rutinasPorSocio) {
+        Map<Long, RutinaDto> resumen = new LinkedHashMap<>();
+        for (Map.Entry<Long, List<RutinaDto>> entry : rutinasPorSocio.entrySet()) {
+            List<RutinaDto> datos = entry.getValue();
+            if (datos != null && !datos.isEmpty()) {
+                resumen.put(entry.getKey(), datos.get(0));
+            }
+        }
+        return resumen;
+    }
+
+    private RutinaDto prepararRutinaForm(Long profesorId, Long rutinaId) {
+        if (rutinaId == null) {
+            return nuevaRutina(profesorId);
+        }
+        return rutinaService.buscarPorId(rutinaId);
+    }
+
+    private RutinaDto nuevaRutina(Long profesorId) {
+        RutinaDto rutina = new RutinaDto();
+        rutina.setProfesorId(profesorId);
+        rutina.setFechaInicio(Timestamp.valueOf(LocalDateTime.now()));
+        rutina.setFechaFinalizacion(Timestamp.valueOf(LocalDateTime.now().plusDays(7)));
+        return rutina;
     }
 }

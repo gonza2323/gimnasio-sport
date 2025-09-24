@@ -36,6 +36,7 @@ public class DataInitialization implements CommandLineRunner {
     private final ValorCuotaService valorCuotaService;
     private final CuotaMensualService cuotaMensualService;
 
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
@@ -380,4 +381,6 @@ public class DataInitialization implements CommandLineRunner {
                 .socioId(1L)
                 .build());
     }
+
+
 }

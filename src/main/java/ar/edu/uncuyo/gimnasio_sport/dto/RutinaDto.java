@@ -26,4 +26,13 @@ public class RutinaDto {
     private Long profesorId;
 
     private List<DetalleRutinaDto> detalles;
+
+
+    private String socioNombre;
+
+    private String socioEmail;
+
+    private Long socioNumero;
+
+    private String profesorNombre;
 }
