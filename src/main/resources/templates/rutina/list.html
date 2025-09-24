@@ -18,7 +18,8 @@
 
             <div class="d-flex align-items-center mb-4 flex-wrap">
                 <h3 class="m-0 mr-3">Panel de Rutinas</h3>
-                <span class="text-muted" th:if="${rutinaForm != null && rutinaForm.profesorNombre != null}" th:text="${rutinaForm.profesorNombre}"></span>
+                <span class="text-muted" th:if="${rutinaForm != null && rutinaForm.profesorNombre != null}"
+                      th:text="${rutinaForm.profesorNombre}"></span>
             </div>
 
             <div class="card shadow-sm mb-4">
@@ -26,57 +27,120 @@
                     <strong th:text="${rutinaForm.id} == null ? 'Nueva rutina' : 'Editar rutina'">Nueva rutina</strong>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{'/rutinas/profesor/' + ${profesorId}}" th:object="${rutinaForm}" method="post" class="row g-3">
-                        <input type="hidden" th:field="*{id}" />
-                        <input type="hidden" th:field="*{profesorId}" />
-
-                        <select class="form-control" th:field="*{socioId}">
-                            <option value="">Seleccione un socio</option>
-                            <option th:each="entry : ${socios.entrySet()}"
-                                    th:value="${entry.key}"
-                                    th:text="${entry.value}">
-                            </option>
-                        </select>
-
-                        <div class="col-md-4">
-                            <label for="tipo" class="form-label">Estado rutina</label>
-                            <select class="form-control" id="tipo" th:field="*{tipo}">
-                                <option value="" th:disabled="*{tipo} == null" selected>Selecciona estado</option>
-                                <option th:each="estado : ${estadosRutina}" th:value="${estado}" th:text="${estado}"></option>
-                            </select>
+                    <form th:action="@{'/rutinas/profesor/' + ${profesorId}}" th:object="${rutinaForm}" method="post"
+                          class="container g-3"><input type="hidden" th:field="*{id}"/> <input type="hidden"
+                                                                                               th:field="*{profesorId}"/>
+                        <div class="form-row">
+                            <div class="form-group col-md-12"><label for="socio" class="form-label">Estado
+                                rutina</label> <select class="form-control" th:field="*{socioId}" id="socio">
+                                <option value="">Seleccione un socio</option>
+                                <option th:each="entry : ${socios.entrySet()}" th:value="${entry.key}"
+                                        th:text="${entry.value}"></option>
+                            </select></div>
                         </div>
-
-                        <div class="col-md-4">
-                            <label for="fechaInicio" class="form-label">Fecha inicio</label>
-                            <input type="text" class="form-control" id="fechaInicio"
-                                   th:value="${rutinaForm.fechaInicio != null ? rutinaForm.fechaInicio.toString().substring(0,10) : ''}"
-                                   name="fechaInicio" placeholder="yyyy-MM-dd" />
+                        <div class="form-row">
+                            <div class="form-group col-md-4"><label for="tipo" class="form-label">Estado rutina</label>
+                                <select class="form-control" id="tipo" th:field="*{tipo}">
+                                    <option value="" th:disabled="*{tipo} == null" selected>Selecciona estado</option>
+                                    <option th:each="estado : ${estadosRutina}" th:value="${estado}"
+                                            th:text="${estado}"></option>
+                                </select></div>
+                            <div class="form-group col-md-4"><label for="fechaInicio" class="form-label">Fecha
+                                inicio</label> <input type="date" class="form-control" id="fechaInicio"
+                                                      th:value="${rutinaForm.fechaInicio != null ? rutinaForm.fechaInicio.toString().substring(0,10) : ''}"
+                                                      name="fechaInicio" placeholder="yyyy-MM-dd"/></div>
+                            <div class="form-group col-md-4"><label for="fechaFinalizacion" class="form-label">Fecha
+                                fin</label> <input type="date" class="form-control" id="fechaFinalizacion"
+                                                   th:value="${rutinaForm.fechaFinalizacion != null ? rutinaForm.fechaFinalizacion.toString().substring(0,10) : ''}"
+                                                   name="fechaFinalizacion" placeholder="yyyy-MM-dd"/></div>
+                        </div> <!-- <div class="col-md-12">-->
+                        <!-- <label class="form-label">Detalle de la rutina</label>-->
+                        <!-- <input type="text" class="form-control"--> <!-- th:field="*{detalles[0].actividad}"-->
+                        <!-- placeholder="Actividad1; Actividad2; Actividad3" />--> <!-- </div>-->
+                        <div class="d-flex align-items-baseline my-4"><h4 class="mr-3">Actividades:</h4>
+                            <button type="button" id="boton-agregar">Agregar actividad</button>
                         </div>
-
-                        <div class="col-md-4">
-                            <label for="fechaFinalizacion" class="form-label">Fecha fin</label>
-                            <input type="text" class="form-control" id="fechaFinalizacion"
-                                   th:value="${rutinaForm.fechaFinalizacion != null ? rutinaForm.fechaFinalizacion.toString().substring(0,10) : ''}"
-                                   name="fechaFinalizacion" placeholder="yyyy-MM-dd" />
+                        <div id="lista-actividades">
+                            <div th:each="actividad, iterStat : *{detalles}" class="form-row actividad-item"
+                                 th:attr="data-index=${iterStat.index}">
+                                <div class="form-group col-md-3"><label
+                                        th:for="*{detalles[__${iterStat.index}__].fecha}"> Fecha de la
+                                    actividad </label> <input type="date" class="form-control"
+                                                              th:field="*{detalles[__${iterStat.index}__].fecha}"></div>
+                                <div class="form-group col-md-5"><label
+                                        th:for="*{detalles[__${iterStat.index}__].actividad}"> Actividad </label> <input
+                                        type="text" class="form-control"
+                                        th:field="*{detalles[__${iterStat.index}__].actividad}"></div>
+                                <div class="col-auto d-flex align-items-center justify-content-end justify-content-md-start">
+                                    <button type="button" class="btn btn-danger btn-sm boton-eliminar"><i
+                                            class="bi bi-trash"></i></button>
+                                </div>
+                            </div>
                         </div>
-
-
-                        <div class="col-md-12">
-                            <label class="form-label">Detalle de la rutina</label>
-                            <input type="text" class="form-control"
-                                   th:field="*{detalles[0].actividad}"
-                                   placeholder="Actividad1; Actividad2; Actividad3" />
-                        </div>
-
-                        <div class="col-12 d-flex justify-content-end">
+                        <div class="d-flex justify-content-end">
                             <button type="submit" class="genric-btn primary radius">Guardar</button>
                         </div>
                     </form>
+
+
+                    <script>
+                        const lista = document.getElementById("lista-actividades");
+                        const botonAgregar = document.getElementById("boton-agregar");
+
+                        function actualizarIndices() {
+                            const items = lista.querySelectorAll(".actividad-item");
+                            items.forEach((item, index) => {
+                                item.dataset.index = index;
+                                item.querySelectorAll("input").forEach(input => {
+                                    if (input.type === "date") {
+                                        input.name = `detalles[${index}].fecha`;
+                                    } else {
+                                        input.name = `detalles[${index}].actividad`;
+                                    }
+                                });
+                            });
+                        }
+
+                        botonAgregar.addEventListener("click", () => {
+                            const nuevo = document.createElement("div");
+                            nuevo.classList.add("form-row", "actividad-item");
+                            nuevo.innerHTML = `
+            <div class="form-group col-md-3">
+                <label>Fecha de la actividad</label>
+                <input type="date" class="form-control" name="">
+            </div>
+            <div class="form-group col-md-5">
+                <label>Actividad</label>
+                <input type="text" class="form-control" name="">
+            </div>
+            <div class="col-auto d-flex align-items-center justify-content-end justify-content-md-start">
+                <button type="button" class="btn btn-danger btn-sm boton-eliminar">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        `;
+                            lista.appendChild(nuevo);
+                            actualizarIndices();
+                        });
+
+                        // 🔑 Event delegation for delete buttons
+                        lista.addEventListener("click", (e) => {
+                            if (e.target.closest(".boton-eliminar")) {
+                                e.target.closest(".actividad-item").remove();
+                                actualizarIndices();
+                            }
+                        });
+
+                        // initialize indices for items rendered by Thymeleaf
+                        actualizarIndices();
+                    </script>
                 </div>
             </div>
 
 
-            <div th:if="${#maps.isEmpty(rutinasPorSocio)}" class="alert alert-secondary">No se registran rutinas para este profesor.</div>
+            <div th:if="${#maps.isEmpty(rutinasPorSocio)}" class="alert alert-secondary">No se registran rutinas para
+                este profesor.
+            </div>
 
             <div th:each="entry : ${rutinasPorSocio}" class="mb-4" th:if="${!#maps.isEmpty(rutinasPorSocio)}">
                 <div class="card shadow-sm">
@@ -107,12 +171,16 @@
                                     <td th:text="${rutina.fechaInicio}">2024-01-01</td>
                                     <td th:text="${rutina.fechaFinalizacion}">2024-02-01</td>
                                     <td>
-                                        <div th:if="${rutina.detalles == null || #lists.isEmpty(rutina.detalles)}" class="text-muted">Sin registros</div>
-                                        <ul th:if="${rutina.detalles != null && !#lists.isEmpty(rutina.detalles)}" class="list-unstyled mb-0">
+                                        <div th:if="${rutina.detalles == null || #lists.isEmpty(rutina.detalles)}"
+                                             class="text-muted">Sin registros
+                                        </div>
+                                        <ul th:if="${rutina.detalles != null && !#lists.isEmpty(rutina.detalles)}"
+                                            class="list-unstyled mb-0">
                                             <li th:each="detalle : ${rutina.detalles}">
                                                 <strong th:text="${detalle.fecha}">Fecha</strong>
                                                 - <span th:text="${detalle.actividad}">Actividad</span>
-                                                <span class="badge bg-secondary" th:text="${detalle.estadoRutina}"></span>
+                                                <span class="badge bg-secondary"
+                                                      th:text="${detalle.estadoRutina}"></span>
                                             </li>
                                         </ul>
                                     </td>
@@ -122,7 +190,8 @@
                                            title="Editar">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        <form th:action="@{'/rutinas/profesor/' + ${profesorId} + '/rutinas/' + ${rutina.id} + '/eliminar'}" method="post"
+                                        <form th:action="@{'/rutinas/profesor/' + ${profesorId} + '/rutinas/' + ${rutina.id} + '/eliminar'}"
+                                              method="post"
                                               th:onsubmit="return confirm('¿Eliminar esta rutina?')">
                                             <button type="submit" class="btn btn-danger btn-sm" title="Eliminar">
                                                 <i class="bi bi-trash"></i>

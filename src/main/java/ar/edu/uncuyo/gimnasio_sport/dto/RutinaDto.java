@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class RutinaDto {
 
     private Long profesorId;
 
-    private List<DetalleRutinaDto> detalles;
+    private List<DetalleRutinaDto> detalles = new ArrayList<DetalleRutinaDto>();
 
     private String socioNombre;
 
