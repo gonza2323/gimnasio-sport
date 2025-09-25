@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -73,6 +74,9 @@ public class MercadoPagoService {
                 .paymentMethods(paymentMethods)
                 .backUrls(backUrls)
                 .autoReturn("approved")
+                .notificationUrl("https://gym.gpadilla.com/webhook/mercadopago")
+                .externalReference(LocalDateTime.now().toString())
+                .statementDescriptor("Gimnasio Sport")
                 .build();
 
         PreferenceClient client = new PreferenceClient();
