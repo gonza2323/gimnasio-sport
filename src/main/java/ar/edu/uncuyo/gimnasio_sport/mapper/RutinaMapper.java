@@ -7,6 +7,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", uses = {DetalleRutinaMapper.class})
 public interface RutinaMapper {
 
@@ -16,16 +18,19 @@ public interface RutinaMapper {
     @Mapping(target = "detalles", ignore = true)
     Rutina toEntity(RutinaDto dto);
 
-    @Mapping(target = "socioId", expression = "java(rutina.getUsuario() != null ? rutina.getUsuario().getId() : null)")
-    @Mapping(target = "profesorId", expression = "java(rutina.getProfesor() != null ? rutina.getProfesor().getId() : null)")
+    @Mapping(target = "socioId", source = "usuario.id")
+    @Mapping(target = "profesorId", source = "profesor.id")
     @Mapping(target = "detalles", source = "detalles")
-    @Mapping(target = "socioNombre", ignore = true)
+    @Mapping(target = "socioNombre", source = "usuario.nombre")
+    @Mapping(target = "socioApellido", source = "usuario.apellido")
     @Mapping(target = "socioEmail", ignore = true)
     @Mapping(target = "socioNumero", ignore = true)
-    @Mapping(target = "profesorNombre", ignore = true)
+    @Mapping(target = "profesorNombre", source = "profesor.nombre")
+    @Mapping(target = "profesorApellido", source = "profesor.apellido")
     RutinaDto toDto(Rutina rutina);
 
+    List<RutinaDto> toDtos(List<Rutina> rutina);
+
     @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "tipo", source = "tipo")
     void updateEntityFromDto(RutinaDto dto, @MappingTarget Rutina rutina);
 }

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/adminLayout}">
+
+<head>
+    <title>Gimnasio Sport - Alta Rutina</title>
+</head>
+
+<body>
+
+<th:block layout:fragment="content">
+    <div th:replace="~{rutina/form :: form(title='Crear rutina', actionUrl='/rutinas/alta', readOnly=false)}"></div>
+</th:block>
+
+</body>
+</html>

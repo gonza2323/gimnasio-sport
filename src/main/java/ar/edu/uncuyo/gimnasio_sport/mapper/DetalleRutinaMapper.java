@@ -15,7 +15,7 @@ public interface DetalleRutinaMapper {
     @Mapping(target = "estadoRutina", ignore = true)
     DetalleRutina toEntity(DetalleRutinaDto dto);
 
-    @Mapping(target = "rutinaId", expression = "java(detalle.getRutina() != null ? detalle.getRutina().getId() : null)")
+    @Mapping(target = "rutinaId", source = "rutina.id")
     DetalleRutinaDto toDto(DetalleRutina detalle);
 
     List<DetalleRutina> toEntities(List<DetalleRutinaDto> detalles);
@@ -23,6 +23,7 @@ public interface DetalleRutinaMapper {
     List<DetalleRutinaDto> toDtos(List<DetalleRutina> detalles);
 
     @Mapping(target = "rutina", ignore = true)
+    @Mapping(target = "estadoRutina", ignore = true)
     void updateFromDto(DetalleRutinaDto dto, @MappingTarget DetalleRutina detalle);
 }
 

@@ -26,8 +26,8 @@
                     <div class="d-flex flex-column flex-md-row justify-content-between gap-3">
                         <div>
                             <span class="text-muted text-uppercase small">Socio</span>
-                            <h4 class="mb-1"
-                                th:text="${rutina.socioNombre != null ? rutina.socioNombre : 'Socio'}">Nombre del socio</h4>
+                            <h5 class="mb-1"
+                                th:text="${rutina.socioNombre + ' ' + rutina.socioApellido}">Nombre del socio</h5>
                             <span class="text-muted"
                                   th:text="${rutina.socioEmail}"
                                   th:if="${rutina.socioEmail != null}">correo@socio.com</span>
@@ -35,7 +35,7 @@
                         <div class="text-md-end">
                             <span class="text-muted text-uppercase small">Profesor</span>
                             <h5 class="mb-0"
-                                th:text="${rutina.profesorNombre != null ? rutina.profesorNombre : 'Sin asignar'}">Nombre del profesor</h5>
+                                th:text="${rutina.profesorNombre + ' ' + rutina.profesorApellido}">Nombre del profesor</h5>
                         </div>
                     </div>
                 </div>
@@ -80,8 +80,8 @@
                                 <td th:text="${detalle.actividad}">Descripción de la actividad</td>
                                 <td>
                                     <span class="badge px-3 py-2"
-                                          th:classappend="${detalle.estadoRutina == T(ar.edu.uncuyo.gimnasio_sport.enums.EstadoRutina).FINALIZADA} ? ' bg-success' :
-                                                          (${detalle.estadoRutina == T(ar.edu.uncuyo.gimnasio_sport.enums.EstadoRutina).ANULADA} ? ' bg-danger' : ' bg-secondary')"
+                                          th:classappend="${detalle.estadoRutina == T(ar.edu.uncuyo.gimnasio_sport.enums.EstadoDetalleRutina).REALIZADA} ? ' bg-success' :
+                                                          (${detalle.estadoRutina == T(ar.edu.uncuyo.gimnasio_sport.enums.EstadoDetalleRutina).SIN_REALIZAR} ? ' bg-danger' : ' bg-secondary')"
                                           th:text="${detalle.estadoRutina}">EN_PROCESO</span>
                                 </td>
                             </tr>

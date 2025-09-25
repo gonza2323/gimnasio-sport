@@ -1,5 +1,6 @@
 package ar.edu.uncuyo.gimnasio_sport.controller;
 
+import ar.edu.uncuyo.gimnasio_sport.dto.DetalleRutinaDto;
 import ar.edu.uncuyo.gimnasio_sport.dto.RutinaDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.Empleado;
 import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
@@ -9,9 +10,16 @@ import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.repository.SocioRepository;
 import ar.edu.uncuyo.gimnasio_sport.service.PersonaService;
 import ar.edu.uncuyo.gimnasio_sport.service.RutinaService;
+import ar.edu.uncuyo.gimnasio_sport.service.SocioService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
@@ -21,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/rutinas")
+@RequiredArgsConstructor
 public class RutinaController {
 
     private final RutinaService rutinaService;
@@ -29,44 +37,22 @@ public class RutinaController {
     private final SocioRepository socioRepository;
 
     private final String listView = "rutina/list";
-    private final String redirectProfesor = "/rutinas/profesor/";
+    private final String editView = "rutina/edit";
+    private final String createView = "rutina/alta";
+    private final String redirectProfesor = "/tablero-rutinas";
+    private final SocioService socioService;
 
-    public RutinaController(RutinaService rutinaService,
-                            PersonaService personaService,
-                            SocioRepository socioRepository) {
-        this.rutinaService = rutinaService;
-        this.personaService = personaService;
-        this.socioRepository = socioRepository;
-    }
+    @GetMapping("/tablero-rutinas")
+    public String tableroProfesor(Model model) {
 
-    @GetMapping
-    public String inicioRutinas() {
-        Empleado profesor = profesorActual();
-        Socio socio = socioActual();
-
-        if (profesor != null && profesor.getTipoEmpleado() == TipoEmpleado.PROFESOR) {
-            return "redirect:" + redirectProfesor + profesor.getId();
-        } else if (socio != null && !socio.isEliminado()) {
-            return "redirect:/rutinas/socio/" + socio.getId() + "/rutinas";
-        } else {
-            return "redirect:/";
-        }
-    }
-    @GetMapping("/profesor/{profesorId}")
-    public String tableroProfesor(@PathVariable Long profesorId,
-                                  @RequestParam(value = "rutinaId", required = false) Long rutinaId,
-                                  Model model) {
-
-        model.addAttribute("profesorId", profesorId);
         model.addAttribute("estadosRutina", EstadoRutina.values());
         model.addAttribute("rutinas", new ArrayList<RutinaDto>());
         model.addAttribute("rutinasPorSocio", new LinkedHashMap<Long, List<RutinaDto>>());
         model.addAttribute("resumenSocios", new LinkedHashMap<Long, RutinaDto>());
         model.addAttribute("socios", new LinkedHashMap<Long, String>());
-        model.addAttribute("rutinaForm", nuevaRutina(profesorId));
 
         try {
-            List<RutinaDto> rutinas = rutinaService.listarPorProfesor(profesorId);
+            List<RutinaDto> rutinas = rutinaService.listarPorProfesorActual();
             Map<Long, List<RutinaDto>> rutinasPorSocio = agruparPorSocio(rutinas);
             Map<Long, RutinaDto> resumen = crearResumenSocios(rutinasPorSocio);
 
@@ -83,9 +69,6 @@ public class RutinaController {
                 socios.put(s.getId(), correo != null ? nombre + " (" + correo + ")" : nombre);
             }
             model.addAttribute("socios", socios);
-
-            model.addAttribute("rutinaForm", prepararRutinaForm(profesorId, rutinaId));
-
         } catch (BusinessException e) {
             model.addAttribute("msgError", e.getMessageKey());
         } catch (Exception e) {
@@ -95,56 +78,101 @@ public class RutinaController {
         return listView;
     }
 
-    @PostMapping("/profesor/{profesorId}")
-    public String guardarRutina(@PathVariable Long profesorId,
-                                @ModelAttribute("rutinaForm") RutinaDto dto,
-                                RedirectAttributes redirectAttributes) {
-        dto.setProfesorId(profesorId);
+    @GetMapping("/rutinas/alta")
+    public String altaRutina(Model model) {
         try {
-            if (dto.getId() == null) {
-                rutinaService.crear(dto);
-                redirectAttributes.addFlashAttribute("msgExito", "Rutina creada correctamente");
-            } else {
-                rutinaService.actualizar(dto.getId(), dto);
-                redirectAttributes.addFlashAttribute("msgExito", "Rutina actualizada correctamente");
-            }
-        } catch (BusinessException e) {
-            redirectAttributes.addFlashAttribute("msgError", e.getMessageKey());
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("msgError", "error.sistema");
-        }
-        return "redirect:" + redirectProfesor + profesorId;
-    }
-
-    @GetMapping("/socio/{socioId}/rutinas/{rutinaId}")
-    public String verUnaRutinaSocio(@PathVariable Long socioId,
-                                    @PathVariable Long rutinaId,
-                                    Model model) {
-        try {
-            Socio socio = socioRepository.findByIdAndEliminadoFalse(socioId)
-                    .orElseThrow(() -> new BusinessException("rutina.socio.noEncontrado"));
-
-            RutinaDto rutina = rutinaService.buscarPorId(rutinaId);
-
-            if (rutina.getSocioId() == null || !rutina.getSocioId().equals(socioId)) {
-                throw new BusinessException("rutina.no.pertenece.socio");
-            }
-
-            model.addAttribute("socioNombre", (socio.getNombre() + " " + socio.getApellido()).trim());
-            model.addAttribute("rutina", rutina);
-
-            // 5. Retornar vista individual (ej: socio/vistaRutina.html)
-            return "socio/vistaRutina";
-
+            return prepararVistaFormularioAlta(model);
         } catch (BusinessException e) {
             model.addAttribute("msgError", e.getMessageKey());
-            return "socio/listaRutina"; // fallback
         } catch (Exception e) {
             model.addAttribute("msgError", "error.sistema");
-            return "socio/listaRutina"; // fallback
+        }
+        return "";
+    }
+
+    @GetMapping("/rutinas/{id}/edit")
+    public String modificarRutina(Model model, @PathVariable Long id) {
+        try {
+            RutinaDto rutina = rutinaService.buscarRutinaDto(id);
+            return prepararVistaFormularioEdicion(model, rutina);
+        } catch (BusinessException e) {
+            model.addAttribute("msgError", e.getMessageKey());
+        } catch (Exception e) {
+            model.addAttribute("msgError", "error.sistema");
+        }
+        return "";
+    }
+
+    @PostMapping("/rutinas/alta")
+    public String altaRutina(Model model, @Valid @ModelAttribute("rutinaForm") RutinaDto rutina,
+                             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors())
+            return prepararVistaFormularioAlta(model, rutina);
+
+        try {
+            rutinaService.crear(rutina);
+            redirectAttributes.addFlashAttribute("msgExito", "Rutina creada correctamente");
+            return "redirect:" + redirectProfesor;
+        } catch (BusinessException e) {
+            model.addAttribute("msgError", e.getMessageKey());
+            return prepararVistaFormularioAlta(model, rutina);
+        } catch (Exception e) {
+            model.addAttribute("msgError", "error.sistema");
+            return prepararVistaFormularioAlta(model, rutina);
         }
     }
 
+    @PostMapping("/rutinas/edit")
+    public String modificarRutina(Model model, @Valid @ModelAttribute("rutinaForm") RutinaDto rutina,
+                             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors())
+            return prepararVistaFormularioEdicion(model, rutina);
+
+        try {
+            rutinaService.actualizar(rutina);
+            redirectAttributes.addFlashAttribute("msgExito", "Rutina creada correctamente");
+            return "redirect:" + redirectProfesor;
+        } catch (BusinessException e) {
+            model.addAttribute("msgError", e.getMessageKey());
+            return prepararVistaFormularioEdicion(model, rutina);
+        } catch (Exception e) {
+            model.addAttribute("msgError", "error.sistema");
+            return prepararVistaFormularioEdicion(model, rutina);
+        }
+    }
+
+    private void prepararVistaFormulario(Model model) {
+        model.addAttribute("socios", socioService.listarSocioResumenDtos());
+    }
+
+    private String prepararVistaFormularioAlta(Model model) {
+        RutinaDto rutina = RutinaDto.builder()
+                .fechaInicio(LocalDate.now())
+                .fechaFinalizacion(LocalDate.now().plusDays(7))
+                .detalles(List.of(
+                        DetalleRutinaDto.builder()
+                                .fecha(LocalDate.now())
+                                .actividad("PIERNAS")
+                                .build()
+                ))
+                .build();
+
+        model.addAttribute("rutinaForm", rutina);
+        prepararVistaFormulario(model);
+        return createView;
+    }
+
+    private String prepararVistaFormularioAlta(Model model, RutinaDto rutinaDto) {
+        model.addAttribute("rutinaForm", rutinaDto);
+        prepararVistaFormulario(model);
+        return createView;
+    }
+
+    private String prepararVistaFormularioEdicion(Model model, RutinaDto rutinaDto) {
+        model.addAttribute("rutinaForm", rutinaDto);
+        prepararVistaFormulario(model);
+        return editView;
+    }
 
     @GetMapping("/socio/{socioId}/rutinas")
     public String verRutinasPorSocio(@PathVariable Long socioId, Model model) {
@@ -171,20 +199,19 @@ public class RutinaController {
                 throw new BusinessException("acceso.denegado");
             }
 
-            return tableroProfesor(profesorId, rutinaId, model);
+            return tableroProfesor(model);
 
         } catch (BusinessException e) {
             model.addAttribute("msgError", e.getMessageKey());
-            return "rutina/list";
+            return "list2";
         } catch (Exception e) {
             model.addAttribute("msgError", "error.sistema");
-            return "rutina/list";
+            return "list2";
         }
     }
 
-    @PostMapping("/profesor/{profesorId}/rutinas/{rutinaId}/eliminar")
-    public String eliminarRutina(@PathVariable Long profesorId,
-                                 @PathVariable Long rutinaId,
+    @PostMapping("/rutinas/{rutinaId}/baja")
+    public String eliminarRutina(@PathVariable Long rutinaId,
                                  RedirectAttributes redirectAttributes) {
         try {
             rutinaService.eliminar(rutinaId);
@@ -194,39 +221,26 @@ public class RutinaController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("msgError", "error.sistema");
         }
-        return "redirect:" + redirectProfesor + profesorId;
+        return "redirect:" + redirectProfesor;
     }
 
-    @GetMapping("/socio/{socioId}/{rutinaId}")
-    public String verDetallesRutina(@PathVariable Long socioId,
-                                    @PathVariable Long rutinaId,
+    @GetMapping("/rutinas/{rutinaId}")
+    public String verDetallesRutina(@PathVariable Long rutinaId,
                                     Model model) {
         try {
-            Socio socio = socioRepository.findByIdAndEliminadoFalse(socioId)
-                    .orElseThrow(() -> new BusinessException("rutina.socio.noEncontrado"));
+            RutinaDto rutina = rutinaService.buscarRutinaDto(rutinaId);
 
-            RutinaDto rutina = rutinaService.buscarPorId(rutinaId);
-
-            if (rutina.getSocioId() == null || !rutina.getSocioId().equals(socioId)) {
-                throw new BusinessException("rutina.no.pertenece.socio");
-            }
-
-            model.addAttribute("socioNombre", (socio.getNombre() + " " + socio.getApellido()).trim());
             model.addAttribute("rutina", rutina);
-
-            return "socio/vistaRutina";
+            return "rutina/detalle";
 
         } catch (BusinessException e) {
             model.addAttribute("msgError", e.getMessageKey());
-            return "socio/listaRutina"; // fallback
+            return "rutina/detalle";
         } catch (Exception e) {
             model.addAttribute("msgError", "error.sistema");
-            return "socio/listaRutina"; // fallback
+            return "rutina/detalle";
         }
     }
-
-
-
 
 
     // --- Métodos auxiliares ---
@@ -289,7 +303,7 @@ public class RutinaController {
         if (rutinaId == null) {
             return nuevaRutina(profesorId);
         }
-        return rutinaService.buscarPorId(rutinaId);
+        return rutinaService.buscarRutina(rutinaId);
     }
 
     private RutinaDto nuevaRutina(Long profesorId) {

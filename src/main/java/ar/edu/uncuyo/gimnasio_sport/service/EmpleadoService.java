@@ -2,9 +2,8 @@ package ar.edu.uncuyo.gimnasio_sport.service;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.EmpleadoCreateForm;
 import ar.edu.uncuyo.gimnasio_sport.dto.EmpleadoResumenDto;
-import ar.edu.uncuyo.gimnasio_sport.dto.SocioResumenDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.Empleado;
-import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
+import ar.edu.uncuyo.gimnasio_sport.entity.Persona;
 import ar.edu.uncuyo.gimnasio_sport.enums.RolUsuario;
 import ar.edu.uncuyo.gimnasio_sport.enums.TipoEmpleado;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
@@ -12,7 +11,9 @@ import ar.edu.uncuyo.gimnasio_sport.mapper.EmpleadoMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.EmpleadoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -54,5 +55,22 @@ public class EmpleadoService {
     public List<EmpleadoResumenDto> listarEmpleadoResumenDtos() {
         List<Empleado> empleados = empleadoRepository.findAllByEliminadoFalse();
         return empleadoMapper.toResumenDtos(empleados);
+    }
+
+    public Empleado buscarEmpleadoActual() {
+        Persona persona = personaService.buscarPersonaActual();
+
+        if (!(persona instanceof Empleado))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+
+        return (Empleado) persona;
+    }
+
+    public Empleado buscarProfesorActual() {
+        Empleado empleado = buscarEmpleadoActual();
+        if (empleado.getTipoEmpleado() != TipoEmpleado.PROFESOR)
+            throw new BusinessException("Invalido.rutina.profesor");
+
+        return empleado;
     }
 }

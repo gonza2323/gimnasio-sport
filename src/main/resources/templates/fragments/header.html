@@ -24,7 +24,7 @@
 
 
                                         <!--OPCIONES SOCIO-->
-                                        <li sec:authorize="hasRole('SOCIO')"><a th:href="@{/rutinas}">MIS RUTINAS</a></li>
+                                        <li sec:authorize="hasRole('SOCIO')"><a th:href="@{/mis-rutinas}">MIS RUTINAS</a></li>
                                         <li sec:authorize="hasRole('SOCIO')"><a href="#">PAGOS<i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
                                                 <li><a th:href="@{/me/cuotas}">CUOTAS</a></li>
@@ -61,7 +61,7 @@
 
 
                                         <!--OPCIONES PROFESOR-->
-                                        <li sec:authorize="hasRole('PROFESOR')"><a th:href="@{/rutinas}">RUTINAS</a></li>
+                                        <li sec:authorize="hasRole('PROFESOR')"><a th:href="@{/tablero-rutinas}">RUTINAS</a></li>
                                         <li sec:authorize="hasRole('PROFESOR')"><a th:href="@{/socios}">SOCIOS</a></li>
 
 

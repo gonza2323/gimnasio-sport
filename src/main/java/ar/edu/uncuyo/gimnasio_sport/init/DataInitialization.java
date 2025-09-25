@@ -381,6 +381,4 @@ public class DataInitialization implements CommandLineRunner {
                 .socioId(1L)
                 .build());
     }
-
-
 }

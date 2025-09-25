@@ -1,0 +1,138 @@
+<section class="container my-5" th:fragment="form(title, readOnly, actionUrl)">
+
+    <div class="alert alert-danger" role="alert" th:if="${msgError}" th:text="#{${msgError}}">MENSAJE ERROR</div>
+
+    <h3 class="text-heading" th:text="${title}">TÍTULO</h3>
+
+    <form method="post" th:action="@{${actionUrl}}" th:object="${rutinaForm}">
+
+        <input th:field="*{id}" type="hidden"/>
+
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label class="form-label" for="socio">Estado rutina</label>
+                <select class="form-control" id="socio" th:field="*{socioId}">
+                    <option value="">Seleccione un socio</option>
+                    <option th:each="socio : ${socios}" th:text="${socio.nombre} + ' ' + ${socio.apellido}"
+                            th:value="${socio.id}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('socioId')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('socioId')}" th:text="${err}"></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label class="form-label" for="tipo">Estado rutina</label>
+                <select th:field="*{tipo}" class="form-control" id="tipo" th:disabled="${readOnly}">
+                    <option value="">Seleccione estado</option>
+                    <option value="FINALIZADA">FINALIZADA</option>
+                    <option value="EN_PROCESO">EN PROCESO</option>
+                    <option value="ANULADA">ANULADA</option>
+                </select>
+                <div th:if="${#fields.hasErrors('tipo')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('tipo')}" th:text="${err}"></div>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="fechaInicio">Fecha inicio *</label>
+                <input type="date" th:field="*{fechaInicio}" class="form-control" id="fechaInicio"
+                       placeholder="Fecha de nacimiento" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('fechaInicio')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('fechaInicio')}" th:text="${err}"></div>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="fechaFinalizacion">Fecha finalización *</label>
+                <input type="date" th:field="*{fechaFinalizacion}" class="form-control" id="fechaFinalizacion"
+                       placeholder="Fecha de nacimiento" th:disabled="${readOnly}">
+                <div th:if="${#fields.hasErrors('fechaFinalizacion')}" class="text-danger mt-1"
+                     th:each="err : ${#fields.errors('fechaFinalizacion')}" th:text="${err}"></div>
+            </div>
+        </div>
+
+        <!-- Lista de actividades -->
+
+        <div class="d-flex align-items-baseline my-4"><h4 class="mr-3">Actividades:</h4>
+            <button id="boton-agregar" type="button">Agregar actividad</button>
+        </div>
+        <div id="lista-actividades">
+            <div class="form-row actividad-item" th:attr="data-index=${iterStat.index}"
+                 th:each="detalle, iterStat : *{detalles}">
+                <input th:field="*{detalles[__${iterStat.index}__].id}" type="hidden" data-attrb="id"/>
+                <div class="form-group col-md-3">
+                    <label th:for="*{detalles[__${iterStat.index}__].fecha}"> Fecha de la actividad</label>
+                    <input type="date" class="form-control" th:field="*{detalles[__${iterStat.index}__].fecha}" data-attrb="fecha">
+                    <div th:if="${#fields.hasErrors('*{detalles[__${iterStat.index}__].actividad}')}"
+                         class="text-danger mt-1"
+                         th:each="err : ${#fields.errors('*{detalles[__${iterStat.index}__].actividad}')}"
+                         th:text="${err}">
+                    </div>
+                </div>
+                <div class="form-group col-md-5">
+                    <label th:for="*{detalles[__${iterStat.index}__].actividad}"> Actividad </label>
+                    <input class="form-control" th:field="*{detalles[__${iterStat.index}__].actividad}"
+                        type="text" data-attrb="actividad">
+                    <div th:if="${#fields.hasErrors('*{detalles[__${iterStat.index}__].actividad}')}"
+                         class="text-danger mt-1"
+                         th:each="err : ${#fields.errors('*{detalles[__${iterStat.index}__].actividad}')}"
+                         th:text="${err}">
+                    </div>
+                </div>
+                <div class="col-auto d-flex align-items-center justify-content-end justify-content-md-start">
+                    <button class="btn btn-danger btn-sm boton-eliminar" type="button">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button class="genric-btn primary radius" type="submit">Guardar</button>
+        </div>
+    </form>
+
+
+    <script>
+        const lista = document.getElementById("lista-actividades");
+        const botonAgregar = document.getElementById("boton-agregar");
+
+        function actualizarIndices() {
+            const items = lista.querySelectorAll(".actividad-item");
+            items.forEach((item, index) => {
+                item.dataset.index = index;
+                item.querySelectorAll("input").forEach(input => {
+                    input.name = `detalles[${index}]` + '.' + input.dataset.attrb;
+                });
+            });
+        }
+
+        botonAgregar.addEventListener("click", () => {
+            const nuevo = document.createElement("div");
+            nuevo.classList.add("form-row", "actividad-item");
+            nuevo.innerHTML = `
+    <input data-attrb="id" type="hidden"/>
+    <div class="form-group col-md-3">
+        <label>Fecha de la actividad</label>
+        <input type="date" class="form-control" name="" data-attrb="fecha">
+    </div>
+    <div class="form-group col-md-5">
+        <label>Actividad</label>
+        <input type="text" class="form-control" name="" data-attrb="actividad">
+    </div>
+    <div class="col-auto d-flex align-items-center justify-content-end justify-content-md-start">
+        <button type="button" class="btn btn-danger btn-sm boton-eliminar">
+            <i class="bi bi-trash"></i>
+        </button>
+    </div>
+`;
+            lista.appendChild(nuevo);
+            actualizarIndices();
+        });
+
+        lista.addEventListener("click", (e) => {
+            if (e.target.closest(".boton-eliminar")) {
+                e.target.closest(".actividad-item").remove();
+                actualizarIndices();
+            }
+        });
+
+        actualizarIndices();
+    </script>
+</section>

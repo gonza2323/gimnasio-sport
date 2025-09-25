@@ -1,6 +1,6 @@
 package ar.edu.uncuyo.gimnasio_sport.entity;
 
-import ar.edu.uncuyo.gimnasio_sport.enums.EstadoRutina;
+import ar.edu.uncuyo.gimnasio_sport.enums.EstadoDetalleRutina;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,16 +20,20 @@ public class DetalleRutina {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private LocalDate fecha;
 
+    @Column(nullable = false)
     private String actividad;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private EstadoRutina estadoRutina;
+    private EstadoDetalleRutina estadoRutina;
 
+    @Column(nullable = false)
     private boolean eliminado;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rutina_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(nullable = false)
     private Rutina rutina;
 }

@@ -14,7 +14,7 @@ public interface RutinaRepository extends JpaRepository<Rutina, Long> {
 
     List<Rutina> findAllByEliminadoFalse();
 
-    List<Rutina> findAllByProfesor_IdAndEliminadoFalse(Long profesorId);
+    List<Rutina> findAllByProfesorIdAndEliminadoFalse(Long profesorId);
 
-    List<Rutina> findAllByUsuario_IdAndEliminadoFalse(Long socioId);
+    List<Rutina> findAllByUsuarioIdAndEliminadoFalse(Long socioId);
 }
