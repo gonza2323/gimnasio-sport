@@ -85,18 +85,18 @@ public class RutinaService {
 
     @Transactional(readOnly = true)
     public List<RutinaDto> listarPorProfesor(Long profesorId) {
-        if (profesorId == null) {
-            return List.of();
-        }
         List<Rutina> rutinas = rutinaRepository.findAllByProfesorIdAndEliminadoFalse(profesorId);
         return rutinaMapper.toDtos(rutinas);
     }
 
     @Transactional(readOnly = true)
+    public List<RutinaDto> listarPorSocioActual() {
+        Socio socio = socioService.buscarSocioActual();
+        return listarPorSocio(socio.getId());
+    }
+
+    @Transactional(readOnly = true)
     public List<RutinaDto> listarPorSocio(Long socioId) {
-        if (socioId == null) {
-            return List.of();
-        }
         List<Rutina> rutinas = rutinaRepository.findAllByUsuarioIdAndEliminadoFalse(socioId);
         return rutinaMapper.toDtos(rutinas);
     }
@@ -199,6 +199,12 @@ public class RutinaService {
         }
         if (duracion > DURACION_MAXIMA_MS) {
             throw new BusinessException("rutina.duracion.maxima");
+        }
+
+        for (DetalleRutinaDto detalle : dto.getDetalles()) {
+            LocalDate fecha = detalle.getFecha();
+            if (fecha.isAfter(fin) || fecha.isBefore(inicio))
+                throw new BusinessException("FueraDeRango.rutina.detalle.fecha");
         }
     }
 

@@ -39,6 +39,8 @@
                     <tr>
                         <th>Estado</th>
                         <th>Profesor</th>
+                        <th>Inicio</th>
+                        <th>Fin</th>
                         <th>Acciones</th>
                     </tr>
                     </thead>
@@ -48,22 +50,17 @@
                             <span class="badge bg-primary px-3 py-2" th:text="${rutina.tipo}"></span>
                         </td>
                         <td>
-                            <div class="d-flex align-items-center" th:if="${rutina.profesorNombre != null}">
-                                <i class="bi bi-person-badge text-primary me-2"></i>
-                                <span class="fw-semibold" th:text="${rutina.profesorNombre}"></span>
-                            </div>
-                            <span class="text-muted" th:unless="${rutina.profesorNombre != null}">Sin profesor asignado</span>
+                            <span class="fw-semibold" th:text="${rutina.profesorNombre + ' ' + rutina.profesorApellido}"></span>
                         </td>
+                        <td th:text="${rutina.fechaInicio}">Fecha de inicio</td>
+                        <td th:text="${rutina.fechaFinalizacion}">Fecha de finalización</td>
                         <td>
-                            <!-- Botón que abre el modal -->
                             <button type="button"
                                     class="btn btn-primary btn-sm ver-detalle">
-                                    <a th:href="@{/rutinas/socio/{socioId}/{rutinaId}(socioId=${socioId}, rutinaId=${rutina.id})}"
+                                    <a th:href="@{/rutinas/{rutinaId}(rutinaId=${rutina.id})}"
                                        class="btn btn-primary btn-sm me-1" title="Ver">
                                         <i class="bi bi-eye"></i>
                                     </a>
-
-                                </i>
                             </button>
                         </td>
                     </tr>
