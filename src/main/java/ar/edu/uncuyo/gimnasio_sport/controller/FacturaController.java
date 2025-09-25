@@ -29,4 +29,11 @@ public class FacturaController {
         model.addAttribute("facturas", facturas);
         return "factura/list";
     }
+
+    @GetMapping("/me/facturas")
+    public String listarFacturasSocioActual(Model model) {
+        List<FacturaDto> facturas = facturaService.listarFacturasActivasSocioActual();
+        model.addAttribute("facturas", facturas);
+        return "factura/list";
+    }
 }

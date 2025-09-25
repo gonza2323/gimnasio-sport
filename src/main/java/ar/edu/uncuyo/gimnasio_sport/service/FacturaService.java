@@ -2,18 +2,12 @@ package ar.edu.uncuyo.gimnasio_sport.service;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.DetalleFacturaDto;
 import ar.edu.uncuyo.gimnasio_sport.dto.FacturaDto;
-import ar.edu.uncuyo.gimnasio_sport.entity.CuotaMensual;
-import ar.edu.uncuyo.gimnasio_sport.entity.DetalleFactura;
-import ar.edu.uncuyo.gimnasio_sport.entity.Factura;
-import ar.edu.uncuyo.gimnasio_sport.entity.FormaDePago;
+import ar.edu.uncuyo.gimnasio_sport.entity.*;
 import ar.edu.uncuyo.gimnasio_sport.enums.EstadoFactura;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.DetalleFacturaMapper;
 import ar.edu.uncuyo.gimnasio_sport.mapper.FacturaMapper;
-import ar.edu.uncuyo.gimnasio_sport.repository.CuotaMensualRepository;
-import ar.edu.uncuyo.gimnasio_sport.repository.DetalleFacturaRepository;
-import ar.edu.uncuyo.gimnasio_sport.repository.FacturaRepository;
-import ar.edu.uncuyo.gimnasio_sport.repository.TipoDePagoRepository;
+import ar.edu.uncuyo.gimnasio_sport.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,6 +25,8 @@ public class FacturaService {
     private final CuotaMensualRepository cuotaMensualRepository;
     private final DetalleFacturaRepository detalleFacturaRepository;
     private final DetalleFacturaMapper detalleFacturaMapper;
+    private final SocioRepository socioRepository;
+    private final SocioService socioService;
 
 
     @Transactional
@@ -187,5 +183,12 @@ public class FacturaService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return factura.getId();
+    }
+
+    @Transactional
+    public List<FacturaDto> listarFacturasActivasSocioActual() {
+        Socio socio = socioService.buscarSocioActual();
+        List<Factura> facturas = facturaRepository.buscarFacturasPorSocio(socio.getId());
+        return facturaMapper.toDtos(facturas);
     }
 }

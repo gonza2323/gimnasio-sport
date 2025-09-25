@@ -1,6 +1,7 @@
 package ar.edu.uncuyo.gimnasio_sport.repository;
 
 import ar.edu.uncuyo.gimnasio_sport.entity.Factura;
+import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
 import ar.edu.uncuyo.gimnasio_sport.enums.EstadoFactura;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -26,4 +27,13 @@ public interface FacturaRepository extends JpaRepository<Factura,Long> {
 
     @Query("SELECT df.factura FROM DetalleFactura df WHERE df.cuotaMensual.id = :cuotaId")
     Optional<Factura> findFacturaByCuotaId(@Param("cuotaId") Long cuotaId);
+
+    @Query("""
+    SELECT DISTINCT df.factura
+    FROM DetalleFactura df
+    JOIN df.cuotaMensual cm
+    JOIN cm.socio s
+    WHERE s.id = :socioId
+""")
+    List<Factura> buscarFacturasPorSocio(@Param("socioId") Long socioId);
 }
