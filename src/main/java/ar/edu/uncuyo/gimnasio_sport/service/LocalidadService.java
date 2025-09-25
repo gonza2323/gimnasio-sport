@@ -39,7 +39,7 @@ public class LocalidadService {
     }
 
     public List<LocalidadDto> buscarLocalidadesPorDepartamento(Long departamentoId) {
-        List<Localidad> localidades = localidadRepository.findAllByDepartamentoIdAndEliminadoFalse(departamentoId);
+        List<Localidad> localidades = localidadRepository.findAllByDepartamentoIdAndEliminadoFalseOrderByNombre(departamentoId);
         return localidadMapper.toDtos(localidades);
     }
 }

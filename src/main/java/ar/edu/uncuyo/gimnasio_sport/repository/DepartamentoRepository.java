@@ -11,5 +11,5 @@ public interface DepartamentoRepository extends JpaRepository<Departamento, Long
     boolean existsByNombreAndIdNotAndEliminadoFalse(String nombre, Long id);
     Optional<Departamento> findByIdAndEliminadoFalse(Long id);
 
-    List<Departamento> findAllByProvinciaIdAndEliminadoFalse(Long provinciaId);
+    List<Departamento> findAllByProvinciaIdAndEliminadoFalseOrderByNombre(Long provinciaId);
 }

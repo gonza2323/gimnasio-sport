@@ -39,7 +39,7 @@ public class DepartamentoService {
     }
 
     public List<DepartamentoDto> buscarDepartamentosPorProvincia(Long provinciaId) {
-        List<Departamento> departamentos = departamentoRepository.findAllByProvinciaIdAndEliminadoFalse(provinciaId);
+        List<Departamento> departamentos = departamentoRepository.findAllByProvinciaIdAndEliminadoFalseOrderByNombre(provinciaId);
         return departamentoMapper.toDtos(departamentos);
     }
 }

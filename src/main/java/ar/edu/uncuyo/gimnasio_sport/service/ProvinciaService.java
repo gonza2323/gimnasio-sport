@@ -73,7 +73,7 @@ public class ProvinciaService {
     }
 
     public List<ProvinciaDto> buscarProvinciaPorPais(Long paisId) {
-        List<Provincia> provincias = provinciaRepository.findAllByPaisIdAndEliminadoFalse(paisId);
+        List<Provincia> provincias = provinciaRepository.findAllByPaisIdAndEliminadoFalseOrderByNombre(paisId);
         return provinciaMapper.toDtos(provincias);
     }
 }

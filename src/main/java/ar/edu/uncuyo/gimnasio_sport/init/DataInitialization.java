@@ -1,13 +1,14 @@
 package ar.edu.uncuyo.gimnasio_sport.init;
 
 import ar.edu.uncuyo.gimnasio_sport.dto.*;
-import ar.edu.uncuyo.gimnasio_sport.entity.Empresa;
+import ar.edu.uncuyo.gimnasio_sport.entity.*;
 import ar.edu.uncuyo.gimnasio_sport.enums.EstadoCuota;
 import ar.edu.uncuyo.gimnasio_sport.enums.TipoDocumento;
 import ar.edu.uncuyo.gimnasio_sport.enums.TipoEmpleado;
-import ar.edu.uncuyo.gimnasio_sport.repository.EmpresaRepository;
-import ar.edu.uncuyo.gimnasio_sport.repository.UsuarioRepository;
+import ar.edu.uncuyo.gimnasio_sport.init.geo.*;
+import ar.edu.uncuyo.gimnasio_sport.repository.*;
 import ar.edu.uncuyo.gimnasio_sport.service.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -16,6 +17,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
@@ -24,13 +27,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DataInitialization implements CommandLineRunner {
 
+    private final ObjectMapper objectMapper;
+    private final ProvinciaRepository provinciaRepository;
+    private final DepartamentoRepository departamentoRepository;
+    private final LocalidadRepository localidadRepository;
+    private final PaisRepository paisRepository;
     private final UsuarioRepository usuarioRepository;
     private final PaisService paisService;
     private final EmpresaRepository empresaRepository;
     private final SucursalService sucursalService;
-    private final ProvinciaService provinciaService;
-    private final DepartamentoService departamentoService;
-    private final LocalidadService localidadService;
     private final SocioService socioService;
     private final EmpleadoService empleadoService;
     private final ValorCuotaService valorCuotaService;
@@ -44,7 +49,7 @@ public class DataInitialization implements CommandLineRunner {
     }
 
     @Transactional
-    protected void crearDatosIniciales() {
+    protected void crearDatosIniciales() throws Exception {
         if (usuarioRepository.existsByNombreUsuarioAndEliminadoFalse("pepeargento@gmail.com")) {
             System.out.println("Datos iniciales ya creados. Salteando creación de datos iniciales. Para forzar su creación, borrar la base de datos");
             return;
@@ -59,9 +64,7 @@ public class DataInitialization implements CommandLineRunner {
 
         // Creación de datos iniciales
         crearPaises();
-        crearProvincias();
-        crearDepartamentos();
-        crearLocalidades();
+        cargarUbicaciones();
         crearEmpresa();
         crearSucursales();
         crearSocios();
@@ -76,28 +79,73 @@ public class DataInitialization implements CommandLineRunner {
     }
 
     private void crearPaises() {
-        paisService.crearPais(new PaisDto(null, "Argentina"));
-        paisService.crearPais(new PaisDto(null, "España"));
+        paisService.crearPais(new PaisDto(1L, "Argentina"));
+        paisService.crearPais(new PaisDto(2L, "España"));
     }
 
-    void crearProvincias() {
-        provinciaService.crearProvincia(new ProvinciaDto(null, "CABA", 1L));
-        provinciaService.crearProvincia(new ProvinciaDto(null, "Mendoza", 1L));
-        provinciaService.crearProvincia(new ProvinciaDto(null, "Barcelona", 2L));
+    private void cargarUbicaciones() throws Exception {
+        Pais argentina = paisRepository.findById(1L)
+                .orElseThrow(() -> new IllegalStateException("Argentina not found"));
+
+        loadProvincias(argentina);
+        loadDepartamentos();
+        loadLocalidades();
     }
 
-    void crearDepartamentos() {
-        departamentoService.crearDepartamento(new DepartamentoDto(null, "Comuna 1", 1L));
-        departamentoService.crearDepartamento(new DepartamentoDto(null, "Ciudad de Mendoza", 2L));
-        departamentoService.crearDepartamento(new DepartamentoDto(null, "Barcelona", 3L));
+    private void loadProvincias(Pais argentina) throws IOException {
+        InputStream is = getClass().getResourceAsStream("/data/provincias.json");
+        ProvinciasWrapper wrapper = objectMapper.readValue(is, ProvinciasWrapper.class);
+
+        for (ProvinciaDTO dto : wrapper.getProvincias()) {
+            Long id = dto.getIdAsLong();
+            if (!provinciaRepository.existsById(id)) {
+                Provincia provincia = new Provincia();
+                provincia.setId(id);
+                provincia.setNombre(dto.getNombre());
+                provincia.setPais(argentina);
+                provinciaRepository.save(provincia);
+            }
+        }
     }
 
-    void crearLocalidades() {
-        localidadService.crearLocalidad(new LocalidadDto(null, "Monserrat", "1234", 1L));
-        localidadService.crearLocalidad(new LocalidadDto(null, "San Telmo", "1234", 1L));
-        localidadService.crearLocalidad(new LocalidadDto(null, "1A. Sección", "1234", 2L));
-        localidadService.crearLocalidad(new LocalidadDto(null, "2A. Sección", "1234", 2L));
-        localidadService.crearLocalidad(new LocalidadDto(null, "Barrio ASDF", "1234", 3L));
+    private void loadDepartamentos() throws IOException {
+        InputStream is = getClass().getResourceAsStream("/data/departamentos.json");
+        DepartamentosWrapper wrapper = objectMapper.readValue(is, DepartamentosWrapper.class);
+
+        for (DepartamentoDTO dto : wrapper.getDepartamentos()) {
+            Long id = dto.getIdAsLong();
+            if (!departamentoRepository.existsById(id)) {
+                Long provinciaId = dto.getProvincia().getIdAsLong();
+                Provincia provincia = provinciaRepository.findById(provinciaId)
+                        .orElseThrow(() -> new IllegalStateException("Provincia not found: " + provinciaId));
+
+                Departamento departamento = new Departamento();
+                departamento.setId(id);
+                departamento.setNombre(dto.getNombre());
+                departamento.setProvincia(provincia);
+                departamentoRepository.save(departamento);
+            }
+        }
+    }
+
+    private void loadLocalidades() throws IOException {
+        InputStream is = getClass().getResourceAsStream("/data/localidades.json");
+        LocalidadesWrapper wrapper = objectMapper.readValue(is, LocalidadesWrapper.class);
+
+        for (LocalidadDTO dto : wrapper.getLocalidades()) {
+            Long id = dto.getIdAsLong();
+            if (!localidadRepository.existsById(id)) {
+                Long departamentoId = dto.getDepartamento().getIdAsLong();
+                Departamento departamento = departamentoRepository.findById(departamentoId)
+                        .orElseThrow(() -> new IllegalStateException("Departamento not found: " + departamentoId));
+
+                Localidad localidad = new Localidad();
+                localidad.setId(id);
+                localidad.setNombre(dto.getNombre());
+                localidad.setDepartamento(departamento);
+                localidadRepository.save(localidad);
+            }
+        }
     }
 
     private void crearEmpresa() {
@@ -111,7 +159,7 @@ public class DataInitialization implements CommandLineRunner {
                 .direccion(DireccionDto.builder()
                         .calle("Av. 9 de Julio")
                         .numeracion("870")
-                        .localidadId(1L)
+                        .localidadId(200701001L)
                         .build())
                 .build());
 
@@ -120,7 +168,7 @@ public class DataInitialization implements CommandLineRunner {
                 .direccion(DireccionDto.builder()
                         .calle("Av. Corrientes")
                         .numeracion("276")
-                        .localidadId(2L)
+                        .localidadId(200701002L)
                         .build())
                 .build());
 
@@ -129,7 +177,7 @@ public class DataInitialization implements CommandLineRunner {
                 .direccion(DireccionDto.builder()
                         .calle("Av. Emilio Civit")
                         .numeracion("1020")
-                        .localidadId(3L)
+                        .localidadId(5000701001L)
                         .build())
                 .build());
     }
@@ -146,7 +194,7 @@ public class DataInitialization implements CommandLineRunner {
                 .direccion(DireccionDto.builder()
                         .calle("Av. pepito")
                         .numeracion("42")
-                        .localidadId(1L)
+                        .localidadId(200701001L)
                         .build())
                 .usuario(UsuarioCreateFormDTO.builder()
                         .clave("1234")
@@ -166,7 +214,7 @@ public class DataInitialization implements CommandLineRunner {
                 .direccion(DireccionDto.builder()
                         .calle("Av. pepito")
                         .numeracion("42")
-                        .localidadId(1L)
+                        .localidadId(200701001L)
                         .build())
                 .usuario(UsuarioCreateFormDTO.builder()
                         .clave("1234")
@@ -186,7 +234,7 @@ public class DataInitialization implements CommandLineRunner {
                 .direccion(DireccionDto.builder()
                         .calle("Av. San Telmo")
                         .numeracion("42")
-                        .localidadId(2L)
+                        .localidadId(200701002L)
                         .build())
                 .usuario(UsuarioCreateFormDTO.builder()
                         .clave("1234")
@@ -206,7 +254,7 @@ public class DataInitialization implements CommandLineRunner {
                 .direccion(DireccionDto.builder()
                         .calle("Av. Colón")
                         .numeracion("252")
-                        .localidadId(3L)
+                        .localidadId(5000701001L)
                         .build())
                 .usuario(UsuarioCreateFormDTO.builder()
                         .clave("1234")
@@ -221,7 +269,7 @@ public class DataInitialization implements CommandLineRunner {
                 .tipoEmpleado(TipoEmpleado.ADMINISTRATIVO)
                 .persona(PersonaCreateFormDTO.builder()
                         .nombre("admin")
-                        .apellido("admin")
+                        .apellido("")
                         .fechaNacimiento(LocalDate.now())
                         .tipoDocumento(TipoDocumento.DNI)
                         .numeroDocumento("25468231")
@@ -230,7 +278,7 @@ public class DataInitialization implements CommandLineRunner {
                         .direccion(DireccionDto.builder()
                                 .calle("Av. 9 de Julio")
                                 .numeracion("400")
-                                .localidadId(1L)
+                                .localidadId(200701001L)
                                 .build())
                         .usuario(UsuarioCreateFormDTO.builder()
                                 .clave("1234")
@@ -253,7 +301,7 @@ public class DataInitialization implements CommandLineRunner {
                         .direccion(DireccionDto.builder()
                                 .calle("Av. Cabildo")
                                 .numeracion("568")
-                                .localidadId(1L)
+                                .localidadId(200701001L)
                                 .build())
                         .usuario(UsuarioCreateFormDTO.builder()
                                 .clave("1234")
