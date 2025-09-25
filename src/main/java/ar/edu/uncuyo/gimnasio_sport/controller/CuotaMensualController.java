@@ -72,10 +72,10 @@ public class CuotaMensualController {
         String status = params.get("status");
 
         if (!status.equals("approved")) {
-            redirectAttributes.addFlashAttribute("msgError", "ERROR EN EL PAGO");
+            redirectAttributes.addFlashAttribute("msgError", "error.pago");
         }
 
-        redirectAttributes.addFlashAttribute("msgExito", "PAGO EXITOSO.");
+        redirectAttributes.addFlashAttribute("msgExito", "PAGO EXITOSO");
         return "redirect:" + redirect;
     }
 
@@ -89,7 +89,7 @@ public class CuotaMensualController {
     @GetMapping("/failure")
     public String failure(@RequestParam Map<String, String> params, Model model,
                           RedirectAttributes redirectAttributes) throws Exception {
-        redirectAttributes.addFlashAttribute("msgError", "ERROR EN EL PAGO.");
+        redirectAttributes.addFlashAttribute("msgError", "error.pago");
         return "redirect:" + redirect;
     }
 

@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RutinaService {
 
-    private static final long DURACION_MINIMA_MS = 1;
-    private static final long DURACION_MAXIMA_MS = 365;
+    private static final long DURACION_MINIMA_DIAS = 7;
+    private static final long DURACION_MAXIMA_DIAS = 365;
 
     private final RutinaRepository rutinaRepository;
     private final RutinaMapper rutinaMapper;
@@ -190,10 +190,10 @@ public class RutinaService {
         }
 
         long duracion = ChronoUnit.DAYS.between(inicio, fin);
-        if (duracion < DURACION_MINIMA_MS) {
+        if (duracion < DURACION_MINIMA_DIAS) {
             throw new BusinessException("rutina.duracion.minima");
         }
-        if (duracion > DURACION_MAXIMA_MS) {
+        if (duracion > DURACION_MAXIMA_DIAS) {
             throw new BusinessException("rutina.duracion.maxima");
         }
 

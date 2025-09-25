@@ -10,7 +10,7 @@
 
         <div class="form-row">
             <div class="form-group col-md-12">
-                <label class="form-label" for="socio">Estado rutina</label>
+                <label class="form-label" for="socio">Socio *</label>
                 <select class="form-control" id="socio" th:field="*{socioId}">
                     <option value="">Seleccione un socio</option>
                     <option th:each="socio : ${socios}" th:text="${socio.nombre} + ' ' + ${socio.apellido}"
@@ -22,7 +22,7 @@
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label class="form-label" for="tipo">Estado rutina</label>
+                <label class="form-label" for="tipo">Estado rutina *</label>
                 <select th:field="*{tipo}" class="form-control" id="tipo" th:disabled="${readOnly}">
                     <option value="">Seleccione estado</option>
                     <option value="FINALIZADA">FINALIZADA</option>
@@ -58,7 +58,7 @@
                  th:each="detalle, iterStat : *{detalles}">
                 <input th:field="*{detalles[__${iterStat.index}__].id}" type="hidden" data-attrb="id"/>
                 <div class="form-group col-md-3">
-                    <label th:for="*{detalles[__${iterStat.index}__].fecha}"> Fecha de la actividad</label>
+                    <label th:for="*{detalles[__${iterStat.index}__].fecha}"> Fecha de la actividad *</label>
                     <input type="date" class="form-control" th:field="*{detalles[__${iterStat.index}__].fecha}" data-attrb="fecha">
                     <div th:if="${#fields.hasErrors('*{detalles[__${iterStat.index}__].actividad}')}"
                          class="text-danger mt-1"
@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div class="form-group col-md-5">
-                    <label th:for="*{detalles[__${iterStat.index}__].actividad}"> Actividad </label>
+                    <label th:for="*{detalles[__${iterStat.index}__].actividad}"> Actividad *</label>
                     <input class="form-control" th:field="*{detalles[__${iterStat.index}__].actividad}"
                         type="text" data-attrb="actividad">
                     <div th:if="${#fields.hasErrors('*{detalles[__${iterStat.index}__].actividad}')}"
@@ -109,11 +109,11 @@
             nuevo.innerHTML = `
     <input data-attrb="id" type="hidden"/>
     <div class="form-group col-md-3">
-        <label>Fecha de la actividad</label>
+        <label>Fecha de la actividad *</label>
         <input type="date" class="form-control" name="" data-attrb="fecha">
     </div>
     <div class="form-group col-md-5">
-        <label>Actividad</label>
+        <label>Actividad *</label>
         <input type="text" class="form-control" name="" data-attrb="actividad">
     </div>
     <div class="col-auto d-flex align-items-center justify-content-end justify-content-md-start">

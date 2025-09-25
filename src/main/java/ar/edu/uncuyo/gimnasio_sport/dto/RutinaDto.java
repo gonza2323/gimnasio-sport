@@ -21,18 +21,18 @@ public class RutinaDto {
 
     private Long id;
 
-    @NotNull
+    @NotNull(message = "{NotNull.rutina.tipo}")
     private EstadoRutina tipo;
 
-    @NotNull
+    @NotNull(message = "{NotNull.rutina.fechaInicio}")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaInicio;
 
-    @NotNull
+    @NotNull(message = "{NotNull.rutina.fechaFinalizacion}")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaFinalizacion;
 
-    @NotNull
+    @NotNull(message = "{NotNull.rutina.socio}")
     private Long socioId;
 
     private Long profesorId;

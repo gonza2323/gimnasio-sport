@@ -19,12 +19,12 @@ import java.time.LocalDate;
 public class DetalleRutinaDto {
     private Long id;
 
-    @NotNull
+    @NotNull(message = "{NotNull.detalleRutina.fecha}")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fecha;
 
-    @NotBlank
-    @Size(min = 1, max = 100)
+    @NotBlank(message = "{NotBlank.detalleRutina.actividad}")
+    @Size(min = 1, max = 100, message = "{Size.detalleRutina.actividad}")
     private String actividad;
 
     private EstadoDetalleRutina estadoRutina;
