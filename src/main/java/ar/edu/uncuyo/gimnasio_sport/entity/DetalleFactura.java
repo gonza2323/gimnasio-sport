@@ -23,7 +23,7 @@ public class DetalleFactura {
     @JoinColumn(name = "factura_id", nullable = false)
     private Factura factura;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cuota_mensual_id", nullable = false)
     private CuotaMensual cuotaMensual;
 }

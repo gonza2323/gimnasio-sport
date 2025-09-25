@@ -4,15 +4,13 @@ import ar.edu.uncuyo.gimnasio_sport.dto.CuotaMensualDto;
 import ar.edu.uncuyo.gimnasio_sport.dto.PagoCuotasDto;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.service.CuotaMensualService;
+import ar.edu.uncuyo.gimnasio_sport.service.FacturaService;
 import ar.edu.uncuyo.gimnasio_sport.service.MercadoPagoService;
 import ar.edu.uncuyo.gimnasio_sport.service.SucursalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -27,6 +25,7 @@ public class CuotaMensualController {
     private final String redirect = "/me/cuotas";
     private final SucursalService sucursalService;
     private final MercadoPagoService mercadoPagoService;
+    private final FacturaService facturaService;
 
     @PostMapping("cuotas/emitirCuotasMesActual")
     public String emitirCuotasMesActual(RedirectAttributes redirectAttributes) {
@@ -100,5 +99,11 @@ public class CuotaMensualController {
         model.addAttribute("deudaTotal", deudaTotal);
         model.addAttribute("cuotas", cuotas);
         return listView;
+    }
+
+    @GetMapping("/cuotas/{id}/factura")
+    public String buscarFacturaDeCuota(@PathVariable Long id) {
+        Long idFactura = facturaService.buscarIdFacturaPorCuotaId(id);
+        return "redirect:/facturas/" + idFactura.toString();
     }
 }

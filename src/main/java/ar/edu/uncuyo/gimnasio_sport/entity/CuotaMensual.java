@@ -36,7 +36,7 @@ public class CuotaMensual {
     @Column(nullable = false)
     private boolean eliminado;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false)
     private ValorCuota valorCuota;
 

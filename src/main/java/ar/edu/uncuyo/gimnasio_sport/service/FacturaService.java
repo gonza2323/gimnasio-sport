@@ -16,7 +16,9 @@ import ar.edu.uncuyo.gimnasio_sport.repository.FacturaRepository;
 import ar.edu.uncuyo.gimnasio_sport.repository.TipoDePagoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -31,21 +33,25 @@ public class FacturaService {
     private final DetalleFacturaMapper detalleFacturaMapper;
 
 
+    @Transactional
     public List<FacturaDto> listarFacturas() {
         List<Factura> facturas = facturaRepository.findAll();
         return facturaMapper.toDtos(facturas);
     }
 
+    @Transactional
     public List<FacturaDto> listarFacturasActivas() {
-        List<Factura> facturas = facturaRepository.findAllByEliminadoFalse();
+        List<Factura> facturas = facturaRepository.findAllByEliminadoFalseOrderByFechaFacturaDescNumeroFacturaDesc();
         return facturaMapper.toDtos(facturas);
     }
 
+    @Transactional
     public List<FacturaDto> listarFacturasPorEstado(EstadoFactura estado) {
         List<Factura> facturas = facturaRepository.findAllByEliminadoFalseAndEstado(estado);
         return facturaMapper.toDtos(facturas);
     }
 
+    @Transactional
     public DetalleFacturaDto crearDetalle(Long facturaId, Long cuotaMensualId) {
         Factura factura = facturaRepository.findById(facturaId)
                 .orElseThrow(() -> new BusinessException("factura.noEncontrada"));
@@ -63,12 +69,14 @@ public class FacturaService {
         return detalleFacturaMapper.toDto(detalleGuardado);
     }
 
+    @Transactional
     public DetalleFacturaDto buscarDetalle(Long id) {
         DetalleFactura detalle = detalleFacturaRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("detalle.noEncontrado"));
         return detalleFacturaMapper.toDto(detalle);
     }
 
+    @Transactional
     public DetalleFacturaDto modificarDetalle(Long idDetalle, Long idCuota) {
         DetalleFactura detalle = detalleFacturaRepository.findById(idDetalle)
                 .orElseThrow(() -> new BusinessException("detalle.noEncontrado"));
@@ -83,6 +91,7 @@ public class FacturaService {
         return detalleFacturaMapper.toDto(detalleActualizado);
     }
 
+    @Transactional
     public void eliminarDetalle(Long idDetalle) {
         DetalleFactura detalle = detalleFacturaRepository.findById(idDetalle)
                 .orElseThrow(() -> new BusinessException("detalle.noEncontrado"));
@@ -134,17 +143,27 @@ public class FacturaService {
         }
     }
 
+    @Transactional
     public Factura buscarFactura(Long id) {
         return facturaRepository.findByIdAndEliminadoFalse(id)
                 .orElseThrow(() -> new BusinessException("Factura no encontrada"));
     }
 
+    @Transactional
+    public FacturaDto buscarFacturaDto(Long id) {
+        Factura factura = buscarFactura(id);
+        FacturaDto facturaDto = facturaMapper.toDto(factura);
+        return facturaDto;
+    }
+
+    @Transactional
     public Factura eliminarFactura(Long id) {
         Factura factura = buscarFactura(id);
         factura.setEliminado(true);
         return facturaRepository.save(factura);
     }
 
+    @Transactional
     public Factura modificarFactura(Long id, FacturaDto facturaDto) {
         Factura factura = buscarFactura(id);
 
@@ -162,6 +181,11 @@ public class FacturaService {
         return facturaRepository.save(factura);
     }
 
+    @Transactional
+    public Long buscarIdFacturaPorCuotaId(Long cuotaId) {
+        Factura factura = facturaRepository.findFacturaByCuotaId(cuotaId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-
+        return factura.getId();
+    }
 }

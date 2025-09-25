@@ -19,7 +19,7 @@ public interface CuotaMensualRepository extends JpaRepository<CuotaMensual, Long
 
     List<CuotaMensual> findAllByFechaVencimientoBetween(LocalDate fechaDesde, LocalDate fechaHasta);
 
-    List<CuotaMensual> findAllBySocioIdAndEliminadoFalse(Long socioId);
+    List<CuotaMensual> findAllBySocioIdAndEliminadoFalseOrderByFechaVencimientoDesc(Long socioId);
 
     @Query("""
             SELECT COALESCE(SUM(c.valorCuota.valorCuota), 0)

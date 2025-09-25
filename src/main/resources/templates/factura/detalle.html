@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/adminLayout}">
+
+<head>
+    <title>Gimnasio Sport - Factura</title>
+</head>
+
+<body>
+
+<th:block layout:fragment="content">
+    <div class="container my-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title">Factura Nº
+                    <span th:text="${factura.numeroFactura}"></span>
+                </h3>
+                <p class="card-text mb-1">
+                    <strong>Fecha:</strong>
+                    <span th:text="${factura.fechaFactura}"></span>
+                </p>
+                <p class="card-text mb-1">
+                    <strong>Estado:</strong>
+                    <span th:text="${factura.estado}"></span>
+                </p>
+                <p class="card-text mb-1">
+                    <strong>Forma de Pago:</strong>
+                    <span th:text="${factura.formaDePago.tipoDePago}"></span>
+                </p>
+                <p class="card-text mb-1">
+                    <strong>Observación:</strong>
+                    <span th:text="${factura.formaDePago.observacion}"></span>
+                </p>
+
+            </div>
+
+            <div class="card-body">
+                <h5 class="card-title">Cuotas Pagadas</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead class="thead-light">
+                        <tr>
+                            <th>Mes</th>
+                            <th>Año</th>
+                            <th class="text-right">Monto</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="detalle : ${factura.detalles}">
+                            <td th:text="${detalle.cuota.mes}"></td>
+                            <td th:text="${detalle.cuota.anio}"></td>
+                            <td class="text-right">$<span th:text="${detalle.cuota.monto}"></span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="font-weight-bold text-right mr-1">
+                    Total Pagado: $<span th:text="${factura.totalPagado}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+</body>
+</html>

@@ -144,7 +144,7 @@ public class CuotaMensualService {
     }
 
     public List<CuotaMensualDto> listarCuotasMensualesDtoPorSocio(Long socioId) {
-        var cuotas = cuotaMensualRepository.findAllBySocioIdAndEliminadoFalse(socioId);
+        var cuotas = cuotaMensualRepository.findAllBySocioIdAndEliminadoFalseOrderByFechaVencimientoDesc(socioId);
         return cuotaMensualMapper.toDtos(cuotas);
     }
 

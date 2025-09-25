@@ -35,7 +35,7 @@ public class Factura {
     @Column(nullable = false)
     private boolean eliminado;
 
-    @OneToMany(mappedBy = "factura", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "factura", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<DetalleFactura> detalles = new ArrayList<>();
 
     @JoinColumn(name = "forma_de_pago_id", nullable = false)

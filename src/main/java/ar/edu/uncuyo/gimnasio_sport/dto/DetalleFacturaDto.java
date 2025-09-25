@@ -15,4 +15,6 @@ public class DetalleFacturaDto {
     private Long facturaId;
 
     private Long cuotaMensualId;
+
+    private CuotaMensualDto cuota;
 }

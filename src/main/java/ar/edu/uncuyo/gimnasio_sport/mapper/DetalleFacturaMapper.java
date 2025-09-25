@@ -8,7 +8,7 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {CuotaMensualMapper.class})
 public interface DetalleFacturaMapper {
 
     @Mapping(target = "factura", ignore = true)
@@ -18,6 +18,7 @@ public interface DetalleFacturaMapper {
     List<DetalleFactura> toEntities(List<DetalleFacturaDto> detalles);
 
     @Mapping(target = "facturaId", source = "factura.id")
+    @Mapping(target = "cuota", source = "cuotaMensual")
     DetalleFacturaDto toDto(DetalleFactura entity);
 
     List<DetalleFacturaDto> toDtos(List<DetalleFactura> detallesFacturas);
