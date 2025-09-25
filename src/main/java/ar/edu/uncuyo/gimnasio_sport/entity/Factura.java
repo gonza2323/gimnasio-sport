@@ -35,10 +35,10 @@ public class Factura {
     @Column(nullable = false)
     private boolean eliminado;
 
-    @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "factura", cascade = CascadeType.PERSIST)
     private List<DetalleFactura> detalles = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "forma_de_pago_id")
+    @JoinColumn(name = "forma_de_pago_id", nullable = false)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private FormaDePago formaDePago;
 }

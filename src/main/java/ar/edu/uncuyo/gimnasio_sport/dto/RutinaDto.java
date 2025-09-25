@@ -41,6 +41,7 @@ public class RutinaDto {
     private List<DetalleRutinaDto> detalles = new ArrayList<DetalleRutinaDto>();
 
     private String socioNombre;
+
     private String socioApellido;
 
     private String socioEmail;

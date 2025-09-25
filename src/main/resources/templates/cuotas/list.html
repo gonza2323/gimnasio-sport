@@ -73,7 +73,7 @@
                                 <label th:for="${cuota.id}" class="m-0"></label>
                             </div>
                             <a th:if="${cuota.estado.name() == 'PAGADA'}"
-                               th:href="@{#}"
+                               th:href="@{/cuotas/{id}/factura(id=${cuota.id})}"
                                class="btn btn-info">Ver Factura</a>
                         </td>
                     </tr>

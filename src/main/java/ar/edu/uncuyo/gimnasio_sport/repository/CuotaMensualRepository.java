@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
+import java.util.Optional;
 
 public interface CuotaMensualRepository extends JpaRepository<CuotaMensual, Long> {
     boolean existsBySocioIdAndMesAndAnioAndEliminadoFalse(Long idSocio, Month mes, Long anio);
@@ -47,4 +48,6 @@ public interface CuotaMensualRepository extends JpaRepository<CuotaMensual, Long
                   AND c.eliminado = false
             """)
     List<CuotaMensual> buscarCuotasAdeudadasPorIds(List<Long> cuotasIds);
+
+    Optional<CuotaMensual> findByIdAndEliminadoFalse(Long cuotaMensualId);
 }

@@ -1,14 +1,15 @@
 package ar.edu.uncuyo.gimnasio_sport.service;
 
-import ar.edu.uncuyo.gimnasio_sport.dto.CuotaMensualCreateDto;
-import ar.edu.uncuyo.gimnasio_sport.dto.CuotaMensualDto;
+import ar.edu.uncuyo.gimnasio_sport.dto.*;
 import ar.edu.uncuyo.gimnasio_sport.entity.CuotaMensual;
 import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
 import ar.edu.uncuyo.gimnasio_sport.entity.ValorCuota;
 import ar.edu.uncuyo.gimnasio_sport.enums.EstadoCuota;
+import ar.edu.uncuyo.gimnasio_sport.enums.EstadoFactura;
 import ar.edu.uncuyo.gimnasio_sport.enums.TipoDePago;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.CuotaMensualMapper;
+import ar.edu.uncuyo.gimnasio_sport.mapper.DetalleFacturaMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.CuotaMensualRepository;
 import ar.edu.uncuyo.gimnasio_sport.repository.ValorCuotaRepository;
 import jakarta.transaction.Transactional;
@@ -30,6 +31,7 @@ public class CuotaMensualService {
     private final SocioService socioService;
     private final ValorCuotaService valorCuotaService;
     private final FacturaService facturaService;
+    private final DetalleFacturaMapper detalleFacturaMapper;
 
     public CuotaMensual crearCuotaMensual(CuotaMensualCreateDto cuotaMensualDto) throws BusinessException {
         if (cuotaMensualRepository.existsBySocioIdAndMesAndAnioAndEliminadoFalse(
@@ -57,23 +59,23 @@ public class CuotaMensualService {
         Long anio = (long) fechaActual.getYear();
         List<Socio> sociosSinCuota = socioService.buscarSociosSinCuotaMesYAnioActual(mes, anio);
         ValorCuota valorCuota = valorCuotaService.buscarValorCuotaVigente();
-        
+
         List<CuotaMensual> cuotasMensuales = sociosSinCuota.stream().map(socio ->
-            CuotaMensual.builder()
-                    .mes(LocalDate.now().getMonth())
-                    .anio(anio)
-                    .estado(EstadoCuota.ADEUDADA)
-                    .fechaVencimiento(fechaActual.plusDays(10))
-                    .socio(socio)
-                    .valorCuota(valorCuota)
-                    .eliminado(false)
-                    .build()
+                CuotaMensual.builder()
+                        .mes(LocalDate.now().getMonth())
+                        .anio(anio)
+                        .estado(EstadoCuota.ADEUDADA)
+                        .fechaVencimiento(fechaActual.plusDays(10))
+                        .socio(socio)
+                        .valorCuota(valorCuota)
+                        .eliminado(false)
+                        .build()
         ).toList();
 
         cuotaMensualRepository.saveAll(cuotasMensuales);
         return (long) cuotasMensuales.size();
     }
-    
+
     public CuotaMensual buscarCuotaMensual(Long id) throws BusinessException {
         return cuotaMensualRepository.findById(id)
                 .orElseThrow(() -> new BusinessException("cuota.no.existe"));
@@ -83,7 +85,7 @@ public class CuotaMensualService {
         CuotaMensual cuotaExistente = buscarCuotaMensual(id);
 
         if (!cuotaExistente.getMes().equals(cuotaMensualDto.getMes()) ||
-            !cuotaExistente.getAnio().equals(cuotaMensualDto.getAnio())) {
+                !cuotaExistente.getAnio().equals(cuotaMensualDto.getAnio())) {
             if (cuotaMensualRepository.existsBySocioIdAndMesAndAnioAndEliminadoFalse(
                     cuotaExistente.getSocio().getId(),
                     cuotaMensualDto.getMes(),
@@ -171,17 +173,47 @@ public class CuotaMensualService {
         return cuotaMensualMapper.toDtos(cuotasPertenecientesAlSocio);
     }
 
+    @Transactional
     public void pagarCuotas(List<Long> cuotasIds, TipoDePago tipoDePago) {
         List<CuotaMensual> cuotasAPagar = cuotaMensualRepository.buscarCuotasAdeudadasPorIds(cuotasIds);
 
         if (cuotasAPagar.size() != cuotasIds.size())
             return;
 
+        Double montoTotal = 0d;
+
         for (CuotaMensual cuota : cuotasAPagar) {
             cuota.setEstado(EstadoCuota.PAGADA);
+            montoTotal += cuota.getValorCuota().getValorCuota();
         }
 
         cuotaMensualRepository.saveAll(cuotasAPagar);
-        // TODO: Crear factura
+
+
+//      Creamos la factura
+
+        List<DetalleFacturaDto> detallesFacturas = cuotasAPagar.stream().map(cuota ->
+            DetalleFacturaDto.builder()
+                    .cuotaMensualId(cuota.getId())
+                    .build()
+        ).toList();
+
+        FormaDePagoDto formaDePago = FormaDePagoDto.builder()
+                .tipoDePago(tipoDePago)
+                .observacion("N/A")
+                .build();
+
+        try {
+            facturaService.crearFactura(FacturaDto.builder()
+                    .fechaFactura(LocalDate.now())
+                    .detalles(detallesFacturas)
+                    .totalPagado(montoTotal)
+                    .formaDePago(formaDePago)
+                    .estado(EstadoFactura.PAGADA)
+                    .build());
+        } catch (Exception e) {
+            System.out.println(e.getCause());
+            System.out.println(e.getMessage());
+        }
     }
 }

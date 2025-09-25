@@ -5,6 +5,7 @@ import ar.edu.uncuyo.gimnasio_sport.dto.FacturaDto;
 import ar.edu.uncuyo.gimnasio_sport.entity.CuotaMensual;
 import ar.edu.uncuyo.gimnasio_sport.entity.DetalleFactura;
 import ar.edu.uncuyo.gimnasio_sport.entity.Factura;
+import ar.edu.uncuyo.gimnasio_sport.entity.FormaDePago;
 import ar.edu.uncuyo.gimnasio_sport.enums.EstadoFactura;
 import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.DetalleFacturaMapper;
@@ -13,6 +14,7 @@ import ar.edu.uncuyo.gimnasio_sport.repository.CuotaMensualRepository;
 import ar.edu.uncuyo.gimnasio_sport.repository.DetalleFacturaRepository;
 import ar.edu.uncuyo.gimnasio_sport.repository.FacturaRepository;
 import ar.edu.uncuyo.gimnasio_sport.repository.TipoDePagoRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -89,15 +91,40 @@ public class FacturaService {
         detalleFacturaRepository.save(detalle);
     }
 
-
+    @Transactional
     public Factura crearFactura(FacturaDto facturaDto) {
-        validar(facturaDto);
+        FormaDePago formaDePago = FormaDePago.builder()
+                .tipoDePago(facturaDto.getFormaDePago().getTipoDePago())
+                .observacion(facturaDto.getFormaDePago().getObservacion())
+                .build();
 
         Factura factura = facturaMapper.toEntity(facturaDto);
-        return facturaRepository.save(factura);
+        factura.setFormaDePago(formaDePago);
+        factura.setNumeroFactura(generarSiguienteNumeroDeFactura());
+        factura.setEliminado(false);
+        facturaRepository.save(factura);
+
+//        Detalles
+        List<DetalleFactura> detalles = facturaDto.getDetalles().stream().map(dto -> {
+            CuotaMensual cuotaMensual = cuotaMensualRepository.findByIdAndEliminadoFalse(dto.getCuotaMensualId())
+                    .orElseThrow();
+
+            return DetalleFactura.builder()
+                    .factura(factura)
+                    .cuotaMensual(cuotaMensual)
+                    .build();
+        }).toList();
+
+        detalleFacturaRepository.saveAll(detalles);
+
+        return factura;
     }
 
-    /// validar algo mas?
+    private Long generarSiguienteNumeroDeFactura() {
+        Long max = facturaRepository.findMaxNumeroFactura();
+        return max == null ? 1L : max + 1;
+    }
+
     public void validar(FacturaDto facturaDto) {
         if (facturaRepository.existsByNumeroFactura(facturaDto.getNumeroFactura())) {
             throw new BusinessException("YaExiste.factura.numero");
@@ -118,7 +145,6 @@ public class FacturaService {
         return facturaRepository.save(factura);
     }
 
-    /// dejar o no dejar?
     public Factura modificarFactura(Long id, FacturaDto facturaDto) {
         Factura factura = buscarFactura(id);
 

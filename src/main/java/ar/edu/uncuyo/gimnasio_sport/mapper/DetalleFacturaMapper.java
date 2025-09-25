@@ -11,11 +11,14 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface DetalleFacturaMapper {
 
+    @Mapping(target = "factura", ignore = true)
+    @Mapping(target = "cuotaMensual", ignore = true)
+    DetalleFactura toEntity(DetalleFacturaDto dto);
+
+    List<DetalleFactura> toEntities(List<DetalleFacturaDto> detalles);
+
     @Mapping(target = "facturaId", source = "factura.id")
     DetalleFacturaDto toDto(DetalleFactura entity);
-
-    @Mapping(target = "factura", ignore = true) // la factura se asigna en el servicio
-    DetalleFactura toEntity(DetalleFacturaDto dto);
 
     List<DetalleFacturaDto> toDtos(List<DetalleFactura> detallesFacturas);
 

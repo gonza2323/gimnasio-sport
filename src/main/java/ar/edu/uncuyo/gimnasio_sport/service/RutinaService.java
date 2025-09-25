@@ -11,9 +11,7 @@ import ar.edu.uncuyo.gimnasio_sport.error.BusinessException;
 import ar.edu.uncuyo.gimnasio_sport.mapper.DetalleRutinaMapper;
 import ar.edu.uncuyo.gimnasio_sport.mapper.RutinaMapper;
 import ar.edu.uncuyo.gimnasio_sport.repository.DetalleRutinaRepository;
-import ar.edu.uncuyo.gimnasio_sport.repository.EmpleadoRepository;
 import ar.edu.uncuyo.gimnasio_sport.repository.RutinaRepository;
-import ar.edu.uncuyo.gimnasio_sport.repository.SocioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +31,6 @@ public class RutinaService {
     private static final long DURACION_MAXIMA_MS = 365;
 
     private final RutinaRepository rutinaRepository;
-    private final SocioRepository socioRepository;
-    private final EmpleadoRepository empleadoRepository;
     private final RutinaMapper rutinaMapper;
     private final DetalleRutinaRepository detalleRutinaRepository;
     private final DetalleRutinaMapper detalleRutinaMapper;
