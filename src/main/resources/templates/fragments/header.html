@@ -29,7 +29,7 @@
                                                th:text="${currentUserRole != null ? currentUserRole : 'ROL'}"></a>
                                         </li>
 
-                                        <li sec:authorize="isAnonymous()" class="d-lg-non">
+                                        <li sec:authorize="isAnonymous()" class="d-lg-none">
                                             <a th:href="@{/login}"
                                                style="font-weight: bold; font-size: 16px; padding: 10px; border-bottom: 1px solid black;">LOG IN</a>
                                         </li>
