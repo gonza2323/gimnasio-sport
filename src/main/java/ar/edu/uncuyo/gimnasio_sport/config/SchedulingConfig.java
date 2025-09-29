@@ -18,4 +18,5 @@ public class SchedulingConfig {
         scheduler.initialize();
         return scheduler;
     }
+
 }

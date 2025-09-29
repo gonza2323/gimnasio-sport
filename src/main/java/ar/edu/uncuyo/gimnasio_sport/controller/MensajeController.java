@@ -29,7 +29,7 @@ public class MensajeController {
     private static final String VIEW_PROGRAMAR = "mensajes/programar";
     private static final String REDIRECT_MENSAJES = "redirect:/mensajes";
 
-    @GetMapping
+    @GetMapping()
     public String listar(@ModelAttribute("f") FiltroMensajeDTO filtro, Model model) {
         List<MensajeDTO> mensajes = mensajeService.listar(filtro).stream()
                 .map(mensajeService::toDto)

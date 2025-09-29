@@ -60,6 +60,10 @@ public class SocioService {
                 .orElseThrow(() -> new BusinessException("NotFound.socio"));
     }
 
+    public List<Socio> ListarSocios() {
+        return socioRepository.findAll();
+    }
+
     public List<Socio> buscarSociosSinCuotaMesYAnioActual(Month mes, Long anio) {
         return socioRepository.buscarSociosSinCuotaMesYAnioActual(mes, anio);
     }

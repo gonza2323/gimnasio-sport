@@ -1,5 +1,6 @@
 package ar.edu.uncuyo.gimnasio_sport.service;
 
+import ar.edu.uncuyo.gimnasio_sport.config.SchedulingConfig;
 import ar.edu.uncuyo.gimnasio_sport.dto.FiltroMensajeDTO;
 import ar.edu.uncuyo.gimnasio_sport.dto.MensajeDTO;
 import ar.edu.uncuyo.gimnasio_sport.entity.Mensaje;
@@ -13,10 +14,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +35,7 @@ public class MensajeService {
     private final UsuarioRepository usuarioRepository;
     private final MensajeMapper mensajeMapper;
     private final JavaMailSender mailSender;
+    private final TaskScheduler taskScheduler;
 
     private static final String REMITENTE = "gimnasiosport21@gmail.com";
 
@@ -129,17 +136,35 @@ public class MensajeService {
         if (dto == null || !StringUtils.hasText(dto.getEmail())) {
             return;
         }
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(REMITENTE);
-            message.setTo(dto.getEmail());
-            message.setSubject(StringUtils.hasText(dto.getAsunto()) ? dto.getAsunto() : "Mensaje Gimnasio Sport");
-            message.setText(StringUtils.hasText(dto.getCuerpo()) ? dto.getCuerpo() : "Hola!");
-            mailSender.send(message);
-        } catch (Exception ex) {
-            log.warn("No se pudo enviar el correo a {}: {}", dto.getEmail(), ex.getMessage());
+
+        Runnable tarea = () -> {
+            try {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setFrom(REMITENTE); // recomendable que coincida con spring.mail.username
+                message.setTo(dto.getEmail());
+                message.setSubject(
+                        StringUtils.hasText(dto.getAsunto()) ? dto.getAsunto() : "Mensaje Gimnasio Sport"
+                );
+                message.setText(
+                        StringUtils.hasText(dto.getCuerpo()) ? dto.getCuerpo() : "Hola!"
+                );
+                mailSender.send(message);
+            } catch (Exception ex) {
+                log.warn("No se pudo enviar el correo a {}", dto.getEmail(), ex);
+            }
+        };
+
+        // Si hay fecha programada, agendamos. Si no, enviamos al toque.
+        if (dto.getFechaProgramada() != null) {
+            Instant instante = dto.getFechaProgramada()
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant();
+            taskScheduler.schedule(tarea, Date.from(instante));
+        } else {
+            tarea.run();
         }
     }
+
 
     private void normalizarCamposMensaje(Mensaje mensaje) {
         if (mensaje == null) {

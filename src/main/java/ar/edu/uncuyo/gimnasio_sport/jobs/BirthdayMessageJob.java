@@ -5,6 +5,7 @@ import ar.edu.uncuyo.gimnasio_sport.entity.Socio;
 import ar.edu.uncuyo.gimnasio_sport.enums.TipoMensaje;
 import ar.edu.uncuyo.gimnasio_sport.repository.SocioRepository;
 import ar.edu.uncuyo.gimnasio_sport.service.MensajeService;
+import ar.edu.uncuyo.gimnasio_sport.service.SocioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,7 +26,7 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class BirthdayMessageJob {
 
-    private final SocioRepository socioRepository;
+    private final SocioService socioService;
     private final MensajeService mensajeService;
 
     @Value("${app.mensajes.cumple.enabled:true}")
@@ -48,7 +49,7 @@ public class BirthdayMessageJob {
         }
 
         LocalDate hoy = LocalDate.now(ZoneId.of(zoneId));
-        List<Socio> socios = socioRepository.findAll();
+        List<Socio> socios = socioService.ListarSocios();
 
         for (Socio socio : socios) {
             if (socio.getFechaNacimiento() == null) {

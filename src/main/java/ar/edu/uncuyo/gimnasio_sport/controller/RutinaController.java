@@ -180,7 +180,7 @@ public class RutinaController {
 
         try {
             rutinaService.actualizar(rutina);
-            redirectAttributes.addFlashAttribute("msgExito", "Rutina creada correctamente");
+            redirectAttributes.addFlashAttribute("msgExito", "Rutina actualizada correctamente");
             return "redirect:/rutinas";
         } catch (BusinessException e) {
             model.addAttribute("msgError", e.getMessageKey());
