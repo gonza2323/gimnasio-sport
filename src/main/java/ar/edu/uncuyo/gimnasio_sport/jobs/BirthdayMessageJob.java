@@ -41,7 +41,7 @@ public class BirthdayMessageJob {
     @Value("${app.mensajes.cumple.texto:Desde Gimnasio Sport te deseamos un gran día.}")
     private String texto;
 
-    @Scheduled(cron = "${app.mensajes.cumple.cron:0 0 8 * * *}", zone = "${app.mensajes.cumple.zone:America/Argentina/Buenos_Aires}")
+    @Scheduled(cron = "${app.mensajes.cumple.cron:0 9 0 30 * *}", zone = "${app.mensajes.cumple.zone:America/Argentina/Buenos_Aires}")
     @Transactional
     public void enviarFelicitaciones() {
         if (!enabled) {
@@ -49,7 +49,7 @@ public class BirthdayMessageJob {
         }
 
         LocalDate hoy = LocalDate.now(ZoneId.of(zoneId));
-        List<Socio> socios = socioService.ListarSocios();
+        List<Socio> socios = socioService.ListarSocios().stream().filter(socio -> socio.getFechaNacimiento().getDayOfMonth() == hoy.getDayOfMonth()).toList();
 
         for (Socio socio : socios) {
             if (socio.getFechaNacimiento() == null) {
