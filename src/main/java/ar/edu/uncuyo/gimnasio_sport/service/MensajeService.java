@@ -1,6 +1,5 @@
 package ar.edu.uncuyo.gimnasio_sport.service;
 
-import ar.edu.uncuyo.gimnasio_sport.config.SchedulingConfig;
 import ar.edu.uncuyo.gimnasio_sport.dto.FiltroMensajeDTO;
 import ar.edu.uncuyo.gimnasio_sport.dto.MensajeDTO;
 import ar.edu.uncuyo.gimnasio_sport.entity.Mensaje;
@@ -15,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class MensajeService {
     private final UsuarioRepository usuarioRepository;
     private final MensajeMapper mensajeMapper;
     private final JavaMailSender mailSender;
+    private final PromotionSchedulerService promotionSchedulerService;
     private final TaskScheduler taskScheduler;
 
     private static final String REMITENTE = "gimnasiosport21@gmail.com";
@@ -106,6 +108,16 @@ public class MensajeService {
         if (dto == null) {
             throw new IllegalArgumentException("El mensaje no puede ser nulo");
         }
+
+        if (dto.getTipo() == TipoMensaje.PROMOCION) {
+            if (dto.getUsuarioId() == null) {
+                throw new IllegalArgumentException("Debe indicarse el usuario asociado al mensaje");
+            }
+            // Para promoción no se valida ni nombre ni email
+            return;
+        }
+
+        // Caso normal
         if (!StringUtils.hasText(dto.getEmail())) {
             throw new IllegalArgumentException("El correo electrónico del destinatario es obligatorio");
         }
@@ -114,10 +126,23 @@ public class MensajeService {
         }
     }
 
+
     private void normalizarDto(MensajeDTO dto) {
         if (dto == null) {
             return;
         }
+
+        // Si es una promocion, NO rellenamos nombre ni email
+        if (dto.getTipo() == TipoMensaje.PROMOCION) {
+            if (!StringUtils.hasText(dto.getAsunto())) {
+                dto.setAsunto("Promoción Gimnasio Sport");
+            }
+            if (!StringUtils.hasText(dto.getCuerpo())) {
+                dto.setCuerpo("¡Tenemos una promoción especial para vos!");
+            }
+            return;
+        }
+
         if (!StringUtils.hasText(dto.getNombre())) {
             dto.setNombre("Destinatario");
         }
@@ -132,15 +157,37 @@ public class MensajeService {
         }
     }
 
-    private void enviarCorreo(MensajeDTO dto) {
-        if (dto == null || !StringUtils.hasText(dto.getEmail())) {
+
+    public void enviarCorreo(MensajeDTO dto) {
+        if (dto == null) {
+            return;
+        }
+
+        if (dto.getTipo() == TipoMensaje.PROMOCION) {
+            if (dto.getFechaProgramada() != null) {
+                // 👉 Programar para la fecha indicada
+                ZonedDateTime fechaEjecucion = dto.getFechaProgramada().atZone(ZoneId.systemDefault());
+                promotionSchedulerService.programarPromocion(dto.getAsunto(), dto.getCuerpo(), fechaEjecucion);
+            } else {
+                // 👉 Envío inmediato, asíncrono
+                promotionSchedulerService.enviarPromocion(dto.getAsunto(), dto.getCuerpo());
+            }
+        } else {
+            enviarCorreoIndividual(dto);
+        }
+    }
+
+
+
+    public void enviarCorreoIndividual(MensajeDTO dto) {
+        if (!StringUtils.hasText(dto.getEmail())) {
             return;
         }
 
         Runnable tarea = () -> {
             try {
                 SimpleMailMessage message = new SimpleMailMessage();
-                message.setFrom(REMITENTE); // recomendable que coincida con spring.mail.username
+                message.setFrom(REMITENTE);
                 message.setTo(dto.getEmail());
                 message.setSubject(
                         StringUtils.hasText(dto.getAsunto()) ? dto.getAsunto() : "Mensaje Gimnasio Sport"
@@ -154,17 +201,15 @@ public class MensajeService {
             }
         };
 
-        // Si hay fecha programada, agendamos. Si no, enviamos al toque.
         if (dto.getFechaProgramada() != null) {
             Instant instante = dto.getFechaProgramada()
                     .atZone(ZoneId.systemDefault())
                     .toInstant();
             taskScheduler.schedule(tarea, Date.from(instante));
         } else {
-            tarea.run();
+            taskScheduler.schedule(tarea, new Date()); // 🔹 siempre asíncrono
         }
     }
-
 
     private void normalizarCamposMensaje(Mensaje mensaje) {
         if (mensaje == null) {

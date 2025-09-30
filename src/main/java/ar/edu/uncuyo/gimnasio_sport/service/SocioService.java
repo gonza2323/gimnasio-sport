@@ -60,7 +60,7 @@ public class SocioService {
                 .orElseThrow(() -> new BusinessException("NotFound.socio"));
     }
 
-    public List<Socio> ListarSocios() {
+    public List<Socio> listarSocios() {
         return socioRepository.findAll();
     }
 
